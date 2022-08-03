@@ -9,7 +9,7 @@ class ApiConstant {
       urlApi = 'http://119.18.157.236:8869/';
     } else{
       //quantum
-      urlApi = 'http://103.106.79.34:8869/';
+      urlApi = 'http://119.18.157.236:8869/';
     }
   }
 }

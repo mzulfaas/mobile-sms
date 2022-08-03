@@ -1,8 +1,6 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,24 +15,25 @@ import 'package:mobile_sms/models/Lines.dart';
 import 'package:mobile_sms/models/Promosi.dart';
 import 'package:mobile_sms/models/User.dart';
 import 'package:mobile_sms/providers/LinesProvider.dart';
-import 'package:money_input_formatter/money_input_formatter.dart';
+import 'package:mobile_sms/view/HistoryNomorPP_All.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/ApiConstant.dart';
 import 'HistoryNomorPP.dart';
 import 'HistorySO.dart';
+import 'HistorySOAll.dart';
 
-class HistoryLines extends StatefulWidget {
+class HistoryLinesAll extends StatefulWidget {
   @override
-  _HistoryLinesState createState() => _HistoryLinesState();
+  _HistoryLinesAllState createState() => _HistoryLinesAllState();
   String numberPP;
   int idEmp;
 
-  HistoryLines({this.numberPP, this.idEmp});
+  HistoryLinesAll({this.numberPP, this.idEmp});
 }
 
-class _HistoryLinesState extends State<HistoryLines> {
+class _HistoryLinesAllState extends State<HistoryLinesAll> {
   List _listHistorySO;
   dynamic _listHistorySOEncode;
   bool _statusDisable = true;
@@ -56,7 +55,6 @@ class _HistoryLinesState extends State<HistoryLines> {
         .then((value) {
       setState(() {
         _listHistorySO = value;
-        _listHistorySOEncode = value;
         _listHistorySOEncode = jsonEncode(_listHistorySO);
       });
     });
@@ -67,50 +65,7 @@ class _HistoryLinesState extends State<HistoryLines> {
     super.initState();
     refreshKey = GlobalKey<RefreshIndicatorState>();
     getSharedPreference();
-    Future.delayed(const Duration(seconds: 1), () {
-      listHistorySO();
-      setState(() {
-        print("cek ini 1 :$_listHistorySO");
-        List<Promosi> data = _listHistorySO;
-        print(_listHistorySO);
-        List disc1 = data.map((element) => element.disc1).toList();
-        List disc2 = data.map((element) => element.disc2).toList();
-        List disc3 = data.map((element) => element.disc3).toList();
-        List disc4 = data.map((element) => element.disc4).toList();
-        List value1 = data.map((element) => element.value1).toList();
-        List value2 = data.map((element) => element.value2).toList();
-        List suppQty = data.map((element) => element.suppQty).toList();
-        print("cek ini 2 :${disc2}");
-        for (int i = 0; i < disc1.length ; i++){
-          disc1Controller.add(TextEditingController()..text = disc1[i]);
-          // disc1Controller[i]..text = disc1[i];
-        }
-        for (int i = 0; i < disc2.length ; i++){
-          disc2Controller.add(TextEditingController()..text = disc2[i]);
-          // disc2Controller[i]..text = disc2[i];
-        }
-        for (int i = 0; i < disc3.length ; i++){
-          disc3Controller.add(TextEditingController()..text = disc3[i]);
-          // disc3Controller[i]..text = disc3[i];
-        }
-        for (int i = 0; i < disc4.length ; i++){
-          disc4Controller.add(TextEditingController()..text = disc4[i]);
-          // disc4Controller[i]..text = disc4[i];
-        }
-        for (int i = 0; i < value1.length ; i++){
-          value1Controller.add(TextEditingController()..text = value1[i]);
-          // value1Controller[i]..text = value1[i];
-        }
-        for (int i = 0; i < value2.length ; i++){
-          value2Controller.add(TextEditingController()..text = value2[i]);
-          // value2Controller[i]..text = value2[i];
-        }
-        for (int i = 0; i < suppQty.length ; i++){
-          suppQtyController.add(TextEditingController()..text = suppQty[i]);
-          // suppQtyController[i]..text = suppQty[i];
-        }
-      });
-    });
+    listHistorySO();
   }
 
   Promosi promosi;
@@ -137,20 +92,20 @@ class _HistoryLinesState extends State<HistoryLines> {
           create: (ctx) => LinesProvider(),
           // builder: (context) => LinesProvider(),
           child: Scaffold(
-            floatingActionButton: FloatingActionButton.extended(
-              label: Text("Select All"),
-              onPressed: () {
-                setState(() {
-                  valueSelectAll = !valueSelectAll;
-                  List<Promosi> data = _listHistorySO;
-                  print(_listHistorySO);
-                  List<bool> status = data.map((element) => element.status).toList();
-                  print("status 1 : $status");
-                  print("status 2 : ${status.map<bool>((e) => true).toList()}");
-                });
-                //xx
-              },
-            ),
+            // floatingActionButton: FloatingActionButton.extended(
+            //   label: Text("Select All"),
+            //   onPressed: () {
+            //     setState(() {
+            //       valueSelectAll = !valueSelectAll;
+            //       List<Promosi> data = _listHistorySO;
+            //       print(_listHistorySO);
+            //       List<bool> status = data.map((element) => element.status).toList();
+            //       print("status 1 : $status");
+            //       print("status 2 : ${status.map<bool>((e) => true).toList()}");
+            //     });
+            //     //xx
+            //   },
+            // ),
             appBar: AppBar(
               backgroundColor: Theme.of(context).primaryColorDark,
               automaticallyImplyLeading: false,
@@ -159,6 +114,9 @@ class _HistoryLinesState extends State<HistoryLines> {
                   Icons.arrow_back,
                   color: Theme.of(context).accentColor,
                 ),
+                // onPressed: (){
+                //   Get.offAll(page);
+                // },
                 onPressed: onBackPressLines,
               ),
               title: Text(
@@ -207,77 +165,66 @@ class _HistoryLinesState extends State<HistoryLines> {
                 ),
               ),
             ),
-            bottomNavigationBar: Container(
-              width: MediaQuery.of(context).size.width,
-              child: Consumer<LinesProvider>(
-                builder: (context, linesProv, _) => Row(
-                  children: [
-                    Expanded(
-                      child: RaisedButton(
-                        padding: EdgeInsets.all(ScreenUtil().setWidth(13)),
-                        color: Colors.red,
-                        child: Text(
-                          'Reject',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: ScreenUtil().setSp(25),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        onPressed: () {
-                          approveNew("Reject");
-//                    listDisc = getUpdateData() as List<Lines>;
-//                    String result = linesProv.getBundleLines;
+//             bottomNavigationBar: Container(
+//               width: MediaQuery.of(context).size.width,
+//               child: Consumer<LinesProvider>(
+//                 builder: (context, linesProv, _) => Row(
+//                   children: [
+//                     Expanded(
+//                       child: RaisedButton(
+//                         padding: EdgeInsets.all(ScreenUtil().setWidth(13)),
+//                         color: Theme.of(context).primaryColorDark,
+//                         child: Text(
+//                           'Approve',
+//                           style: TextStyle(
+//                             color: Theme.of(context).accentColor,
+//                             fontSize: ScreenUtil().setSp(25),
+//                             fontWeight: FontWeight.bold,
+//                           ),
+//                         ),
+//                         onPressed: () {
+//                           approveNew("Approve");
+// //                    listDisc = getUpdateData() as List<Lines>;
+// //                    String result = linesProv.getBundleLines;
+// //                           getUpdateData(context, listDisc, widget.idEmp, code);
+//                         },
+//                       ),
+//                     ),
+//                     Expanded(
+//                       child: RaisedButton(
+//                         padding: EdgeInsets.all(ScreenUtil().setWidth(13)),
+//                         color: Theme.of(context).primaryColorDark,
+//                         child: Text(
+//                           'Reject',
+//                           style: TextStyle(
+//                             color: Theme.of(context).accentColor,
+//                             fontSize: ScreenUtil().setSp(25),
+//                             fontWeight: FontWeight.bold,
+//                           ),
+//                         ),
+//                         onPressed: () {
+// //                    listDisc = getUpdateData() as List<Lines>;
+// //                    String result = linesProv.getBundleLines;
 //                           getUpdateData(context, listDisc, widget.idEmp, code);
-                        },
-                      ),
-                    ),
-                    Expanded(
-                      child: RaisedButton(
-                        padding: EdgeInsets.all(ScreenUtil().setWidth(13)),
-                        color: Theme.of(context).primaryColorDark,
-                        child: Text(
-                          'Approve',
-                          style: TextStyle(
-                            color: Theme.of(context).accentColor,
-                            fontSize: ScreenUtil().setSp(25),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        onPressed: () {
-                          approveNew("Approve");
-//                    listDisc = getUpdateData() as List<Lines>;
-//                    String result = linesProv.getBundleLines;
-//                           getUpdateData(context, listDisc, widget.idEmp, code);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+//                         },
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ),
           ),
         ),
       ),
     );
   }
 
-  List<TextEditingController> disc1Controller = [];
-  List<TextEditingController> disc2Controller = [];
-  List disc2Value = [];
-  List<TextEditingController> disc3Controller = [];
-  List<TextEditingController> disc4Controller = [];
-  List<TextEditingController> value1Controller = [];
-  List<TextEditingController> value2Controller = [];
-  List<TextEditingController> suppQtyController = [];
-
-
   Container CardLinesAdapter(String namePP, Promosi promosi, int index) {
+
+
     List<Promosi> data = _listHistorySO;
     print(_listHistorySO);
     List qtyFrom = data.map((element) => element.qty).toList();
-    List fromDate = data.map((element) => element.toDate).toList();
-    print("fromDate :${fromDate}");
     print("qty from :$qtyFrom");
     List qtyTo = data.map((element) => element.qtyTo).toList();
     print("qty to :$qtyTo");
@@ -290,49 +237,49 @@ class _HistoryLinesState extends State<HistoryLines> {
         ),
         child: Column(
           children: <Widget>[
-            Stack(
-              children: [
-                Container(
-                  alignment: Alignment.topLeft,
-                  child: CheckboxListTile(
-                    value: valueSelectAll?valueSelectAll:promosi.status,
-                    onChanged: (bool value) {
-                      setState(() {
-                        promosi.status = value;
-                        // _statusDisable = value;
-                        value == true
-                            ? _statusDisable = false //_listid.add(promosi.id)
-                            : _statusDisable =
-                                true; //_listid.remove(promosi.id);
-                      });
-                    },
-                    controlAffinity: ListTileControlAffinity.leading,
-                    activeColor: Colors.red,
-                  ),
-                ),
-                // Container(
-                //   // height: 10,
-                //   // width: 10,
-                //   alignment: Alignment.topRight,
-                //   margin: EdgeInsets.only(left: 100.w),
-                //   child: CheckboxListTile(
-                //     value: promosi.status,
-                //     onChanged: (bool value) {
-                //       setState(() {
-                //         promosi.status = value;
-                //         // _statusDisable = value;
-                //         value == true
-                //             ? _statusDisable = false //_listid.add(promosi.id)
-                //             : _statusDisable =
-                //                 true; //_listid.remove(promosi.id);
-                //       });
-                //     },
-                //     controlAffinity: ListTileControlAffinity.leading,
-                //     activeColor: Colors.red,
-                //   ),
-                // ),
-              ],
-            ),
+            // Stack(
+            //   children: [
+            //     Container(
+            //       alignment: Alignment.topLeft,
+            //       child: CheckboxListTile(
+            //         value: valueSelectAll?valueSelectAll:promosi.status,
+            //         onChanged: (bool value) {
+            //           setState(() {
+            //             promosi.status = value;
+            //             // _statusDisable = value;
+            //             value == true
+            //                 ? _statusDisable = false //_listid.add(promosi.id)
+            //                 : _statusDisable =
+            //                     true; //_listid.remove(promosi.id);
+            //           });
+            //         },
+            //         controlAffinity: ListTileControlAffinity.leading,
+            //         activeColor: Colors.red,
+            //       ),
+            //     ),
+            //     // Container(
+            //     //   // height: 10,
+            //     //   // width: 10,
+            //     //   alignment: Alignment.topRight,
+            //     //   margin: EdgeInsets.only(left: 100.w),
+            //     //   child: CheckboxListTile(
+            //     //     value: promosi.status,
+            //     //     onChanged: (bool value) {
+            //     //       setState(() {
+            //     //         promosi.status = value;
+            //     //         // _statusDisable = value;
+            //     //         value == true
+            //     //             ? _statusDisable = false //_listid.add(promosi.id)
+            //     //             : _statusDisable =
+            //     //                 true; //_listid.remove(promosi.id);
+            //     //       });
+            //     //     },
+            //     //     controlAffinity: ListTileControlAffinity.leading,
+            //     //     activeColor: Colors.red,
+            //     //   ),
+            //     // ),
+            //   ],
+            // ),
             TextResultCard(
               context: context,
               title: "PP. Type",
@@ -383,16 +330,16 @@ class _HistoryLinesState extends State<HistoryLines> {
               title: "Price",
               value: promosi.price,
             ),
-            // //Period Date
-            // Container(
-            //     margin: EdgeInsets.all(ScreenUtil().setWidth(5)),
-            //     width: ScreenUtil().setWidth(MediaQuery.of(context).size.width),
-            //     child: Text(
-            //         'Period Date(hapus dgn klik X jika ingin ganti period)',
-            //         style: TextStyle(
-            //           color: Theme.of(context).primaryColorDark,
-            //           fontSize: ScreenUtil().setSp(15),
-            //         ))),
+            //Period Date
+            Container(
+                margin: EdgeInsets.all(ScreenUtil().setWidth(5)),
+                width: ScreenUtil().setWidth(MediaQuery.of(context).size.width),
+                child: Text(
+                    'Period Date(hapus dgn klik X jika ingin ganti period)',
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColorDark,
+                      fontSize: ScreenUtil().setSp(15),
+                    ))),
             Container(
                 width:
                     ScreenUtil().setHeight(MediaQuery.of(context).size.width),
@@ -401,7 +348,7 @@ class _HistoryLinesState extends State<HistoryLines> {
                     builder: (context, linesProv, _) => TextFormField(
                           readOnly: true,
                           // format: DateFormat('dd/MMM/yyyy'),
-                          initialValue: promosi.fromDate.toString().split(' ')[0].toString(),
+                          initialValue: promosi.fromDate.split(" ")[0].toString(),
                           keyboardType: TextInputType.datetime,
                           decoration: InputDecoration(
                               border: OutlineInputBorder(),
@@ -443,7 +390,7 @@ class _HistoryLinesState extends State<HistoryLines> {
                           readOnly: true,
                           // format: DateFormat('dd/MMM/yyyy'),
                           // initialValue: convertDate(promosi.toDate),
-                          initialValue: promosi.toDate.split(" ")[0].toString(),
+                          initialValue: promosi.toDate.split(" ")[0],
                           keyboardType: TextInputType.datetime,
                           decoration: InputDecoration(
                               border: OutlineInputBorder(),
@@ -493,19 +440,15 @@ class _HistoryLinesState extends State<HistoryLines> {
                 Expanded(
                   flex: 3,
                   child: Consumer<LinesProvider>(
-                    builder: (context, linesProv, _) {
-
-                      return TextFormField(
-                        // readOnly: _statusDisable,
-                        keyboardType: TextInputType.text,
-                        // initialValue: promosi.disc1,
-                        controller: disc1Controller.isEmpty?TextEditingController():disc1Controller[index],
-                        // onFieldSubmitted: (value) {
-                        //   setBundleLines(
-                        //       promosi.id, double.parse(value), null, null);
-                        // },
-                      );
-                    },
+                    builder: (context, linesProv, _) => TextFormField(
+                      readOnly: _statusDisable,
+                      keyboardType: TextInputType.text,
+                      initialValue: promosi.disc1,
+                      onFieldSubmitted: (value) {
+                        setBundleLines(
+                            promosi.id, double.parse(value), null, null);
+                      },
+                    ),
                   ),
                 ),
 
@@ -524,17 +467,13 @@ class _HistoryLinesState extends State<HistoryLines> {
                   flex: 3,
                   child: Consumer<LinesProvider>(
                     builder: (context, linesProv, _) => TextFormField(
-                      // readOnly: _statusDisable,
+                      readOnly: _statusDisable,
                       keyboardType: TextInputType.text,
-                      controller: disc2Controller.isEmpty?TextEditingController():disc2Controller[index],
-
-                      // controller: disc2Controller[index],
-
-
-                      // onFieldSubmitted: (value) {
-                      //   setBundleLines(
-                      //       promosi.id, double.parse(value), null, null);
-                      // },
+                      initialValue: promosi.disc2,
+                      onFieldSubmitted: (value) {
+                        setBundleLines(
+                            promosi.id, double.parse(value), null, null);
+                      },
                     ),
                   ),
                 ),
@@ -557,14 +496,13 @@ class _HistoryLinesState extends State<HistoryLines> {
                   flex: 3,
                   child: Consumer<LinesProvider>(
                     builder: (context, linesProv, _) => TextFormField(
-                      // readOnly: _statusDisable,
+                      readOnly: _statusDisable,
                       keyboardType: TextInputType.text,
-                      controller: disc3Controller.isEmpty?TextEditingController():disc3Controller[index],
-                      // initialValue: promosi.disc3,
-                      // onFieldSubmitted: (value) {
-                      //   setBundleLines(
-                      //       promosi.id, double.parse(value), null, null);
-                      // },
+                      initialValue: promosi.disc3,
+                      onFieldSubmitted: (value) {
+                        setBundleLines(
+                            promosi.id, double.parse(value), null, null);
+                      },
                     ),
                   ),
                 ),
@@ -584,14 +522,13 @@ class _HistoryLinesState extends State<HistoryLines> {
                   flex: 3,
                   child: Consumer<LinesProvider>(
                     builder: (context, linesProv, _) => TextFormField(
-                      // readOnly: _statusDisable,
+                      readOnly: _statusDisable,
                       keyboardType: TextInputType.text,
-                      controller: disc4Controller.isEmpty?TextEditingController():disc4Controller[index],
-                      // initialValue: promosi.disc4,
-                      // onFieldSubmitted: (value) {
-                      //   setBundleLines(
-                      //       promosi.id, double.parse(value), null, null);
-                      // },
+                      initialValue: promosi.disc4,
+                      onFieldSubmitted: (value) {
+                        setBundleLines(
+                            promosi.id, double.parse(value), null, null);
+                      },
                     ),
                   ),
                 ),
@@ -614,17 +551,13 @@ class _HistoryLinesState extends State<HistoryLines> {
                   flex: 3,
                   child: Consumer<LinesProvider>(
                     builder: (context, linesProv, _) => TextFormField(
-                      // readOnly: _statusDisable,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        MoneyInputFormatter(thousandSeparator: ".", decimalSeparator: ",")
-                      ],
-                      // initialValue: promosi.value1,
-                      controller: value1Controller.isEmpty?TextEditingController():value1Controller[index],
-                      // onFieldSubmitted: (value) {
-                      //   setBundleLines(
-                      //       promosi.id, double.parse(value), null, null);
-                      // },
+                      readOnly: _statusDisable,
+                      keyboardType: TextInputType.text,
+                      initialValue: promosi.value1,
+                      onFieldSubmitted: (value) {
+                        setBundleLines(
+                            promosi.id, double.parse(value), null, null);
+                      },
                     ),
                   ),
                 ),
@@ -633,7 +566,7 @@ class _HistoryLinesState extends State<HistoryLines> {
                   margin: EdgeInsets.all(ScreenUtil().setWidth(5)),
                   width: MediaQuery.of(context).size.width / 5,
                   child: Text(
-                    "Value2 ",
+                    "Disc Value2 ",
                     style: TextStyle(
                       color: Theme.of(context).primaryColorDark,
                       fontSize: ScreenUtil().setSp(15),
@@ -644,17 +577,13 @@ class _HistoryLinesState extends State<HistoryLines> {
                   flex: 3,
                   child: Consumer<LinesProvider>(
                     builder: (context, linesProv, _) => TextFormField(
-                      // readOnly: _statusDisable,
-                      keyboardType: TextInputType.number,
-                      controller: value2Controller.isEmpty?TextEditingController():value2Controller[index],
-                      inputFormatters: [
-                        MoneyInputFormatter(thousandSeparator: ".", decimalSeparator: ",")
-                      ],
-                      // initialValue: promosi.value2,
-                      // onFieldSubmitted: (value) {
-                      //   setBundleLines(
-                      //       promosi.id, double.parse(value), null, null);
-                      // },
+                      readOnly: _statusDisable,
+                      keyboardType: TextInputType.text,
+                      initialValue: promosi.value2,
+                      onFieldSubmitted: (value) {
+                        setBundleLines(
+                            promosi.id, double.parse(value), null, null);
+                      },
                     ),
                   ),
                 ),
@@ -662,62 +591,20 @@ class _HistoryLinesState extends State<HistoryLines> {
             ),
             TextResultCard(
               context: context,
-              title: "SuppItem",
+              title: 'SuppItem',
               value: promosi.suppItem,
             ),
-            Row(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.all(ScreenUtil().setWidth(5)),
-                  width: MediaQuery.of(context).size.width / 5,
-                  child: Text(
-                    "SuppQty",
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColorDark,
-                      fontSize: ScreenUtil().setSp(15),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 3,
-                  child: Consumer<LinesProvider>(
-                    builder: (context, linesProv, _) => TextFormField(
-                      // readOnly: _statusDisable,
-                      keyboardType: TextInputType.number,
-                      controller: suppQtyController.isEmpty?TextEditingController():suppQtyController[index],
-                      // initialValue: promosi.value1,
-                      // onFieldSubmitted: (value) {
-                      //   setBundleLines(
-                      //       promosi.id, double.parse(value), null, null);
-                      // },
-                    ),
-                  ),
-                ),
-
-                Container(
-                  margin: EdgeInsets.all(ScreenUtil().setWidth(5)),
-                  width: MediaQuery.of(context).size.width / 5,
-                  child: Text(
-                    "",
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColorDark,
-                      fontSize: ScreenUtil().setSp(15),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 3,
-                  child: Consumer<LinesProvider>(
-                    builder: (context, linesProv, _) => Container(),
-                  ),
-                ),
-              ],
+            TextResultCard(
+              context: context,
+              title: 'SuppQty',
+              value: promosi.suppQty,
             ),
             TextResultCard(
               context: context,
-              title: "SuppUnit",
+              title: 'SuppUnit',
               value: promosi.suppUnit,
             ),
+
 
             TextResultCard(
               context: context,
@@ -742,7 +629,7 @@ class _HistoryLinesState extends State<HistoryLines> {
               onPressed: () {
                 Navigator.pushReplacement(context,
                     MaterialPageRoute(builder: (context) {
-                  return HistorySO(
+                  return HistorySOAll(
                       namePP: namePP,
                       idCustomer: promosi.idCustomer,
                       idProduct: promosi.idProduct,
@@ -797,33 +684,10 @@ class _HistoryLinesState extends State<HistoryLines> {
     List<Promosi> data = _listHistorySO;
     print(_listHistorySO);
     List idLines = data.map((element) => element.id).toList();
-    List disc1lines = data.map((element) => element.disc1).toList();
-    List disc2lines = data.map((element) => element.disc2).toList();
-    List disc3lines = data.map((element) => element.disc3).toList();
-    List disc4lines = data.map((element) => element.disc4).toList();
-    List value1lines = data.map((element) => element.value1).toList();
-    List value2lines = data.map((element) => element.value2).toList();
-    List suppQtylines = data.map((element) => element.qty).toList();
-    List lines = [];
-    for (int i = 0; i < idLines.length; i++) {
-      lines.add({
-        "id": idLines[i],
-        "disc1": disc1Controller[i].text==null?disc1lines[i]:double.parse(disc1Controller[i].text),
-        "disc2": disc2Controller[i].text==null?disc1lines[i]:double.parse(disc2Controller[i].text),
-        "disc3": disc3Controller[i].text==null?disc1lines[i]:double.parse(disc3Controller[i].text),
-        "disc4": disc4Controller[i].text==null?disc1lines[i]:double.parse(disc4Controller[i].text),
-        "value1": value1Controller[i].text==null?value1lines[i]:value1Controller[i].text.replaceAll('.', ''),
-        "value2": value2Controller[i].text==null?value2lines[i]:value2Controller[i].text.replaceAll('.', ''),
-        "suppQty": suppQtyController[i].text==null?suppQtylines[i]:suppQtyController[i].text,
-      });
-    }
     dynamic isiBody = jsonEncode(<String, dynamic>{
       "status": apprroveOrReject=="Approve"?1:2,
-      'lines':
-        lines
+      "id": idLines,
     });
-    print("isi BodyApprove: $isiBody");
-    print("wakwan: ${idLines}");
     final response = await put(Uri.parse(url),
       headers: <String, String>{
         // 'authorization': basicAuth,

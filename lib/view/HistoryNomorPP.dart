@@ -7,12 +7,16 @@ import 'package:mobile_sms/assets/widgets/Debounce.dart';
 import 'package:mobile_sms/assets/widgets/TextResultCard.dart';
 import 'package:mobile_sms/models/Promosi.dart';
 import 'package:mobile_sms/models/User.dart';
+import 'package:mobile_sms/view/HistoryNomorPP_All.dart';
+import 'package:mobile_sms/view/HistoryNomorPP_Pending.dart';
 import 'package:mobile_sms/view/input-page/input-page-new.dart';
+import 'package:mobile_sms/view/input-page/input-page-presenter-new.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'HistoryLines.dart';
 import 'Login.dart';
+import 'input-page/input-page.dart';
 
 class HistoryNomorPP extends StatefulWidget {
   @override
@@ -48,6 +52,33 @@ class _HistoryNomorPPState extends State<HistoryNomorPP> {
     return null;
   }
 
+  Future<Null> listHistoryAll() async {
+    await Future.delayed(Duration(seconds: 5));
+    Promosi.getAllListPromosi(0, code, _user.token??"token kosong", _user.username).then((value) {
+      print("userToken: ${_user.token}");
+      setState(() {
+        listHistoryReal = value;
+        _listHistory = listHistoryReal;
+      });
+    });
+    return null;
+  }
+
+  List<Widget> pages = [
+    Container(
+      height: Get.size.height,
+      width: Get.size.width,
+      child: HistoryPending(),
+    ),
+    Container(
+      height: Get.size.height,
+      width: Get.size.width,
+      child: HistoryAll(),
+    ),
+  ];
+
+  final ScrollController listController  = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     // ScreenUtil.init(
@@ -61,6 +92,17 @@ class _HistoryNomorPPState extends State<HistoryNomorPP> {
       child: MaterialApp(
         theme: Theme.of(context),
         home: Scaffold(
+          floatingActionButton: FloatingActionButton.extended(
+              onPressed: (){
+                setState(() {
+                  listController.animateTo(
+                    listController.position.maxScrollExtent,
+                    duration: Duration(seconds: 2),
+                    curve: Curves.fastOutSlowIn,
+                  );
+                });
+              },
+              label: Text("All History")),
           appBar: AppBar(
             backgroundColor: Theme.of(context).primaryColorDark,
             leading: IconButton(
@@ -75,7 +117,7 @@ class _HistoryNomorPPState extends State<HistoryNomorPP> {
                 child: IconButton(
                   icon: Icon(Icons.edit,color: Colors.white,),
                   onPressed: (){
-                    Get.to(InputPage());
+                    Get.to(InputPageNew());
                   },
                 ),
               )
@@ -87,114 +129,11 @@ class _HistoryNomorPPState extends State<HistoryNomorPP> {
                   color: Theme.of(context).accentColor),
             ),
           ),
-          body: Scaffold(
-            body: Column(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                  child: TextField(
-                    controller: filterController,
-                    decoration: InputDecoration(
-                        contentPadding:
-                            EdgeInsets.all(ScreenUtil().setHeight(10)),
-                        hintText: 'Enter customer, number PP or date',
-                        suffixIcon: IconButton(
-                            icon: Icon(Icons.search, color: colorPrimary),
-                            onPressed: () {
-                              String value = filterController.text;
-                              _debouncer.run(() {
-                                setState(() {
-                                  _listHistory = listHistoryReal.where((element) =>
-                                          element.nomorPP
-                                              .toLowerCase()
-                                              .contains(value.toLowerCase()) ||
-                                          element.date
-                                              .toLowerCase()
-                                              .contains(value.toLowerCase())||element.customer
-                                              .toLowerCase()
-                                              .contains(value.toLowerCase()))
-                                      .toList();
-                                  print(_listHistory);
-                                });
-                              });
-                            })),
-                    onEditingComplete: () {
-                      String value = filterController.text;
-                      _debouncer.run(() {
-                        setState(() {
-                          _listHistory = listHistoryReal
-                              .where((element) =>
-                                  element.nomorPP
-                                      .toLowerCase()
-                                      .contains(value.toLowerCase()) ||
-                                  element.date
-                                      .toLowerCase()
-                                      .contains(value.toLowerCase())||element.customer
-                                      .toLowerCase()
-                                      .contains(value.toLowerCase()))
-                              .toList();
-                          print(_listHistory);
-                        });
-                      });
-                    },
-                  ),
-                ),
-                Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: listHistory,
-                    child: FutureBuilder(
-                      future: Promosi.getListPromosi(
-                          0, code, _user?.token??"", _user?.username??""),
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          if (snapshot.hasError != true) {
-                            _listHistory == null
-                                ? _listHistory = listHistoryReal = snapshot.data
-                                : _listHistory = _listHistory;
-                            if (_listHistory.length == 0) {
-                              return Center(
-                                child: Column(
-                                  children: <Widget>[
-                                    Text('No Data'),
-                                    Text('Swipe down for refresh item'),
-                                  ],
-                                ),
-                              );
-                            }
-                            return ListView.builder(
-                                itemCount: _listHistory?.length,
-                                itemBuilder:
-                                    (BuildContext context, int index) =>
-                                        CardAdapter(
-                                          _listHistory[index],
-                                        ));
-                          } else {
-                            print(snapshot.error.toString());
-                          }
-                        } else if (snapshot.connectionState ==
-                            ConnectionState.none) {
-                          return Center(
-                            child: Column(
-                              children: <Widget>[
-                                Text('No Data'),
-                                Text('Swipe down for refresh item'),
-                              ],
-                            ),
-                          );
-                        } else {
-                          Future.delayed(Duration(milliseconds: 5));
-                          return Center(
-                            child: CircularProgressIndicator(
-                              semanticsLabel: 'Loading',
-                            ),
-                          );
-                        }return Container();
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          body: ListView(
+            shrinkWrap: true,
+            scrollDirection: Axis.horizontal,
+            controller: listController,
+            children: pages
           ),
         ),
       ),
@@ -279,10 +218,11 @@ class _HistoryNomorPPState extends State<HistoryNomorPP> {
 
   Future<bool> onBackPress() {
     deleteBoxUser();
-    return Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (context) {
-      return LoginView();
-    }));
+    return Get.offAll(LoginView());
+    // return Navigator.pushReplacement(context,
+    //     MaterialPageRoute(builder: (context) {
+    //   return LoginView();
+    // }));
   }
 
   void deleteBoxUser() async {

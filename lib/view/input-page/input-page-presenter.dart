@@ -14,13 +14,14 @@ class InputPagePresenter extends GetxController {
 
   RxList cardsItem = [].obs;
 
+  List<Lines> lines = <Lines>[].obs;
+
   void addCardsItem(Widget widget){
     cardsItem.add(widget);
     valCustomer.add(Rx<String>(null));
     valCustomerChoice.add(Rx<String>(null));
     valItemGroup.add(Rx<String>(null));
     valChoiceItemGroup.add(Rx<String>(null));
-
     update();
   }
 
@@ -119,7 +120,27 @@ class InputPagePresenter extends GetxController {
 
   var valType = Rx<dynamic>(null);
   RxList dataType = [
-
+    {
+      "id": "1",
+      "name": "Diskon",
+    },
+    {"id": "2", "name": "Bonus"},
+    {
+      "id": "3",
+      "name": "Live",
+    },
+    {"id": "4", "name": "Diskon & Bonus"},
+    {
+      "id": "5",
+      "name": "Sample",
+    },
+    {"id": "6", "name": "Rebate"},
+    {
+      "id": "7",
+      "name": "Rafraksi",
+    },
+    {"id": "8", "name": "Gimmick"},
+    {"id": "9", "name": "Trading Term"},
   ].obs;
 
   void getType() async {
@@ -629,31 +650,34 @@ class InputPagePresenter extends GetxController {
       "PPnum": ppNum,
       "Location": "$location",
       "Vendor": "$vendor",
-      "Lines": [
-        {
-          "Customer": "$customer",
-          "ItemId": "$itemId",
-          "QtyFrom": qtyForm,
-          "QtyTo": qtyTo,
-          "Unit": "$unit",
-          "Multiply": multiply,
-          "FromDate": "$fromDate",
-          "ToDate": "$toDate",
-          "Currency": "$currency",
-          "type": type,
-          "Pct1": pct1,
-          "Pct2": pct2,
-          "Pct3": pct3,
-          "Pct4": pct4,
-          "SupplyItem": "$supplyItem",
-          "QtySupply": qtySupply,
-          "UnitSupply": "$unitSupply",
-          "SalesPrice": "$salesPrice",
-          "PriceTo": "$priceTo",
-          "Value1": value1.toDouble(),
-          "Value2": value2,
-        },
-      ]
+      "Lines": Lines(
+
+      )
+      // "Lines": [
+      //   {
+      //     "Customer": "$customer",
+      //     "ItemId": "$itemId",
+      //     "QtyFrom": qtyForm,
+      //     "QtyTo": qtyTo,
+      //     "Unit": "$unit",
+      //     "Multiply": multiply,
+      //     "FromDate": "$fromDate",
+      //     "ToDate": "$toDate",
+      //     "Currency": "$currency",
+      //     "type": type,
+      //     "Pct1": pct1,
+      //     "Pct2": pct2,
+      //     "Pct3": pct3,
+      //     "Pct4": pct4,
+      //     "SupplyItem": "$supplyItem",
+      //     "QtySupply": qtySupply,
+      //     "UnitSupply": "$unitSupply",
+      //     "SalesPrice": "$salesPrice",
+      //     "PriceTo": "$priceTo",
+      //     "Value1": value1.toDouble(),
+      //     "Value2": value2,
+      //   },
+      // ]
     });
     // final response = await post(
     //     Uri.parse('http://119.18.157.236:8869/api/activity?username=$username'),

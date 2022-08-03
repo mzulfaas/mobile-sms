@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_sms/view/input-page/input-page-presenter.dart';
 import 'package:search_choices/search_choices.dart';
@@ -13,7 +16,6 @@ class InputPage extends StatefulWidget {
 }
 
 class _InputPageState extends State<InputPage> {
-
   TextEditingController programNumberController = TextEditingController();
   TextEditingController programNameController = TextEditingController();
   TextEditingController qtyFromController = TextEditingController();
@@ -30,1139 +32,490 @@ class _InputPageState extends State<InputPage> {
   TextEditingController value1Controller = TextEditingController();
   TextEditingController value2Controller = TextEditingController();
 
-  final inputPagePresenter = Get.put(InputPagePresenter());
+  String valType;
+  List<dynamic> dataType = [
+    {
+      "id": "1",
+      "name": "Diskon",
+    },
+    {"id": "2", "name": "Bonus"},
+    {
+      "id": "3",
+      "name": "Live",
+    },
+    {"id": "4", "name": "Diskon & Bonus"},
+    {
+      "id": "5",
+      "name": "Sample",
+    },
+    {"id": "6", "name": "Rebate"},
+    {
+      "id": "7",
+      "name": "Rafraksi",
+    },
+    {"id": "8", "name": "Gimmick"},
+    {"id": "9", "name": "Trading Term"},
+  ];
 
-  // bool isSelectedCustomer = false;
-  // bool isSelectedDiscGroup = false;
+  void getType() {
+    var listData = [];
+    dataType = listData;
+    setState(() {
+      if (!typeContains(valType)) {
+        valType = null;
+      }
+    });
+  }
 
-  // List<Widget> cardsItem = [
-  //
-  // ];
+  bool typeContains(var type) {
+    for (int i = 0; i < dataType.length; i++) {
+      if (type == dataType[i]["name"]) return true;
+    }
+    return false;
+  }
 
-  // void addCardsItem(){
-  //     cardsItem.add(customCard(cardsItem.length));
-  //     inputPagePresenter.valCustomer.add(Rx<String>(null));
-  //     inputPagePresenter.valCustomerChoice.add(Rx<String>(null));
-  // }
-  //
-  // void removeCardsItem(int index){
-  //     cardsItem.remove(cardsItem[index]);
-  //     inputPagePresenter.valCustomer.remove(inputPagePresenter.valCustomer[index]);
-  // }
+  String valVendor;
+  List dataVendor = [].obs;
 
-  Widget customCard(int index){
-    return Container(
-      margin:
-      EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 0),
-      child: Card(
-        elevation: 20,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8)),
-        borderOnForeground: true,
-        semanticContainer: true,
-        child: Container(
-          padding: EdgeInsets.all(10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text("Add Item"),
-                  Spacer(),
-                  IconButton(
-                      onPressed: (){
-                        inputPagePresenter.addCardsItem(customCard(inputPagePresenter.cardsItem.length));
-                      }, icon: Icon(Icons.add,)),
-                  IconButton(
-                      onPressed: (){
-                        // removeCardsItem(index);
-                        inputPagePresenter.removeCardsItem(index);
-                      }, icon: Icon(Icons.delete,)),
-                ],
-              ),
-              SizedBox(
-                height: 20,
-              ),
+  void getVendor() async {
+    var urlGetVendor = "http://119.18.157.236:8869/api/Vendors";
+    final response = await get(Uri.parse(urlGetVendor));
+    var listData = jsonDecode(response.body);
+    print("ini url getVendor : $urlGetVendor");
+    setState(() {
+      dataVendor = listData;
+      if (!vendorContains(valVendor)) {
+        valVendor = null;
+      }
+    });
+    print("Data Vendor : $listData");
+  }
 
-              //customer
-              Container(
-                // width: 150,
-                  child: Obx(() =>
-                      DropdownButtonFormField(
-                        isExpanded: true,
-                        isDense: true,
-                        value: inputPagePresenter.valCustomer[index].value,
-                        hint: Text(
-                          "Customer/Group",
-                          style: TextStyle(fontSize: 12),
-                        ),
-                        items: inputPagePresenter.dataCustomer.map((item) {
-                          return DropdownMenuItem(
-                            child: Text(item['name'],
-                              style: TextStyle(fontSize: 12),
-                              overflow: TextOverflow.fade,),
-                            value: item['name'],
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          inputPagePresenter.valCustomer[index].value = value;
-                          print(
-                              "ini isi dropdown customer : $value");
-                          inputPagePresenter.getChoice(value);
-                          inputPagePresenter.update();
-                        },
-                      ),)
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Container(
-                // width: 150,
-                child: Obx(() =>
-                    SearchChoices.single(
-                      items: inputPagePresenter.dataChoice.map((
-                          item) {
-                        return DropdownMenuItem(
-                          child: Text(item["CUSTNAME"] == null
-                              ? item["NAME"]
-                              : item["CUSTNAME"],
-                            overflow: TextOverflow.fade,),
-                          value: item["CUSTNAME"] == null
-                              ? item["NAME"]
-                              : item["ACCOUNTNUM"].toString() + " " + item["CUSTNAME"].toString(),
-                        );
-                      }).toList(),
-                      value: inputPagePresenter.valCustomerChoice[index],
-                      hint: Text(
-                        "Customer Name",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      // searchHint: "Select one",
-                      onChanged: (value) {
-                        inputPagePresenter.valCustomerChoice[index] = value;
-                        print("cek 1 :${inputPagePresenter.valCustomerChoice[index].value}");
-                        inputPagePresenter.update();
-                      },
-                      // onTap: (value){
-                      //   inputPagePresenter.valCustomerChoice[index] = value;
-                      //   // print("cek 1 :${inputPagePresenter.valCustomerChoice[index].value}");
-                      //   inputPagePresenter.update();
-                      // },
-                      isExpanded: true,
+  bool vendorContains(var vendor) {
+    for (int i = 0; i < dataVendor.length; i++) {
+      if (vendor == dataVendor[i]["VENDNAME"]) return true;
+    }
+    return false;
+  }
+
+  String valLocation;
+  List dataLocation = [].obs;
+
+  void getLocation() async {
+    var urlGetLocation = "http://119.18.157.236:8869/api/SalesOffices";
+    final response = await get(Uri.parse(urlGetLocation));
+    var listData = jsonDecode(response.body);
+    print("ini url getLocation");
+    setState(() {
+      dataLocation = listData;
+      if (!locationContains(valLocation)) {
+        valLocation = null;
+      }
+    });
+    print("Data Location : $listData");
+  }
+
+  bool locationContains(var location) {
+    for (int i = 0; i < dataLocation.length; i++) {
+      if (location == dataLocation[i]["NameSO"]) return true;
+    }
+    return false;
+  }
+
+  String valCustomerOrGroup;
+  List<dynamic> dataCustomerOrGroup = [
+    {
+      "id": "1",
+      "name": "Customer",
+    },
+    {"id": "2", "name": "Disc Group"},
+  ];
+
+  void getCustomerOrGroup() {
+    var listData = [];
+    setState(() {
+      dataCustomerOrGroup = listData;
+      if (!typeContains(valCustomerOrGroup)) {
+        valCustomerOrGroup = null;
+      }
+    });
+  }
+
+  bool customerOrGroupContains(var type) {
+    for (int i = 0; i < dataCustomerOrGroup.length; i++) {
+      if (type == dataCustomerOrGroup[i]["name"]) return true;
+    }
+    return false;
+  }
+
+  // int counter = 0;
+
+  String valStatusTesting;
+  List<dynamic> dataStatusTesting = [
+    {
+      "id": "1",
+      "name": "Live",
+    },
+    {"id": "2", "name": "Testing"},
+  ];
+
+  void getStatusTesting() {
+    var listData = [];
+    setState(() {
+      dataCustomerOrGroup = listData;
+      if (!typeContains(valCustomerOrGroup)) {
+        valCustomerOrGroup = null;
+      }
+    });
+  }
+
+  bool statusTestingContains(var type) {
+    for (int i = 0; i < dataStatusTesting.length; i++) {
+      if (type == dataStatusTesting[i]["name"]) return true;
+    }
+    return false;
+  }
+
+
+  List valCustomer = [];
+  List dataCustomer = [];
+
+  void getCustomer(var selected) async {
+    if (selected == "Customer") {
+      var urlGetCustomerChoice =
+          "http://119.18.157.236:8869/api/custtables?salesOffice=${valLocation}";
+      final response = await get(Uri.parse(urlGetCustomerChoice));
+      var listData = jsonDecode(response.body);
+      print("ini url getCustomerChoice : $urlGetCustomerChoice");
+      dataCustomer = listData;
+      bool choiceContains(var choice) {
+        for (int i = 0; i < dataCustomer.length; i++) {
+          if (choice == dataCustomer[i]["nameCust"]) return true;
+        }
+        return false;
+      }
+
+      if (!choiceContains(valCustomer)) {
+        valCustomer = null;
+      }
+      print("Data CustomerChoice : $listData");
+    } else if (selected == "Disc Group") {
+      var urlGetDiscGroup =
+          "http://119.18.157.236:8869/api/CustPriceDiscGroup";
+      final response = await get(Uri.parse(urlGetDiscGroup));
+      var listData = jsonDecode(response.body);
+      print("ini url getDiscGroup : $urlGetDiscGroup");
+      setState(() {
+        dataCustomer = listData;
+      });
+      bool discGroupContains(var choice) {
+        for (int i = 0; i < dataCustomer.length; i++) {
+          if (choice == dataCustomer[i]["NAME"]) return true;
+        }
+        return false;
+      }
+
+      if (!discGroupContains(valCustomer)) {
+        valCustomer = null;
+      }
+      print("Data DiscGroup : $listData");
+    }
+  }
+
+  List<Widget> cardItem = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getVendor();
+    getLocation();
+    getCustomerOrGroup();
+  }
+
+  Widget customCardLines() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text("Lines"),
+                Spacer(),
+                IconButton(
+                    onPressed: () {
+                      setState(() {
+                        cardItem.add(customCardLines());
+                      });
+                    },
+                    icon: Icon(
+                      Icons.add,
                     )),
-              ),
-              SizedBox(height: 10,),
-              //ite, group
-              Container(
-                // width: 150,
-                child: Obx(()=>DropdownButtonFormField(
-                  value: inputPagePresenter.valItemGroup[index].value,
-                  hint: Text(
-                    "Item/Group",
-                    style: TextStyle(fontSize: 12),
-                  ),
-                  items: inputPagePresenter.dataItemGroup.map((
-                      item) {
-                    return DropdownMenuItem<String>(
-                      value: item["name"],
-                      child: Text(item['name'],
-                        style: TextStyle(fontSize: 12),
-                        overflow: TextOverflow.fade,),
-                    );
-                  }).toList(),
+                IconButton(
+                    onPressed: () {
+                      setState(() {
+                        cardItem.removeLast();
+                      });
+                    },
+                    icon: Icon(
+                      Icons.delete,
+                    )),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Customer/Group"),
+                DropdownButtonFormField(
+                  value: valCustomerOrGroup,
+                  items: dataCustomerOrGroup.map(
+                    (item) {
+                      // print(valCustomer[index]);
+                      return DropdownMenuItem(
+                        child: Text(item['name']),
+                        value: item['name'],
+                      );
+                    },
+                  ).toList(),
                   onChanged: (value) {
-                    inputPagePresenter.valItemGroup[index] =
-                        value;
-                    inputPagePresenter.update();
-                    print("ini isi dropdown item/group : $value");
-                    inputPagePresenter.getChoiceItemGroup(value, inputPagePresenter.valItemGroup[index]);
-                    inputPagePresenter.getSupplyItem(value, inputPagePresenter.valCustomerChoice[index].value);
+                    setState(() {
+                      valCustomerOrGroup = value;
+                      // getCustomer(value);
+                    });
                   },
-                )),
-              ),
-              SizedBox(height: 10,),
-              //item group
-              Container(
-                // width: 150,
-                child: Obx(() =>
-                    SearchChoices.single(
-                      isExpanded: true,
-                      items: inputPagePresenter
-                          .dataChoiceItemGroup.map((item) {
-                        return DropdownMenuItem(
-                          child: Text(item["nameProduct"] == null
-                              ? item["NAME"]
-                              : item["nameProduct"],
-                            overflow: TextOverflow.fade,),
-                          value: item["idProduct"] == null
-                              ? item["NAME"]
-                              : item["idProduct"].toString() + " " + item['nameProduct'].toString(),
-                        );
-                      }).toList(),
-                      // value: inputPagePresenter.valChoiceItemGroup.value,
-                      hint: Text(
-                        "Select Product",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      // searchHint: "Select product",
-                      onChanged: (value) {
-                        inputPagePresenter.valChoiceItemGroup[index].value = value;
-                        print("ini dropdown item: $value");
-                        // inputPagePresenter.update();
-                        inputPagePresenter.getUnit(value);
-                        inputPagePresenter.update();
-                      },
-                      // isExpanded: true,
-                    )),
-              ),
-
-              //warehouse qyt
-              Row(
-                children: [
-                  //customer/group
-                  Container(
-                      width: 150,
-                      child: Obx(() =>
-                          SearchChoices.single(
-                            isExpanded: true,
-                            value: inputPagePresenter.valWarehouse
-                                .value,
-                            hint: Text(
-                              "Warehouse",
-                              style: TextStyle(fontSize: 12),
-                            ),
-                            items: inputPagePresenter.dataWarehouse
-                                .map((item) {
-                              return DropdownMenuItem<String>(
-                                child: Text(item['NAME'],
-                                  style: TextStyle(fontSize: 12),
-                                  overflow: TextOverflow.fade,),
-                                value: item["NAME"],
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              inputPagePresenter.valWarehouse.value =
-                                  value;
-                              inputPagePresenter.update();
-                              print(
-                                  "ini isi dropdown warehouse : $value");
-                            },
-                          ),)
-                  ),
-                  Spacer(),
-                  //product
-                  Container(
-                    width: 60,
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      controller: qtyFromController,
-                      decoration: InputDecoration(
-                        labelText: 'Qty From',
-                        labelStyle: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 12,
-                            fontFamily: 'AvenirLight'),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide:
-                          BorderSide(color: Colors.purple),
-                        ),
-                        enabledBorder: new UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.grey, width: 1.0)),
-                      ),
-                      style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 17,
-                          fontFamily: 'AvenirLight'),
-                      //  controller: _passwordController,
-                    ),
-                  ),
-                  Spacer(),
-                  Container(
-                    width: 60,
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      controller: qtyToController,
-                      decoration: InputDecoration(
-                        labelText: 'Qty To',
-                        labelStyle: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 12,
-                            fontFamily: 'AvenirLight'),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide:
-                          BorderSide(color: Colors.purple),
-                        ),
-                        enabledBorder: new UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.grey, width: 1.0)),
-                      ),
-                      style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 17,
-                          fontFamily: 'AvenirLight'),
-                      //  controller: _passwordController,
-                    ),
-                  ),
-                ],
-              ),
-
-              //unit multiply
-              Row(
-                children: [
-                  //unit
-                  Container(
-                      width: 150,
-                      child: Obx(() =>
-                          DropdownButtonFormField(
-                            value: inputPagePresenter.valUnit.value,
-                            hint: Text(
-                              "Unit",
-                              style: TextStyle(fontSize: 12),
-                            ),
-                            items: inputPagePresenter.dataUnit.map((
-                                item) {
-                              return DropdownMenuItem(
-                                child: Text(item ?? "Loading",
-                                  style: TextStyle(fontSize: 12),
-                                  overflow: TextOverflow.fade,),
-                                value: item,
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              inputPagePresenter.valUnit.value =
-                                  value;
-                              inputPagePresenter.update();
-                            },
-                          ),)
-                  ),
-                  Spacer(),
-                  //multiply
-                  Container(
-                    width: 150,
-                    child: Obx(()=>DropdownButtonFormField(
-                      value: inputPagePresenter.valMultiply.value,
-                      hint: Text(
-                        "Multiply",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      items: inputPagePresenter.dataMultiply.map((
-                          item) {
-                        return DropdownMenuItem<String>(
-                          child: Text(item["name"],
-                            style: TextStyle(fontSize: 12),
-                            overflow: TextOverflow.fade,),
-                          value: item["id"],
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        inputPagePresenter.valMultiply.value = value;
-                        inputPagePresenter.update();
-                      },
-                    )),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: 10),
-
-              //datetime
-              Row(
-                children: [
-                  //from date
-                  Container(
-                    width: 150,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black)),
-                    child: Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "From Date",
-                            style: TextStyle(fontSize: 12),
-                          ),
-                          Divider(
-                            color: Colors.black54,
-                            thickness: 1,
-                          ),
-                          DateTimeField(
-                            controller: fromDateController,
-                            initialValue: DateTime.now(),
-                            style: TextStyle(fontSize: 12),
-                            format: DateFormat('dd/MMM/yyyy'),
-                            onShowPicker: (context, currentValue) {
-                              return showDatePicker(
-                                  context: context,
-                                  firstDate: DateTime(
-                                      DateTime
-                                          .now()
-                                          .year - 1),
-                                  initialDate: DateTime.now(),
-                                  lastDate: DateTime(
-                                      DateTime
-                                          .now()
-                                          .year + 1),
-                                  builder: (BuildContext context,
-                                      Widget child) {
-                                    return Theme(
-                                      data: ThemeData.light(),
-                                      child: child,
-                                    );
-                                  });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Spacer(),
-
-                  //todate
-                  Container(
-                    width: 150,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black)),
-                    child: Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "To Date",
-                            style: TextStyle(fontSize: 12),
-                          ),
-                          Divider(
-                            color: Colors.black54,
-                            thickness: 1,
-                          ),
-                          DateTimeField(
-                            controller: toDateController,
-                            initialValue: DateTime.now(),
-                            style: TextStyle(fontSize: 12),
-                            format: DateFormat('dd/MMM/yyyy'),
-                            onShowPicker: (context, currentValue) {
-                              return showDatePicker(
-                                  context: context,
-                                  firstDate: DateTime(
-                                      DateTime
-                                          .now()
-                                          .year - 1),
-                                  initialDate: DateTime.now(),
-                                  lastDate: DateTime(
-                                      DateTime
-                                          .now()
-                                          .year + 1),
-                                  builder: (BuildContext context,
-                                      Widget child) {
-                                    return Theme(
-                                      data: ThemeData.light(),
-                                      child: child,
-                                    );
-                                  });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              //curency percent
-              Row(
-                children: [
-                  //unit
-                  Container(
-                      width: 150,
-                      child: Obx(() =>
-                          DropdownButtonFormField(
-                            value: inputPagePresenter.valCurrency
-                                .value,
-                            hint: Text(
-                              "Currency",
-                              style: TextStyle(fontSize: 12),
-                            ),
-                            items: inputPagePresenter.dataCurrency
-                                .map((item) {
-                              return DropdownMenuItem<String>(
-                                value: item["name"],
-                                child: Text(item["name"],
-                                  style: TextStyle(fontSize: 12),
-                                  overflow: TextOverflow.fade,),
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              inputPagePresenter.valCurrency.value =
-                                  value;
-                              inputPagePresenter.update();
-                            },
-                          ),)
-                  ),
-                  Spacer(),
-                  //multiply
-                  Container(
-                    width: 150,
-                    child: Obx(()=>DropdownButtonFormField(
-                      value: inputPagePresenter.valPercentValue.value,
-                      hint: Text(
-                        "Percent/Value",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      items: inputPagePresenter.dataPercentValue.map((
-                          item) {
-                        return DropdownMenuItem<String>(
-                          child: Text(item["name"],
-                            style: TextStyle(fontSize: 12),
-                            overflow: TextOverflow.fade,),
-                          value: item["id"],
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        inputPagePresenter.valPercentValue.value =
-                            value;
-                        inputPagePresenter.update();
-                      },
-                    )),
-                  ),
-                ],
-              ),
-
-              //percent
-              Obx(()=>inputPagePresenter.valPercentValue.value == '2'?
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  //sales price
-                  Container(
-                    width: 60,
-                    child: TextFormField(
-                      controller: salesPriceController,
-                      decoration: InputDecoration(
-                        labelText: 'Sales Price',
-                        labelStyle: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 12,
-                            fontFamily: 'AvenirLight'),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide:
-                          BorderSide(color: Colors.purple),
-                        ),
-                        enabledBorder: new UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.grey, width: 1.0)),
-                      ),
-                      style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 17,
-                          fontFamily: 'AvenirLight'),
-                      //  controller: _passwordController,
-
-                    ),
-                  ),
-                  //price to customer
-                  Container(
-                    width: 60,
-                    child: TextFormField(
-                      controller: priceToController,
-                      decoration: InputDecoration(
-                        labelText: 'Price to Customer',
-                        labelStyle: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 12,
-                            fontFamily: 'AvenirLight'),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide:
-                          BorderSide(color: Colors.purple),
-                        ),
-                        enabledBorder: new UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.grey, width: 1.0)),
-                      ),
-                      style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 17,
-                          fontFamily: 'AvenirLight'),
-                      //  controller: _passwordController,
-                    ),
-                  ),
-                  //value 1
-                  Container(
-                    width: 60,
-                    child: TextFormField(
-                      controller: value1Controller,
-                      decoration: InputDecoration(
-                        labelText: 'Value 1',
-                        labelStyle: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 12,
-                            fontFamily: 'AvenirLight'),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide:
-                          BorderSide(color: Colors.purple),
-                        ),
-                        enabledBorder: new UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.grey, width: 1.0)),
-                      ),
-                      style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 17,
-                          fontFamily: 'AvenirLight'),
-                      //  controller: _passwordController,
-                    ),
-                  ),
-
-                  //value 2
-                  Container(
-                    width: 60,
-                    child: TextFormField(
-                      controller: value2Controller,
-                      decoration: InputDecoration(
-                        labelText: 'Value 2',
-                        labelStyle: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 12,
-                            fontFamily: 'AvenirLight'),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide:
-                          BorderSide(color: Colors.purple),
-                        ),
-                        enabledBorder: new UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.grey, width: 1.0)),
-                      ),
-                      style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 17,
-                          fontFamily: 'AvenirLight'),
-                      //  controller: _passwordController,
-
-                    ),
-                  ),
-                ],
-              ):
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  //percent1
-                  Container(
-                    width: 60,
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      controller: percent1Controller,
-                      decoration: InputDecoration(
-                        labelText: 'Percent 1',
-                        labelStyle: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 12,
-                            fontFamily: 'AvenirLight'),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide:
-                          BorderSide(color: Colors.purple),
-                        ),
-                        enabledBorder: new UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.grey, width: 1.0)),
-                      ),
-                      style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 17,
-                          fontFamily: 'AvenirLight'),
-                      //  controller: _passwordController,
-
-                    ),
-                  ),
-                  //percent2
-                  Container(
-                    width: 60,
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      controller: percent2Controller,
-                      decoration: InputDecoration(
-                        labelText: 'Percent 2',
-                        labelStyle: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 12,
-                            fontFamily: 'AvenirLight'),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide:
-                          BorderSide(color: Colors.purple),
-                        ),
-                        enabledBorder: new UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.grey, width: 1.0)),
-                      ),
-                      style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 17,
-                          fontFamily: 'AvenirLight'),
-                      //  controller: _passwordController,
-                    ),
-                  ),
-                  //percent3
-                  Container(
-                    width: 60,
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      controller: percent3Controller,
-                      decoration: InputDecoration(
-                        labelText: 'Percent 3',
-                        labelStyle: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 12,
-                            fontFamily: 'AvenirLight'),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide:
-                          BorderSide(color: Colors.purple),
-                        ),
-                        enabledBorder: new UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.grey, width: 1.0)),
-                      ),
-                      style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 17,
-                          fontFamily: 'AvenirLight'),
-                      //  controller: _passwordController,
-                    ),
-                  ),
-
-                  //percent4
-                  Container(
-                    width: 60,
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      controller: percent4Controller,
-                      decoration: InputDecoration(
-                        labelText: 'Percent 4',
-                        labelStyle: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 12,
-                            fontFamily: 'AvenirLight'),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide:
-                          BorderSide(color: Colors.purple),
-                        ),
-                        enabledBorder: new UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.grey, width: 1.0)),
-                      ),
-                      style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 17,
-                          fontFamily: 'AvenirLight'),
-                      //  controller: _passwordController,
-
-                    ),
-                  ),
-                ],
-              ),),
-
-              Container(
-                // width: 100,
-                child: Obx(() =>
-                    SearchChoices.single(
-                      isExpanded: true,
-                      items: inputPagePresenter
-                          .dataSupplyItem.map((item) {
-                        return DropdownMenuItem(
-                          child: Text(item["nameProduct"] == null
-                              ? item["NAME"]
-                              : item["nameProduct"],
-                            overflow: TextOverflow.fade,),
-                          value: item["idProduct"] == null
-                              ? item["NAME"]
-                              : item["idProduct"],
-                        );
-                      }).toList(),
-                      // value: inputPagePresenter.valChoiceItemGroup.value,
-                      hint: Text(
-                        "Supply Item",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      onChanged: (value) {
-                        inputPagePresenter.valSupplyItem = value;
-                        print("ini dropdown item: $value");
-                        inputPagePresenter.update();
-                        // inputPagePresenter.getUnit(value);
-                        inputPagePresenter.update();
-                      },
-                      // isExpanded: true,
-                    )),
-              ),
-
-              //unit multiply
-              Row(
-                children: [
-                  //unit
-                  Container(
-                    width: 50,
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      controller: qtyItemController,
-                      decoration: InputDecoration(
-                        labelText: 'Qty Item',
-                        labelStyle: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 12,
-                            fontFamily: 'AvenirLight'),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide:
-                          BorderSide(color: Colors.purple),
-                        ),
-                        enabledBorder: new UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.grey, width: 1.0)),
-                      ),
-                      style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 17,
-                          fontFamily: 'AvenirLight'),
-                      //  controller: _passwordController,
-
-                    ),
-                  ),
-                  Spacer(),
-                  //unit supply item
-                  Container(
-                    width: 120,
-                    child: Obx(() =>
-                        DropdownButtonFormField(
-                          value: inputPagePresenter.valUnit.value,
-                          hint: Text(
-                            "Unit Supply Item",
-                            style: TextStyle(fontSize: 12),
-                          ),
-                          items: inputPagePresenter.dataUnit.map((
-                              item) {
-                            return DropdownMenuItem<String>(
-                              value: item,
-                              child: Text(item),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            inputPagePresenter.valUnit.value = value;
-                            inputPagePresenter.update();
-                          },
-                        )),
-                  ),
-
-                ],
-              ),
-
-            ],
-          ),
+                )
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Customer"),
+                SearchChoices.single(
+                  value: valCustomer,
+                  isExpanded: true,
+                  items: dataCustomer.map(
+                    (item) {
+                      return DropdownMenuItem(
+                        child: Text(item['nameCust']),
+                        value: item['nameCust'],
+                      );
+                    },
+                  ).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      valCustomerOrGroup = value;
+                    });
+                  },
+                )
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    // inputPagePresenter.getCustomer();
-    inputPagePresenter.getWarehouse();
-    inputPagePresenter.getLocation();
-    inputPagePresenter.getVendor();
-    value1Controller.text = 0.0.toString();
-    value2Controller.text = 0.0.toString();
-    qtyItemController.text = 0.toString();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme
-            .of(context)
-            .primaryColorDark,
-        title: Text("New Promotion Program"),
-      ),
-      body: SafeArea(
-        child: Obx(()=>SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Column(
-            children: [
-              //card1
-              Container(
-                margin: EdgeInsets.only(top: 30, left: 20, right: 20),
-                child: Card(
-                  elevation: 20,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
-                  borderOnForeground: true,
-                  semanticContainer: true,
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Create"),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          "Setup a trade agreement",
-                          style: TextStyle(fontSize: 10, color: Colors.black54),
-                        ),
-
-                        SizedBox(
-                          height: 20,
-                        ),
-
-                        Row(
-                          children: [
-                            //Program number
-                            Container(
-                              width: 150,
-                              child: TextFormField(
-                                controller: programNumberController,
-                                keyboardType: TextInputType.text,
-                                decoration: InputDecoration(
-                                  labelText: 'Program Number',
-                                  labelStyle: TextStyle(
-                                      color: Colors.black87,
-                                      fontSize: 12,
-                                      fontFamily: 'AvenirLight'),
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide:
-                                    BorderSide(color: Colors.purple),
-                                  ),
-                                  enabledBorder: new UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.grey, width: 1.0)),
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).primaryColorDark,
+          title: Text("New Promotion Program"),
+        ),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                children: [
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Create"),
+                          Text("Setup trade agreement"),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Program Number"),
+                                    Container(
+                                      width: 150,
+                                      child: TextFormField(
+                                        controller: programNumberController,
+                                      ),
+                                    )
+                                  ],
                                 ),
-                                style: TextStyle(
-                                    color: Colors.black87,
-                                    fontSize: 17,
-                                    fontFamily: 'AvenirLight'),
-                                //  controller: _passwordController,
-                                // obscureText: true,
                               ),
-                            ),
-                            Spacer(),
-                            //Program name
-                            Container(
-                              width: 150,
-                              child: TextFormField(
-                                controller: programNameController,
-                                decoration: InputDecoration(
-                                  labelText: 'Program Name',
-                                  labelStyle: TextStyle(
-                                      color: Colors.black87,
-                                      fontSize: 12,
-                                      fontFamily: 'AvenirLight'),
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide:
-                                    BorderSide(color: Colors.purple),
-                                  ),
-                                  enabledBorder: new UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.grey, width: 1.0)),
+                              Spacer(),
+                              Flexible(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Program Name"),
+                                    Container(
+                                      width: 150,
+                                      child: TextFormField(
+                                        controller: programNameController,
+                                      ),
+                                    )
+                                  ],
                                 ),
-                                style: TextStyle(
-                                    color: Colors.black87,
-                                    fontSize: 17,
-                                    fontFamily: 'AvenirLight'),
-                                //  controller: _passwordController,
-                                // obscureText: true,
                               ),
-                            ),
-                          ],
-                        ),
-
-                        //dropdown
-                        Row(
-                          children: [
-                            Container(
-                              width: 150,
-                              child: Obx(()=>DropdownButtonFormField(
-                                value: inputPagePresenter.valType.value,
-                                hint: Text(
-                                  "Type",
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                                items: inputPagePresenter.dataType.map((item) {
-                                  return DropdownMenuItem<String>(
-                                    value: item["id"].toString(),
-                                    child: Text(item["name"],
-                                      style: TextStyle(fontSize: 12),),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Type"),
+                              DropdownButtonFormField(
+                                isExpanded: true,
+                                value: valType,
+                                items: dataType.map((item) {
+                                  return DropdownMenuItem(
+                                    child: Text(item['name']),
+                                    value: item['name'],
                                   );
                                 }).toList(),
                                 onChanged: (value) {
-                                  inputPagePresenter.valType.value = value;
-                                  inputPagePresenter.update();
+                                  setState(() {
+                                    valType = value;
+                                  });
                                 },
-                              )),
-                            ),
-                            Spacer(),
-
-                            //xx
-                            Container(
-                              width: 150,
-                              child: Obx(() =>
-                                  SearchChoices.single(
-                                    isExpanded: true,
-                                    value: inputPagePresenter.valVendor.value,
-                                    hint: Text(''
-                                        "Vendor",
-                                      style: TextStyle(fontSize: 12),
-                                    ),
-                                    items: inputPagePresenter.dataVendor.map((
-                                        item) {
-                                      return DropdownMenuItem<String>(
-                                        child: Text(item["VENDNAME"],
-                                          style: TextStyle(fontSize: 12),),
-                                        // item["idProduct"].toString() + " " + item['nameProduct'].toString()
-                                        value: item["ACCOUNTNUM"].toString() + " " + item['VENDNAME'].toString(),//xx
-                                      );
-                                    }).toList(),
-                                    onChanged: (value) {
-                                      inputPagePresenter.valVendor.value =
-                                          value;
-                                      inputPagePresenter.update();
-                                    },
-                                  ),),
-                            ),
-                          ],
-                        ),
-
-
-                        Row(
-                          children: [
-                            Container(
-                              width: 150,
-                              child: Obx(() =>
-                                  DropdownButtonFormField(
-                                    value: inputPagePresenter.valLocation.value,
-                                    hint: Text(
-                                      "Location",
-                                      style: TextStyle(fontSize: 12),
-                                    ),
-                                    items: inputPagePresenter.dataLocation.map((
-                                        item) {
-                                      return DropdownMenuItem<String>(
-                                        child: Text(item["NameSO"],
-                                          style: TextStyle(fontSize: 12),),
-                                        value: item["CodeSO"],
-                                      );
-                                    }).toList(),
-                                    onChanged: (value) {
-                                      inputPagePresenter.valLocation.value =
-                                          value;
-                                      inputPagePresenter.update();
-                                    },
-                                  ),),
-                            ),
-                            Spacer(),
-                            Container(
-                                width: 150,
-                                child: Obx(() =>
-                                    DropdownButtonFormField(
-                                      value: inputPagePresenter.valStatusTesting
-                                          .value,
-                                      hint: Text(
-                                        "Status Testing",
-                                        style: TextStyle(fontSize: 12),
-                                      ),
-                                      items: inputPagePresenter
-                                          .dataStatusTesting.map((item) {
-                                        return DropdownMenuItem<String>(
-                                          value: item["name"],
-                                          child: Text(item["name"],
-                                            style: TextStyle(fontSize: 12),
-                                            overflow: TextOverflow.fade,),
-                                        );
-                                      }).toList(),
-                                      onChanged: (value) {
-                                        inputPagePresenter.valStatusTesting
-                                            .value = value;
-                                        inputPagePresenter.update();
-                                      },
-                                    ),)
-                            ),
-                          ],
-                        ),
-                      ],
+                                // value: ,
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Vendor"),
+                              SearchChoices.single(
+                                isExpanded: true,
+                                value: valVendor,
+                                items: dataVendor.map((item) {
+                                  return DropdownMenuItem(
+                                    child: Text(item['VENDNAME']),
+                                    value: item['VENDNAME'],
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    valVendor = value;
+                                  });
+                                },
+                                // value: ,
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Location"),
+                              SearchChoices.single(
+                                isExpanded: true,
+                                value: valLocation,
+                                items: dataLocation.map((item) {
+                                  return DropdownMenuItem(
+                                    child: Text(item['NameSO']),
+                                    value: item['NameSO'],
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    valLocation = value;
+                                  });
+                                },
+                                // value: ,
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Status Testing"),
+                              DropdownButtonFormField(
+                                isExpanded: true,
+                                value: valStatusTesting,
+                                items: dataStatusTesting.map((item) {
+                                  return DropdownMenuItem(
+                                    child: Text(item['name']),
+                                    value: item['name'],
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    valStatusTesting = value;
+                                  });
+                                },
+                                // value: ,
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
+                  cardItem.length == 0
+                      ? RaisedButton(
+                          child: Text("Add",
+                              style: TextStyle(color: Colors.white)),
+                          color: Theme.of(context).primaryColorDark,
+                          onPressed: () {
+                            setState(() {
+                              cardItem.add(customCardLines());
+                            });
+                          })
+                      : ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: cardItem.length,
+                          itemBuilder: (context, index) {
+                            return Column(
+                              children: [
+                                cardItem[index],
+                                index == cardItem.length - 1
+                                    ? RaisedButton(
+                                        color: Colors.green,
+                                        child: Text("Submit"),
+                                        onPressed: () {})
+                                    : SizedBox()
+                              ],
+                            );
+                          })
+                ],
               ),
-
-              SizedBox(
-                height: 10,
-              ),
-
-              //card2
-              inputPagePresenter.cardsItem.length==0?RaisedButton(
-                  color: Colors.green,
-                  child: Text("Add Item"),
-                  onPressed: () {
-                    inputPagePresenter.addCardsItem(customCard(inputPagePresenter.cardsItem.length));
-                  }):
-              ListView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: inputPagePresenter.cardsItem.length,
-                  itemBuilder: (context, index){
-                    return Column(
-                      children: [
-                        inputPagePresenter.cardsItem[index],
-                        index == inputPagePresenter.cardsItem.length -1 ?RaisedButton(
-                            color: Colors.green,
-                            child: Text("Submit"),
-                            onPressed: () {
-                              print("dropdown customergroup : ${inputPagePresenter.valCustomer}");
-                              print("dropdown customerName : ${inputPagePresenter.valCustomerChoice}");
-                              print("dropdown itemGroup : ${inputPagePresenter.valItemGroup}");
-                              print("dropdown selectProduct : ${inputPagePresenter.valChoiceItemGroup}");
-                              // inputPagePresenter.submitProcess(
-                              //     int.parse(inputPagePresenter.valType.value),
-                              //     programNameController.text,
-                              //     programNumberController.text,
-                              //     inputPagePresenter.valLocation.value,
-                              //     inputPagePresenter.valVendor.value.toString().split(' ')[0],
-                              //     inputPagePresenter.valCustomerChoice.value.toString().split(' ')[0],
-                              //     inputPagePresenter.valChoiceItemGroup.value.split(' ')[0],
-                              //     int.parse(qtyFromController.text),
-                              //     int.parse(qtyToController.text),
-                              //     inputPagePresenter.valUnit.value,
-                              //     int.parse(inputPagePresenter.valMultiply.value),
-                              //     fromDateController.text,
-                              //     toDateController.text,
-                              //     inputPagePresenter.valCurrency.value,
-                              //     int.parse(inputPagePresenter.valPercentValue.value,),
-                              //     double.parse(percent1Controller.text),
-                              //     double.parse(percent2Controller.text),
-                              //     double.parse(percent3Controller.text),
-                              //     double.parse(percent4Controller.text),
-                              //     salesPriceController.text,
-                              //     priceToController.text,
-                              //     double.parse(value1Controller.text),
-                              //     double.parse(value2Controller.text),
-                              //     inputPagePresenter.valSupplyItem.value,
-                              //     int.parse(qtyItemController.text),
-                              //     inputPagePresenter.valUnit.value);
-                            }):SizedBox()
-                        // customButton(index),
-                      ],
-                    );
-                  }
-              ),
-              // listCard(),
-
-              //button xx
-              // cardsItem.length==0?RaisedButton(
-              //     color: Colors.green,
-              //     child: Text("Add item"),
-              //     onPressed: () { addCardsItem();}):SizedBox()
-            ],
+            ),
           ),
-        )),
-      ),
-    );
+        ));
   }
 }

@@ -48,12 +48,12 @@ class SalesOrderAdapter extends StatelessWidget {
           TextResultCard(
             context: context,
             title: 'Disc(%)',
-            value: models.disc,
+            value: models.disc1,
           ),
           TextResultCard(
             context: context,
             title: "Total",
-            value: models.totalAmount,
+            value: models?.totalAmount??"",
           ),
         ],
       ),

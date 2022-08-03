@@ -12,9 +12,9 @@ class TextResultCard extends StatelessWidget {
       children: <Widget>[
         Container(
           margin: EdgeInsets.all(ScreenUtil().setWidth(5)),
-          width: MediaQuery.of(context).size.width / 5,
+          // width: MediaQuery.of(context).size.width / 5,
           child: Text(
-            title,
+            title??"",
             style: TextStyle(
               color: Theme.of(context).primaryColorDark,
               fontSize: ScreenUtil().setSp(15),
@@ -26,10 +26,10 @@ class TextResultCard extends StatelessWidget {
           child: Container(
             margin: EdgeInsets.all(ScreenUtil().setWidth(5)),
             child: Text(
-              value,
+              ":  "+value??"",
               style: TextStyle(
                   color: Theme.of(context).primaryColorDark,
-                  fontWeight: FontWeight.bold,
+                  // fontWeight: FontWeight.bold,
                   fontSize: ScreenUtil().setSp(17)),
             ),
           ),

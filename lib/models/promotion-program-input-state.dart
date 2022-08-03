@@ -8,13 +8,13 @@ class PromotionProgramInputState {
   InputPageDropdownState<IdAndValue<String>> customerNameOrDiscountGroupInputPageDropdownState;
   InputPageDropdownState<String> itemGroupInputPageDropdownState;
   InputPageDropdownState<IdAndValue<String>> selectProductPageDropdownState;
-  InputPageDropdownState<IdAndValue<String>> wareHousePageDropdownState;
+  WrappedInputPageDropdownState<IdAndValue<String>> wareHousePageDropdownState;
   TextEditingController qtyFrom;
   TextEditingController qtyTo;
   InputPageDropdownState<String> currencyInputPageDropdownState;
-  InputPageDropdownState<String> percentValueInputPageDropdownState;
-  InputPageDropdownState<IdAndValue<String>> unitPageDropdownState;
-  InputPageDropdownState<String> multiplyInputPageDropdownState;
+  InputPageDropdownState<IdAndValue<String>> percentValueInputPageDropdownState;
+  InputPageDropdownState<String> unitPageDropdownState;
+  InputPageDropdownState<IdAndValue<String>> multiplyInputPageDropdownState;
   TextEditingController fromDate;
   TextEditingController toDate;
   TextEditingController percent1;
@@ -27,7 +27,7 @@ class PromotionProgramInputState {
   TextEditingController value2;
   InputPageDropdownState<IdAndValue<String>> supplyItem;
   TextEditingController qtyItem;
-  InputPageDropdownState<IdAndValue<String>> unitSupplyItem;
+  InputPageDropdownState<String> unitSupplyItem;
 
   PromotionProgramInputState({
     this.customerGroupInputPageDropdownState,

@@ -17,4 +17,9 @@ class IdAndValue<T> {
 
   @override
   int get hashCode => id.hashCode ^ value.hashCode;
+
+  @override
+  String toString() {
+    return this.value.toString();
+  }
 }

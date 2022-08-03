@@ -2,16 +2,19 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:money_input_formatter/money_input_formatter.dart';
 import 'package:search_choices/search_choices.dart';
+import 'package:signature/signature.dart';
 
+import '../../models/input-page-wrapper.dart';
 import '../../models/promotion-program-input-state.dart';
 import 'input-page-presenter-new.dart';
 
-class InputPage extends StatelessWidget {
-  InputPage({Key key}) : super(key: key);
+class InputPageNew extends StatelessWidget {
+  InputPageNew({Key key}) : super(key: key);
 
   Widget customCard(int index, InputPagePresenterNew inputPagePresenter){
-    PromotionProgramInputState promotionProgramInputState = inputPagePresenter.promotionProgramInputStateRx.value.value[index];
+    PromotionProgramInputState promotionProgramInputState = inputPagePresenter.promotionProgramInputStateRx.value.promotionProgramInputState[index];
     return Container(
       margin: EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 0),
       child: Card(
@@ -26,7 +29,7 @@ class InputPage extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Text("Add Item"),
+                  Text("Add Lines"),
                   Spacer(),
                   IconButton(
                     onPressed: (){
@@ -85,7 +88,7 @@ class InputPage extends StatelessWidget {
                     String text = (promotionProgramInputState.customerGroupInputPageDropdownState.selectedChoice ?? "").toLowerCase() == "Customer"
                         ? "Customer Name" : "Discount Group Name";
                     return Text(
-                      text,
+                      promotionProgramInputState.customerGroupInputPageDropdownState.selectedChoice=="Customer"?"Select Customer": "Select Discount Group",
                       style: TextStyle(fontSize: 12),
                     );
                   }
@@ -115,18 +118,17 @@ class InputPage extends StatelessWidget {
               ),
               SearchChoices.single(
                 isExpanded: true,
+                value: promotionProgramInputState.selectProductPageDropdownState.selectedChoice,
                 items: promotionProgramInputState.selectProductPageDropdownState.choiceList.map((item) {
                   return DropdownMenuItem(
                     child: Text(item.value),
                     value: item
                   );
                 }).toList(),
-                // value: inputPagePresenter.valChoiceItemGroup.value,
                 hint: Text(
-                  "Select Product",
+                  promotionProgramInputState.itemGroupInputPageDropdownState.selectedChoice=="Item"?"Select Product": "Select Discount Group",
                   style: TextStyle(fontSize: 12),
                 ),
-                // searchHint: "Select product",
                 onChanged: (value) => inputPagePresenter.changeProduct(index, value)
                 // isExpanded: true,
               ),
@@ -138,16 +140,18 @@ class InputPage extends StatelessWidget {
                     width: 150,
                     child: SearchChoices.single(
                       isExpanded: true,
-                      value: promotionProgramInputState.wareHousePageDropdownState.selectedChoice,
+                      value: promotionProgramInputState.wareHousePageDropdownState.selectedChoiceWrapper.value,
                       hint: Text(
                         "Warehouse",
                         style: TextStyle(fontSize: 12),
                       ),
-                      items: promotionProgramInputState.wareHousePageDropdownState.choiceList.map((item) {
+                      items: promotionProgramInputState.wareHousePageDropdownState.choiceListWrapper.value.map((item) {
                         return DropdownMenuItem(
-                          child: Text(item.value,
+                          child: Text(
+                            item.value,
                             style: TextStyle(fontSize: 12),
-                            overflow: TextOverflow.fade,),
+                            overflow: TextOverflow.fade,
+                          ),
                           value: item,
                         );
                       }).toList(),
@@ -218,7 +222,8 @@ class InputPage extends StatelessWidget {
                   //unit
                   Container(
                     width: 150,
-                    child: DropdownButtonFormField(
+                    child: SearchChoices.single(
+                      isExpanded: true,
                       value: promotionProgramInputState.unitPageDropdownState.selectedChoice,
                       hint: Text(
                         "Unit",
@@ -226,7 +231,7 @@ class InputPage extends StatelessWidget {
                       ),
                       items: promotionProgramInputState.unitPageDropdownState.choiceList.map((item) {
                         return DropdownMenuItem(
-                          child: Text(item.value),
+                          child: Text(item),
                           value: item,
                         );
                       }).toList(),
@@ -245,7 +250,7 @@ class InputPage extends StatelessWidget {
                       ),
                       items: promotionProgramInputState.multiplyInputPageDropdownState.choiceList.map((item) {
                         return DropdownMenuItem(
-                          child: Text(item),
+                          child: Text(item.value),
                           value: item,
                         );
                       }).toList(),
@@ -255,34 +260,28 @@ class InputPage extends StatelessWidget {
                 ],
               ),
 
-              SizedBox(height: 10),
-
               //datetime
               Row(
                 children: [
                   //from date
                   Container(
                     width: 150,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black)),
                     child: Padding(
                       padding: EdgeInsets.all(8),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "From Date",
-                            style: TextStyle(fontSize: 12),
-                          ),
-                          Divider(
-                            color: Colors.black54,
-                            thickness: 1,
-                          ),
                           DateTimeField(
+                            decoration: InputDecoration(
+                              label: Text("From Date"),
+                              suffixIcon: Icon(Icons.arrow_drop_down)
+                            ),
                             controller: promotionProgramInputState.fromDate,
                             initialValue: DateTime.now(),
                             style: TextStyle(fontSize: 12),
-                            format: DateFormat('dd/MMM/yyyy'),
+                            format: DateFormat('dd-MM-yyyy'),
+                            //xx
+                            // format: DateFormat('yyyy-MM-dd'),
                             onShowPicker: (context, currentValue) {
                               return showDatePicker(
                                   context: context,
@@ -313,26 +312,21 @@ class InputPage extends StatelessWidget {
                   //todate
                   Container(
                     width: 150,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black)),
                     child: Padding(
                       padding: EdgeInsets.all(8),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "To Date",
-                            style: TextStyle(fontSize: 12),
-                          ),
-                          Divider(
-                            color: Colors.black54,
-                            thickness: 1,
-                          ),
                           DateTimeField(
+                            decoration: InputDecoration(
+                                label: Text("To Date"),
+                                suffixIcon: Icon(Icons.arrow_drop_down)
+                            ),
                             controller: promotionProgramInputState.toDate,
                             initialValue: DateTime.now(),
                             style: TextStyle(fontSize: 12),
-                            format: DateFormat('dd/MMM/yyyy'),
+                            format: DateFormat('dd-MM-yyyy'),
+                            // format: DateFormat('yyyy-MM-dd'),
                             onShowPicker: (context, currentValue) {
                               return showDatePicker(
                                   context: context,
@@ -362,7 +356,7 @@ class InputPage extends StatelessWidget {
               ),
 
               //curency percent
-              Row(
+              inputPagePresenter.promotionTypeInputPageDropdownStateRx.value.selectedChoice.value=="Bonus"?SizedBox():Row(
                 children: [
                   //unit
                   Container(
@@ -394,7 +388,7 @@ class InputPage extends StatelessWidget {
                       ),
                       items: promotionProgramInputState.percentValueInputPageDropdownState.choiceList.map((item) {
                         return DropdownMenuItem(
-                          child: Text(item),
+                          child: Text(item.value),
                           value: item,
                         );
                       }).toList(),
@@ -405,237 +399,270 @@ class InputPage extends StatelessWidget {
               ),
 
               //percent
-              promotionProgramInputState.percentValueInputPageDropdownState.selectedChoice == promotionProgramInputState.percentValueInputPageDropdownState.choiceList[1]?
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              inputPagePresenter.promotionTypeInputPageDropdownStateRx.value.selectedChoice.value=="Bonus"?SizedBox():promotionProgramInputState.percentValueInputPageDropdownState.selectedChoice == promotionProgramInputState.percentValueInputPageDropdownState.choiceList[1] ?
+              Column(
                 children: [
-                  //sales price
-                  Container(
-                    width: 60,
-                    child: TextFormField(
-                      controller: promotionProgramInputState.salesPrice,
-                      decoration: InputDecoration(
-                        labelText: 'Sales Price',
-                        labelStyle: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 12,
-                            fontFamily: 'AvenirLight'),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide:
-                          BorderSide(color: Colors.purple),
-                        ),
-                        enabledBorder: new UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.grey, width: 1.0)),
-                      ),
-                      style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 17,
-                          fontFamily: 'AvenirLight'),
-                      //  controller: _passwordController,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      //sales price
+                      Expanded(
+                        child: TextFormField(
+                          keyboardType: TextInputType.number,
+                          controller: promotionProgramInputState.salesPrice,
+                          inputFormatters: [
+                            MoneyInputFormatter(thousandSeparator: ".", decimalSeparator: ",")
+                          ],
+                          decoration: InputDecoration(
+                            labelText: 'Sales Price',
+                            prefixText: "Rp",
+                            labelStyle: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 12,
+                                fontFamily: 'AvenirLight'),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide:
+                              BorderSide(color: Colors.purple),
+                            ),
+                            enabledBorder: new UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Colors.grey, width: 1.0)),
+                          ),
+                          style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 17,
+                              fontFamily: 'AvenirLight'),
+                          //  controller: _passwordController,
 
-                    ),
-                  ),
-                  //price to customer
-                  Container(
-                    width: 60,
-                    child: TextFormField(
-                      controller: promotionProgramInputState.priceToCustomer,
-                      decoration: InputDecoration(
-                        labelText: 'Price to Customer',
-                        labelStyle: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 12,
-                            fontFamily: 'AvenirLight'),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide:
-                          BorderSide(color: Colors.purple),
                         ),
-                        enabledBorder: new UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.grey, width: 1.0)),
                       ),
-                      style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 17,
-                          fontFamily: 'AvenirLight'),
-                      //  controller: _passwordController,
-                    ),
-                  ),
-                  //value 1
-                  Container(
-                    width: 60,
-                    child: TextFormField(
-                      controller: promotionProgramInputState.value1,
-                      decoration: InputDecoration(
-                        labelText: 'Value 1',
-                        labelStyle: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 12,
-                            fontFamily: 'AvenirLight'),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide:
-                          BorderSide(color: Colors.purple),
+                      SizedBox(width: 20,),
+                      //price to customer
+                      Expanded(
+                        child: TextFormField(
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            MoneyInputFormatter(thousandSeparator: ".", decimalSeparator: ",")
+                          ],
+                          controller: promotionProgramInputState.priceToCustomer,
+                          decoration: InputDecoration(
+                            labelText: 'Price to Customer',
+                            prefixText: "Rp",
+                            labelStyle: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 12,
+                                fontFamily: 'AvenirLight'),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide:
+                              BorderSide(color: Colors.purple),
+                            ),
+                            enabledBorder: new UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Colors.grey, width: 1.0)),
+                          ),
+                          style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 17,
+                              fontFamily: 'AvenirLight'),
+                          //  controller: _passwordController,
                         ),
-                        enabledBorder: new UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.grey, width: 1.0)),
                       ),
-                      style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 17,
-                          fontFamily: 'AvenirLight'),
-                      //  controller: _passwordController,
-                    ),
+                    ],
                   ),
+                  Row(
+                    children: [
+                      //value 1
+                      Expanded(
+                        child: TextFormField(
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            MoneyInputFormatter(thousandSeparator: ".", decimalSeparator: ",")
+                          ],
+                          controller: promotionProgramInputState.value1,
+                          decoration: InputDecoration(
+                            labelText: 'Value 1',
+                            labelStyle: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 12,
+                                fontFamily: 'AvenirLight'),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide:
+                              BorderSide(color: Colors.purple),
+                            ),
+                            enabledBorder: new UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Colors.grey, width: 1.0)),
+                          ),
+                          style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 17,
+                              fontFamily: 'AvenirLight'),
+                          //  controller: _passwordController,
+                        ),
+                      ),
+                      SizedBox(width: 20,),
+                      //value 2
+                      Expanded(
+                        child: TextFormField(
+                          inputFormatters: [
+                            MoneyInputFormatter(thousandSeparator: ".", decimalSeparator: ",")
+                          ],
+                          keyboardType: TextInputType.number,
+                          controller: promotionProgramInputState.value2,
+                          decoration: InputDecoration(
+                            labelText: 'Value 2',
+                            labelStyle: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 12,
+                                fontFamily: 'AvenirLight'),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide:
+                              BorderSide(color: Colors.purple),
+                            ),
+                            enabledBorder: new UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Colors.grey, width: 1.0)),
+                          ),
+                          style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 17,
+                              fontFamily: 'AvenirLight'),
+                          //  controller: _passwordController,
 
-                  //value 2
-                  Container(
-                    width: 60,
-                    child: TextFormField(
-                      controller: promotionProgramInputState.value2,
-                      decoration: InputDecoration(
-                        labelText: 'Value 2',
-                        labelStyle: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 12,
-                            fontFamily: 'AvenirLight'),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide:
-                          BorderSide(color: Colors.purple),
                         ),
-                        enabledBorder: new UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.grey, width: 1.0)),
                       ),
-                      style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 17,
-                          fontFamily: 'AvenirLight'),
-                      //  controller: _passwordController,
-
-                    ),
-                  ),
+                    ],
+                  )
                 ],
-              ):
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              ): Column(
                 children: [
-                  //percent1
-                  Container(
-                    width: 60,
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      controller: promotionProgramInputState.percent1,
-                      decoration: InputDecoration(
-                        labelText: 'Percent 1',
-                        labelStyle: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 12,
-                            fontFamily: 'AvenirLight'),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide:
-                          BorderSide(color: Colors.purple),
-                        ),
-                        enabledBorder: new UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.grey, width: 1.0)),
-                      ),
-                      style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 17,
-                          fontFamily: 'AvenirLight'),
-                      //  controller: _passwordController,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      //percent1
+                      Expanded(
+                        child: TextFormField(
+                          keyboardType: TextInputType.number,
+                          controller: promotionProgramInputState.percent1,
+                          decoration: InputDecoration(
+                            suffixText: "%",
+                            labelText: 'Disc-1 (%) PRB',
+                            labelStyle: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 12,
+                                fontFamily: 'AvenirLight'),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide:
+                              BorderSide(color: Colors.purple),
+                            ),
+                            enabledBorder: new UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Colors.grey, width: 1.0)),
+                          ),
+                          style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 17,
+                              fontFamily: 'AvenirLight'),
+                          //  controller: _passwordController,
 
-                    ),
-                  ),
-                  //percent2
-                  Container(
-                    width: 60,
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      controller: promotionProgramInputState.percent2,
-                      decoration: InputDecoration(
-                        labelText: 'Percent 2',
-                        labelStyle: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 12,
-                            fontFamily: 'AvenirLight'),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide:
-                          BorderSide(color: Colors.purple),
                         ),
-                        enabledBorder: new UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.grey, width: 1.0)),
                       ),
-                      style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 17,
-                          fontFamily: 'AvenirLight'),
-                      //  controller: _passwordController,
-                    ),
-                  ),
-                  //percent3
-                  Container(
-                    width: 60,
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      controller: promotionProgramInputState.percent3,
-                      decoration: InputDecoration(
-                        labelText: 'Percent 3',
-                        labelStyle: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 12,
-                            fontFamily: 'AvenirLight'),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide:
-                          BorderSide(color: Colors.purple),
+                      SizedBox(width: 20,),
+                      //percent2
+                      Expanded(
+                        child: TextFormField(
+                          keyboardType: TextInputType.number,
+                          controller: promotionProgramInputState.percent2,
+                          decoration: InputDecoration(
+                            labelText: 'Disc-2 (%) COD',
+                            suffixText: "%",
+                            labelStyle: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 12,
+                                fontFamily: 'AvenirLight'),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide:
+                              BorderSide(color: Colors.purple),
+                            ),
+                            enabledBorder: new UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Colors.grey, width: 1.0)),
+                          ),
+                          style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 17,
+                              fontFamily: 'AvenirLight'),
+                          //  controller: _passwordController,
                         ),
-                        enabledBorder: new UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.grey, width: 1.0)),
                       ),
-                      style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 17,
-                          fontFamily: 'AvenirLight'),
-                      //  controller: _passwordController,
-                    ),
+                    ],
                   ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      //percent3
+                      Expanded(
+                        child: TextFormField(
+                          keyboardType: TextInputType.number,
+                          controller: promotionProgramInputState.percent3,
+                          decoration: InputDecoration(
+                            labelText: 'Disc-3 (%) Principal1',
+                            suffixText: "%",
+                            labelStyle: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 12,
+                                fontFamily: 'AvenirLight'),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide:
+                              BorderSide(color: Colors.purple),
+                            ),
+                            enabledBorder: new UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Colors.grey, width: 1.0)),
+                          ),
+                          style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 17,
+                              fontFamily: 'AvenirLight'),
+                          //  controller: _passwordController,
+                        ),
+                      ),
+                      SizedBox(width: 20,),
+                      //percent4
+                      Expanded(
+                        child: TextFormField(
+                          keyboardType: TextInputType.number,
+                          controller: promotionProgramInputState.percent4,
+                          decoration: InputDecoration(
+                            labelText: 'Disc-4 (%) Principal2',
+                            suffixText: "%",
+                            labelStyle: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 12,
+                                fontFamily: 'AvenirLight'),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide:
+                              BorderSide(color: Colors.purple),
+                            ),
+                            enabledBorder: new UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Colors.grey, width: 1.0)),
+                          ),
+                          style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 17,
+                              fontFamily: 'AvenirLight'),
+                          //  controller: _passwordController,
 
-                  //percent4
-                  Container(
-                    width: 60,
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      controller: promotionProgramInputState.percent4,
-                      decoration: InputDecoration(
-                        labelText: 'Percent 4',
-                        labelStyle: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 12,
-                            fontFamily: 'AvenirLight'),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide:
-                          BorderSide(color: Colors.purple),
                         ),
-                        enabledBorder: new UnderlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.grey, width: 1.0)),
                       ),
-                      style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 17,
-                          fontFamily: 'AvenirLight'),
-                      //  controller: _passwordController,
-
-                    ),
+                    ],
                   ),
                 ],
               ),
 
-              SearchChoices.single(
+
+              inputPagePresenter.promotionTypeInputPageDropdownStateRx.value.selectedChoice.value=="Diskon"?SizedBox():SearchChoices.single(
                 isExpanded: true,
                 value: promotionProgramInputState.supplyItem.selectedChoice,
                 hint: Text(
@@ -656,7 +683,7 @@ class InputPage extends StatelessWidget {
               ),
 
               //unit multiply
-              Row(
+              inputPagePresenter.promotionTypeInputPageDropdownStateRx.value.selectedChoice.value=="Diskon"?SizedBox():Row(
                 children: [
                   //unit
                   Container(
@@ -690,7 +717,8 @@ class InputPage extends StatelessWidget {
                   //unit supply item
                   Container(
                     width: 120,
-                    child: DropdownButtonFormField(
+                    child: SearchChoices.single(
+                      isExpanded: true,
                       value: promotionProgramInputState.unitSupplyItem.selectedChoice,
                       hint: Text(
                         "Unit Supply Item",
@@ -698,7 +726,7 @@ class InputPage extends StatelessWidget {
                       ),
                       items: promotionProgramInputState.unitSupplyItem.choiceList.map((item) {
                         return DropdownMenuItem(
-                          child: Text(item.value),
+                          child: Text(item),
                           value: item,
                         );
                       }).toList(),
@@ -716,8 +744,15 @@ class InputPage extends StatelessWidget {
     );
   }
 
+  final SignatureController _signaturecontrollersales = SignatureController(
+    penStrokeWidth: 1,
+    penColor: Colors.black,
+    exportBackgroundColor: Colors.white,
+  );
+
   @override
   Widget build(BuildContext context) {
+    print("Build lahh");
     final inputPagePresenter = Get.put(InputPagePresenterNew());
     return Scaffold(
       appBar: AppBar(
@@ -758,6 +793,7 @@ class InputPage extends StatelessWidget {
                               child: Obx(() => TextFormField(
                                 controller: inputPagePresenter.programNumberTextEditingControllerRx.value,
                                 keyboardType: TextInputType.text,
+                                onChanged: (value) => inputPagePresenter.checkAddItemStatus(),
                                 decoration: InputDecoration(
                                   labelText: 'Program Number',
                                   labelStyle: TextStyle(
@@ -788,6 +824,7 @@ class InputPage extends StatelessWidget {
                               width: 150,
                               child: Obx(() => TextFormField(
                                 controller: inputPagePresenter.programNameTextEditingControllerRx.value,
+                                onChanged: (value) => inputPagePresenter.checkAddItemStatus(),
                                 decoration: InputDecoration(
                                   labelText: 'Program Name',
                                   labelStyle: TextStyle(
@@ -826,7 +863,7 @@ class InputPage extends StatelessWidget {
                                 ),
                                 items: inputPagePresenter.promotionTypeInputPageDropdownStateRx.value.choiceList.map((item) {
                                   return DropdownMenuItem(
-                                    child: Text(item),
+                                    child: Text(item.value),
                                     value: item,
                                   );
                                 }).toList(),
@@ -864,6 +901,7 @@ class InputPage extends StatelessWidget {
                             Container(
                               width: 150,
                               child: Obx(() => DropdownButtonFormField(
+                                isExpanded: true,
                                 value: inputPagePresenter.locationInputPageDropdownStateRx.value.selectedChoice,
                                 hint: Text(
                                   "Location",
@@ -875,7 +913,7 @@ class InputPage extends StatelessWidget {
                                     value: item,
                                   );
                                 }).toList(),
-                                onChanged: (value) => inputPagePresenter.changePromotionType(value),
+                                onChanged: (value) => inputPagePresenter.changeLocation(value),
                               )),
                             ),
                             Spacer(),
@@ -893,7 +931,7 @@ class InputPage extends StatelessWidget {
                                     value: item,
                                   );
                                 }).toList(),
-                                onChanged: (value) => inputPagePresenter.changePromotionType(value),
+                                onChanged: (value) => inputPagePresenter.changeStatusTesting(value),
                               ))
                             ),
                           ],
@@ -907,12 +945,15 @@ class InputPage extends StatelessWidget {
               SizedBox(
                 height: 10,
               ),
+
               Obx(() {
-                List<PromotionProgramInputState> promotionProgramInputStateList = inputPagePresenter.promotionProgramInputStateRx.value.value;
+                InputPageWrapper inputPageWrapper = inputPagePresenter.promotionProgramInputStateRx.value;
+                List<PromotionProgramInputState> promotionProgramInputStateList = inputPageWrapper.promotionProgramInputState;
+                bool isAddItem = inputPageWrapper.isAddItem;
                 return promotionProgramInputStateList.length == 0 ? RaisedButton(
                   color: Colors.green,
-                  child: Text("Add Item"),
-                  onPressed: () => inputPagePresenter.addItem()
+                  child: Text("Add Lines"),
+                  onPressed: isAddItem ? () => inputPagePresenter.addItem() : null
                 ) : ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
@@ -920,43 +961,63 @@ class InputPage extends StatelessWidget {
                   itemBuilder: (context, index) => Column(
                     children: [
                       customCard(index, inputPagePresenter),
+                      SizedBox(
+                        height: 10,
+                      ),
+
+                      index == promotionProgramInputStateList.length -1 ? Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                            child: Card(
+                              child: Signature(
+                                controller: _signaturecontrollersales,
+                                height: 200,
+                                backgroundColor: Colors.white,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.black,
+                            ),
+                            child: Container(
+                              width: 355,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisSize: MainAxisSize.max,
+                                children: <Widget>[
+                                  //Clear Canvass
+                                  // ignore: deprecated_member_use
+                                  RaisedButton(
+                                    color: Colors.blue,
+                                    child: Text(
+                                      "Clear",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                          _signaturecontrollersales.clear();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ) : SizedBox(),
                       index == promotionProgramInputStateList.length -1 ? RaisedButton(
                         color: Colors.green,
                         child: Text("Submit"),
-                        onPressed: () {
-                          // inputPagePresenter.submitProcess(
-                          //     int.parse(inputPagePresenter.valType.value),
-                          //     programNameController.text,
-                          //     programNumberController.text,
-                          //     inputPagePresenter.valLocation.value,
-                          //     inputPagePresenter.valVendor.value.toString().split(' ')[0],
-                          //     inputPagePresenter.valCustomerChoice.value.toString().split(' ')[0],
-                          //     inputPagePresenter.valChoiceItemGroup.value.split(' ')[0],
-                          //     int.parse(qtyFromController.text),
-                          //     int.parse(qtyToController.text),
-                          //     inputPagePresenter.valUnit.value,
-                          //     int.parse(inputPagePresenter.valMultiply.value),
-                          //     fromDateController.text,
-                          //     toDateController.text,
-                          //     inputPagePresenter.valCurrency.value,
-                          //     int.parse(inputPagePresenter.valPercentValue.value,),
-                          //     double.parse(percent1Controller.text),
-                          //     double.parse(percent2Controller.text),
-                          //     double.parse(percent3Controller.text),
-                          //     double.parse(percent4Controller.text),
-                          //     salesPriceController.text,
-                          //     priceToController.text,
-                          //     double.parse(value1Controller.text),
-                          //     double.parse(value2Controller.text),
-                          //     inputPagePresenter.valSupplyItem.value,
-                          //     int.parse(qtyItemController.text),
-                          //     inputPagePresenter.valUnit.value);
+                        onPressed: (){
+                          inputPagePresenter.submitPromotionProgram();
                         }
-                      ):SizedBox()
+                      ) : SizedBox()
                     ],
                   )
                 );
-              })
+              }),
             ],
           ),
         )

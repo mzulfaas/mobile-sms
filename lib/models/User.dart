@@ -102,7 +102,9 @@ class User {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString("username", _user.username);
       prefs.setString("token", _user.token);
+      prefs.setInt("userid", _user.id);
       print("ini username login : ${_user.username}");
+      print("ini userid : ${_user.id}");
       return _user;
     }else{
       Exception('Failed to login');

@@ -39,6 +39,8 @@ class _LoginViewState extends State<LoginView> {
     // TODO: implement initState
     super.initState();
     deleteHistorySharedPrefs();
+    _selectedUrl = _listUrl[1];
+    code = 1;
   }
 
   @override
