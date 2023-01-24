@@ -41,7 +41,7 @@ class TransactionHistoryPage extends StatelessWidget {
                                 // physics: NeverScrollableScrollPhysics(),
                                 itemCount: transactionHistoryPresenter.transactionHistory[index].transactionLines.length,
                                 itemBuilder: (context, index) {
-                                  print("total ${transactionHistoryPresenter.transactionHistory[indexes].transactionLines[index].totalPrice}");
+                                  print("total ${transactionHistoryPresenter.transactionHistory[index].transactionLines[index].totalPrice}");
                                   return Card(
                                     child: Padding(
                                       padding: const EdgeInsets.all(14.0),

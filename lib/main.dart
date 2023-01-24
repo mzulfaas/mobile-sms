@@ -30,7 +30,7 @@ class _MyAppState extends State<MyApp> {
 
   getOneSignal() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    OneSignal.shared.setAppId("1e72c3a5-63f4-447a-a56e-8aeda29e46d3");
+    OneSignal.shared.setAppId("ffad8398-fdf5-4aef-a16b-a33696f48630");
     OneSignal.shared.getDeviceState().then((deviceState) {
       onesignalUserID = deviceState.userId;
       setState(() {
