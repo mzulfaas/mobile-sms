@@ -64,7 +64,7 @@ class _HistoryPendingState extends State<HistoryPending> {
               title: "Type",
               value: promosi.customer,
             ),
-            FlatButton(
+            TextButton(
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 margin: EdgeInsets.all(ScreenUtil().setWidth(7)),
@@ -88,15 +88,17 @@ class _HistoryPendingState extends State<HistoryPending> {
                       );
                     }));
               },
-              color: Theme.of(context).accentColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-                side: BorderSide(
-                    color: Theme.of(context).primaryColor,
-                    style: BorderStyle.solid,
-                    width: 2),
+              style: TextButton.styleFrom(
+                backgroundColor: Theme.of(context).accentColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: BorderSide(
+                      color: Theme.of(context).primaryColor,
+                      style: BorderStyle.solid,
+                      width: 2),
+                ),
+                padding: EdgeInsets.all(ScreenUtil().setWidth(7)),
               ),
-              padding: EdgeInsets.all(ScreenUtil().setWidth(7)),
             )
           ],
         ));
@@ -125,6 +127,10 @@ class _HistoryPendingState extends State<HistoryPending> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // appBar: AppBar(
+      //   backgroundColor: Colors.green,
+      //   title: Text("Approval PP"),
+      // ),
       body: Column(
         children: <Widget>[
           Container(

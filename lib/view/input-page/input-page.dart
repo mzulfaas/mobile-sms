@@ -486,10 +486,12 @@ class _InputPageState extends State<InputPage> {
                     ),
                   ),
                   cardItem.length == 0
-                      ? RaisedButton(
+                      ? ElevatedButton(
                           child: Text("Add",
                               style: TextStyle(color: Colors.white)),
-                          color: Theme.of(context).primaryColorDark,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).primaryColorDark,
+                          ),
                           onPressed: () {
                             setState(() {
                               cardItem.add(customCardLines());
@@ -504,8 +506,10 @@ class _InputPageState extends State<InputPage> {
                               children: [
                                 cardItem[index],
                                 index == cardItem.length - 1
-                                    ? RaisedButton(
-                                        color: Colors.green,
+                                    ? ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.green,
+                                        ),
                                         child: Text("Submit"),
                                         onPressed: () {})
                                     : SizedBox()

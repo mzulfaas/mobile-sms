@@ -1,27 +1,26 @@
-import 'dart:convert';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive/hive.dart';
 import 'package:mobile_sms/view/HistoryLinesAll.dart';
+import 'package:mobile_sms/view/HistoryLinesApproved.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../assets/global.dart';
 import '../assets/widgets/Debounce.dart';
 import '../assets/widgets/TextResultCard.dart';
 import '../models/Promosi.dart';
 import '../models/User.dart';
 import 'HistoryLines.dart';
-import 'Login.dart';
 
-class HistoryAll extends StatefulWidget {
-  const HistoryAll({Key key}) : super(key: key);
+class HistoryApproved extends StatefulWidget {
+  const HistoryApproved({Key key}) : super(key: key);
 
   @override
-  _HistoryAllState createState() => _HistoryAllState();
+  _HistoryApprovedState createState() => _HistoryApprovedState();
 }
 
-class _HistoryAllState extends State<HistoryAll> {
+class _HistoryApprovedState extends State<HistoryApproved> {
 
   final _debouncer = Debounce(miliseconds: 5);
   TextEditingController filterController = new TextEditingController();
@@ -32,12 +31,11 @@ class _HistoryAllState extends State<HistoryAll> {
 
   Future<Null> listHistory() async {
     await Future.delayed(Duration(seconds: 5));
-    Promosi.getAllListPromosi(0, code, _user.token??"token kosong", _user.username).then((value) {
+    Promosi.getListPromosiApproved(0, code, _user.token??"token kosong", _user.username).then((value) {
       print("userToken: ${_user.token}");
       setState(() {
         listHistoryReal = value;
         _listHistory = listHistoryReal;
-        // _listHistory.sort((a, b) => b.idTransaction - a.idTransaction);
       });
     });
     return null;
@@ -86,7 +84,7 @@ class _HistoryAllState extends State<HistoryAll> {
               onPressed: () {
                 Navigator.pushReplacement(context,
                     MaterialPageRoute(builder: (context) {
-                      return HistoryLinesAll(
+                      return HistoryLinesApproved(
                         numberPP: promosi?.namePP,
                         idEmp: _user.id,
                       );
@@ -121,41 +119,6 @@ class _HistoryAllState extends State<HistoryAll> {
     });
   }
 
-  Future<bool> onBackPress() {
-    deleteBoxUser();
-    return Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (context) {
-          return LoginView();
-        }));
-  }
-
-  void deleteBoxUser() async {
-    var dir = await getApplicationDocumentsDirectory();
-    Hive.init(dir.path);
-    Box _userBox = await Hive.openBox('users');
-    SharedPreferences pref = await SharedPreferences.getInstance();
-
-    Future.delayed(Duration(milliseconds: 10));
-    await _userBox.deleteFromDisk();
-    pref.setInt("flag", 0);
-    pref.setString("result", "");
-  }
-
-  void LogOut() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: Text('Log Out'),
-          content: Text('Are you sure log out ?'),
-          actions: <Widget>[
-            TextButton(
-                onPressed: () => Navigator.pop(context, 'Cancel'),
-                child: Text('Cancel')),
-            TextButton(onPressed: onBackPress, child: Text('Ok')),
-          ],
-        ));
-  }
-
   @override
   void initState() {
     // TODO: implement initState
@@ -166,6 +129,10 @@ class _HistoryAllState extends State<HistoryAll> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // appBar: AppBar(
+      //   backgroundColor: Colors.green,
+      //   title: Text("Approval PP"),
+      // ),
       body: Column(
         children: <Widget>[
           Container(
@@ -221,7 +188,7 @@ class _HistoryAllState extends State<HistoryAll> {
             child: RefreshIndicator(
               onRefresh: listHistory,
               child: FutureBuilder(
-                future: Promosi.getAllListPromosi(
+                future: Promosi.getListPromosiApproved(
                     0, code, _user?.token??"", _user?.username??""),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {

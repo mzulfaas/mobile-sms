@@ -16,6 +16,7 @@ import 'package:mobile_sms/models/Promosi.dart';
 import 'package:mobile_sms/models/User.dart';
 import 'package:mobile_sms/providers/LinesProvider.dart';
 import 'package:mobile_sms/view/HistoryNomorPP_All.dart';
+import 'package:mobile_sms/view/dashboard/dashboard_approvalpp.dart';
 import 'package:mobile_sms/view/dashboard/dashboard_pp.dart';
 import 'package:money_formatter/money_formatter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -26,16 +27,16 @@ import 'HistoryNomorPP.dart';
 import 'HistorySO.dart';
 import 'HistorySOAll.dart';
 
-class HistoryLinesAll extends StatefulWidget {
+class HistoryLinesApproved extends StatefulWidget {
   @override
-  _HistoryLinesAllState createState() => _HistoryLinesAllState();
+  _HistoryLinesApprovedState createState() => _HistoryLinesApprovedState();
   String numberPP;
   int idEmp;
 
-  HistoryLinesAll({this.numberPP, this.idEmp});
+  HistoryLinesApproved({this.numberPP, this.idEmp});
 }
 
-class _HistoryLinesAllState extends State<HistoryLinesAll> {
+class _HistoryLinesApprovedState extends State<HistoryLinesApproved> {
   List _listHistorySO;
   dynamic _listHistorySOEncode;
   bool _statusDisable = true;
@@ -271,98 +272,98 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
               value: promosi.price,
             ),
             //Period Date
+            // Container(
+            //     margin: EdgeInsets.all(ScreenUtil().setWidth(5)),
+            //     width: ScreenUtil().setWidth(MediaQuery.of(context).size.width),
+            //     child: Text(
+            //         'Period Date(hapus dgn klik X jika ingin ganti period)',
+            //         style: TextStyle(
+            //           color: Theme.of(context).primaryColorDark,
+            //           fontSize: ScreenUtil().setSp(15),
+            //         ))),
             Container(
-                margin: EdgeInsets.all(ScreenUtil().setWidth(5)),
-                width: ScreenUtil().setWidth(MediaQuery.of(context).size.width),
-                child: Text(
-                    'Period Date(hapus dgn klik X jika ingin ganti period)',
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColorDark,
-                      fontSize: ScreenUtil().setSp(15),
+                width:
+                ScreenUtil().setHeight(MediaQuery.of(context).size.width),
+                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                child: Consumer<LinesProvider>(
+                    builder: (context, linesProv, _) => TextFormField(
+                      readOnly: true,
+                      // format: DateFormat('dd/MMM/yyyy'),
+                      initialValue: promosi.fromDate.split(" ")[0].toString(),
+                      keyboardType: TextInputType.datetime,
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          filled: true,
+                          labelText: 'From Date',
+                          hintStyle: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontSize: 15),
+                          errorStyle: TextStyle(
+                              color: Theme.of(context).errorColor,
+                              fontSize: 15)),
+                      // ignore: missing_return
+                      // onShowPicker: (context, currentValue) {
+                      //   return showDatePicker(
+                      //       context: context,
+                      //       firstDate: DateTime(DateTime.now().year - 1),
+                      //       initialDate: currentValue ??
+                      //           DateTime.parse(promosi.fromDate),
+                      //       lastDate: DateTime(DateTime.now().year + 1),
+                      //       builder: (BuildContext context, Widget child) {
+                      //         return Theme(
+                      //           data: ThemeData.light(),
+                      //           child: child,
+                      //         );
+                      //       });
+                      // },
+                      // onChanged: (value) {
+                      //   if (value != null) {
+                      //     setBundleLines(promosi.id, null, value, null);
+                      //   }
+                      // },
                     ))),
             Container(
                 width:
-                    ScreenUtil().setHeight(MediaQuery.of(context).size.width),
+                ScreenUtil().setHeight(MediaQuery.of(context).size.width),
                 margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 child: Consumer<LinesProvider>(
                     builder: (context, linesProv, _) => TextFormField(
-                          readOnly: true,
-                          // format: DateFormat('dd/MMM/yyyy'),
-                          initialValue: promosi.fromDate.split(" ")[0].toString(),
-                          keyboardType: TextInputType.datetime,
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              filled: true,
-                              labelText: 'From Date',
-                              hintStyle: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                  fontSize: 15),
-                              errorStyle: TextStyle(
-                                  color: Theme.of(context).errorColor,
-                                  fontSize: 15)),
-                          // ignore: missing_return
-                          // onShowPicker: (context, currentValue) {
-                          //   return showDatePicker(
-                          //       context: context,
-                          //       firstDate: DateTime(DateTime.now().year - 1),
-                          //       initialDate: currentValue ??
-                          //           DateTime.parse(promosi.fromDate),
-                          //       lastDate: DateTime(DateTime.now().year + 1),
-                          //       builder: (BuildContext context, Widget child) {
-                          //         return Theme(
-                          //           data: ThemeData.light(),
-                          //           child: child,
-                          //         );
-                          //       });
-                          // },
-                          // onChanged: (value) {
-                          //   if (value != null) {
-                          //     setBundleLines(promosi.id, null, value, null);
-                          //   }
-                          // },
-                        ))),
-            Container(
-                width:
-                    ScreenUtil().setHeight(MediaQuery.of(context).size.width),
-                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                child: Consumer<LinesProvider>(
-                    builder: (context, linesProv, _) => TextFormField(
-                          readOnly: true,
-                          // format: DateFormat('dd/MMM/yyyy'),
-                          // initialValue: convertDate(promosi.toDate),
-                          initialValue: promosi.toDate.split(" ")[0],
-                          keyboardType: TextInputType.datetime,
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              filled: true,
-                              labelText: 'To Date',
-                              hintStyle: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                  fontSize: 15),
-                              errorStyle: TextStyle(
-                                  color: Theme.of(context).errorColor,
-                                  fontSize: 15)),
-                          // ignore: missing_return
-                          // onShowPicker: (context, currentValue) {
-                          //   return showDatePicker(
-                          //       context: context,
-                          //       firstDate: DateTime(DateTime.now().year - 1),
-                          //       initialDate: currentValue ??
-                          //           DateTime.parse(promosi.toDate),
-                          //       lastDate: DateTime(DateTime.now().year + 1),
-                          //       builder: (BuildContext context, Widget child) {
-                          //         return Theme(
-                          //           data: ThemeData.light(),
-                          //           child: child,
-                          //         );
-                          //       });
-                          // },
-                          // onChanged: (value) {
-                          //   if (value != null) {
-                          //     setBundleLines(promosi.id, null, null, value);
-                          //   }
-                          // },
-                        ))),
+                      readOnly: true,
+                      // format: DateFormat('dd/MMM/yyyy'),
+                      // initialValue: convertDate(promosi.toDate),
+                      initialValue: promosi.toDate.split(" ")[0],
+                      keyboardType: TextInputType.datetime,
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          filled: true,
+                          labelText: 'To Date',
+                          hintStyle: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontSize: 15),
+                          errorStyle: TextStyle(
+                              color: Theme.of(context).errorColor,
+                              fontSize: 15)),
+                      // ignore: missing_return
+                      // onShowPicker: (context, currentValue) {
+                      //   return showDatePicker(
+                      //       context: context,
+                      //       firstDate: DateTime(DateTime.now().year - 1),
+                      //       initialDate: currentValue ??
+                      //           DateTime.parse(promosi.toDate),
+                      //       lastDate: DateTime(DateTime.now().year + 1),
+                      //       builder: (BuildContext context, Widget child) {
+                      //         return Theme(
+                      //           data: ThemeData.light(),
+                      //           child: child,
+                      //         );
+                      //       });
+                      // },
+                      // onChanged: (value) {
+                      //   if (value != null) {
+                      //     setBundleLines(promosi.id, null, null, value);
+                      //   }
+                      // },
+                    ))),
             //Discount
             Row(
               children: <Widget>[
@@ -383,7 +384,7 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
                     builder: (context, linesProv, _) => TextFormField(
                       readOnly: _statusDisable,
                       keyboardType: TextInputType.text,
-                      initialValue: promosi.disc1.split(".").first,
+                      initialValue: promosi.disc1,
                       onFieldSubmitted: (value) {
                         setBundleLines(
                             promosi.id, double.parse(value), null, null);
@@ -547,9 +548,9 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
 
 
             TextResultCard(
-              context: context,
-              title: "Total",
-              value: "Rp${MoneyFormatter(amount: totalPrice).output.withoutFractionDigits.replaceAll(",", ".")}"//promosi.totalAmount,
+                context: context,
+                title: "Total",
+                value: "Rp${MoneyFormatter(amount: totalPrice).output.withoutFractionDigits.replaceAll(",", ".")}"//promosi.totalAmount,
             ),
             // TextButton(
             //   child: Container(
@@ -647,25 +648,25 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
     }
     else{
       Get.dialog(
-        Center(
-          child: Text("${response.statusCode}"),
-        )
+          Center(
+            child: Text("${response.statusCode}"),
+          )
       );
     }
   }
 
   void getUpdateData(
       BuildContext context, List<Lines> listDisc, int idEmp, int code) async {List<Lines> listDisc = new List<Lines>();
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    Future.delayed(Duration(milliseconds: 10));
-    String result = preferences.getString("result");
-    var listStringResult = json.decode(result);
-    for (var objectResult in listStringResult) {
-      var objects = Lines.fromJson(objectResult as Map<String, dynamic>);
-      listDisc.add(objects);
-    }
-    preferences.setString("result", "");
-    _approvePP(context, listDisc, widget.idEmp, code);
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  Future.delayed(Duration(milliseconds: 10));
+  String result = preferences.getString("result");
+  var listStringResult = json.decode(result);
+  for (var objectResult in listStringResult) {
+    var objects = Lines.fromJson(objectResult as Map<String, dynamic>);
+    listDisc.add(objects);
+  }
+  preferences.setString("result", "");
+  _approvePP(context, listDisc, widget.idEmp, code);
   }
 
   DateTime convertDate(String date) {
@@ -709,10 +710,6 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
 
   Future<bool> onBackPressLines() {
 
-    Get.off(DashboardPP(initialIndexs: 1,));
-    // return Navigator.pushReplacement(context,
-    //     MaterialPageRoute(builder: (context) {
-    //   return HistoryNomorPP();
-    // }));
+    Get.off(DashboardApprovalPP(initialIndexs: 1,));
   }
 }

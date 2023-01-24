@@ -170,6 +170,27 @@ class Promosi {
     return models;
   }
 
+  static Future<List<Promosi>> getListPromosiApproved(
+      int id, int code, String token, String username) async {
+    print(token);
+    dynamic userId;
+    // String url = ApiConstant(code).urlApi + "api/PromosiHeader/" + id.toString() + "?username=" + username;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String url = ApiConstant(code).urlApi + "api/PromosiHeader?usernames=${prefs.getString("username")}&userIds=${prefs.getInt('userid')}";
+    print("ini url getListPromosi: $url");
+
+    var dio = Dio();
+    dio.options.headers['Authorization'] = token;
+    Response response = await dio.get(url);
+    var jsonObject = response.data;
+    List<Promosi> models = [];
+    for (var promosi in jsonObject) {
+      var objects = Promosi.fromJson(promosi as Map<String, dynamic>);
+      models.add(objects);
+    }
+    return models;
+  }
+
   static Future<List<Promosi>> getAllListPromosi(
       int id, int code, String token, String username) async {
     print(token);

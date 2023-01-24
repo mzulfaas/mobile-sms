@@ -8,13 +8,23 @@ import 'package:signature/signature.dart';
 
 import '../../models/input-page-wrapper.dart';
 import '../../models/promotion-program-input-state.dart';
+import '../dashboard/dashboard_pp.dart';
 import 'input-page-presenter-new.dart';
 
-class InputPageNew extends StatelessWidget {
+class InputPageNew extends StatefulWidget {
   InputPageNew({Key key}) : super(key: key);
 
+  @override
+  State<InputPageNew> createState() => _InputPageNewState();
+}
+
+class _InputPageNewState extends State<InputPageNew> {
   Widget customCard(int index, InputPagePresenterNew inputPagePresenter){
     PromotionProgramInputState promotionProgramInputState = inputPagePresenter.promotionProgramInputStateRx.value.promotionProgramInputState[index];
+    // promotionProgramInputState.qtyFrom.text = 1.toString();
+    // promotionProgramInputState.qtyTo.text = 1.toString();
+    promotionProgramInputState.fromDate.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    promotionProgramInputState.toDate.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
     return Container(
       margin: EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 0),
       child: Card(
@@ -48,96 +58,120 @@ class InputPageNew extends StatelessWidget {
               SizedBox(
                 height: 20,
               ),
-              DropdownButtonFormField<String>(
-                isExpanded: true,
-                isDense: true,
-                value: promotionProgramInputState.customerGroupInputPageDropdownState.selectedChoice,
-                hint: Text(
-                  "Customer/Group",
-                  style: TextStyle(fontSize: 12),
-                ),
-                items: promotionProgramInputState.customerGroupInputPageDropdownState.choiceList.map((item) {
-                  return DropdownMenuItem(
-                    child: Text(
-                      item,
-                      style: TextStyle(fontSize: 12),
-                      overflow: TextOverflow.fade,
-                    ),
-                    value: item,
-                  );
-                }).toList(),
-                onChanged: (value) => inputPagePresenter.changeCustomerGroup(index, value)
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              SearchChoices.single(
-                items: promotionProgramInputState.customerNameOrDiscountGroupInputPageDropdownState.choiceList.map((item) {
-                  return DropdownMenuItem(
-                    child: Text(
-                      item.value,
-                      style: TextStyle(fontSize: 12),
-                      overflow: TextOverflow.fade,
-                    ),
-                    value: item,
-                  );
-                }).toList(),
-                value: promotionProgramInputState.customerNameOrDiscountGroupInputPageDropdownState.selectedChoice,
-                hint: Builder(
-                  builder: (context) {
-                    String text = (promotionProgramInputState.customerGroupInputPageDropdownState.selectedChoice ?? "").toLowerCase() == "Customer"
-                        ? "Customer Name" : "Discount Group Name";
-                    return Text(
-                      promotionProgramInputState.customerGroupInputPageDropdownState.selectedChoice=="Customer"?"Select Customer": "Select Discount Group",
-                      style: TextStyle(fontSize: 12),
-                    );
-                  }
-                ),
-                onChanged: (value) => inputPagePresenter.changeCustomerNameOrDiscountGroup(index, value),
-                isExpanded: true,
-              ),
-              SizedBox(height: 10,),
+              // DropdownButtonFormField<String>(
+              //   isExpanded: true,
+              //   isDense: true,
+              //   value: promotionProgramInputState.customerGroupInputPageDropdownState.selectedChoice,
+              //   hint: Text(
+              //     "Customer/Cust Group",
+              //     style: TextStyle(fontSize: 12),
+              //   ),
+              //   items: promotionProgramInputState.customerGroupInputPageDropdownState.choiceList.map((item) {
+              //     return DropdownMenuItem(
+              //       child: Text(
+              //         item,
+              //         style: TextStyle(fontSize: 12),
+              //         overflow: TextOverflow.fade,
+              //       ),
+              //       value: item,
+              //     );
+              //   }).toList(),
+              //   onChanged: (value) => inputPagePresenter.changeCustomerGroup(index, value)
+              // ),
+              // SizedBox(
+              //   height: 20,
+              // ),
+              // SearchChoices.single(
+              //   items: promotionProgramInputState.customerNameOrDiscountGroupInputPageDropdownState.choiceList.map((item) {
+              //     return DropdownMenuItem(
+              //       child: Text(
+              //         item.value,
+              //         style: TextStyle(fontSize: 12),
+              //         overflow: TextOverflow.fade,
+              //       ),
+              //       value: item,
+              //     );
+              //   }).toList(),
+              //   value: promotionProgramInputState.customerNameOrDiscountGroupInputPageDropdownState.selectedChoice,
+              //   hint: Builder(
+              //     builder: (context) {
+              //       String text = (promotionProgramInputState.customerGroupInputPageDropdownState.selectedChoice ?? "").toLowerCase() == "Customer"
+              //           ? "Customer Name" : "Discount Group Name";
+              //       return Text(
+              //         promotionProgramInputState.customerGroupInputPageDropdownState.selectedChoice=="Customer"?"Select Customer": "Select Discount Group",
+              //         style: TextStyle(fontSize: 12),
+              //       );
+              //     }
+              //   ),
+              //   onChanged: (value) => inputPagePresenter.changeCustomerNameOrDiscountGroup(index, value),
+              //   isExpanded: true,
+              // ),
+              // SizedBox(height: 10,),
               //ite, group
-              DropdownButtonFormField(
-                value: promotionProgramInputState.itemGroupInputPageDropdownState.selectedChoice,
-                hint: Text(
-                  "Item/Group",
-                  style: TextStyle(fontSize: 12),
-                ),
-                items: promotionProgramInputState.itemGroupInputPageDropdownState.choiceList.map((item) {
-                  return DropdownMenuItem<String>(
-                    value: item,
-                    child: Text(
-                      item,
-                      style: TextStyle(fontSize: 12),
-                      overflow: TextOverflow.fade,
-                    ),
-                  );
-                }).toList(),
-                onChanged: (value) => inputPagePresenter.changeItemGroup(index, value),
-              ),
-              SearchChoices.single(
-                isExpanded: true,
-                value: promotionProgramInputState.selectProductPageDropdownState.selectedChoice,
-                items: promotionProgramInputState.selectProductPageDropdownState.choiceList.map((item) {
-                  return DropdownMenuItem(
-                    child: Text(item.value),
-                    value: item
-                  );
-                }).toList(),
-                hint: Text(
-                  promotionProgramInputState.itemGroupInputPageDropdownState.selectedChoice=="Item"?"Select Product": "Select Discount Group",
-                  style: TextStyle(fontSize: 12),
-                ),
-                onChanged: (value) => inputPagePresenter.changeProduct(index, value)
-                // isExpanded: true,
-              ),
-
-              //warehouse qyt
-              Row(
+              Stack(
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Text("Item/Item Group",style: TextStyle(fontSize: 10,color: Colors.black54)),
+                  ),
+                  SearchChoices.single(
+                    isExpanded: true,
+                    value: promotionProgramInputState.itemGroupInputPageDropdownState.selectedChoice,
+                    hint: Text(
+                      "Item/Item Group",
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    items: promotionProgramInputState.itemGroupInputPageDropdownState.choiceList.map((item) {
+                      return DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(
+                          item,
+                          style: TextStyle(fontSize: 12),
+                          overflow: TextOverflow.fade,
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (value) => inputPagePresenter.changeItemGroup(index, value),
+                  ),
+                ],
+              ),
+              SizedBox(height: 8,),
+              Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Text("Item Product",style: TextStyle(fontSize: 10,color: Colors.black54)),
+                  ),
                   Container(
-                    width: 150,
+                    margin: EdgeInsets.only(top: promotionProgramInputState.selectProductPageDropdownState.selectedChoice!=null?10:0,),
+                    child: SearchChoices.single(
+                      isExpanded: true,
+                      value: promotionProgramInputState.selectProductPageDropdownState.selectedChoice,
+                      items: promotionProgramInputState.selectProductPageDropdownState.choiceList.map((item) {
+                        return DropdownMenuItem(
+                          child: Text(item.value),
+                          value: item
+                        );
+                      }).toList(),
+                      hint: Text(
+                        promotionProgramInputState.itemGroupInputPageDropdownState.selectedChoice=="Item"?"Select Product": "Select Product",
+                        style: TextStyle(fontSize: 12),
+                      ),
+                      onChanged: (value) => inputPagePresenter.changeProduct(index, value)
+                      // isExpanded: true,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 8,),
+              //warehouse qyt
+              Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Text("Warehouse",style: TextStyle(fontSize: 10,color: Colors.black54)),
+                  ),
+                  Container(
                     child: SearchChoices.single(
                       isExpanded: true,
                       value: promotionProgramInputState.wareHousePageDropdownState.selectedChoiceWrapper.value,
@@ -158,19 +192,75 @@ class InputPageNew extends StatelessWidget {
                       onChanged: (value) => inputPagePresenter.changeWarehouse(index, value),
                     ),
                   ),
-                  Spacer(),
+                ],
+              ),
+
+              //unit multiply
+              Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Text("Unit",style: TextStyle(fontSize: 10,color: Colors.black54)),
+                  ),
+                  Row(
+                    children: [
+                      //unit
+                      Expanded(
+                        child: SearchChoices.single(
+                          isExpanded: true,
+                          value: promotionProgramInputState.unitPageDropdownState.selectedChoice,
+                          hint: Text(
+                            "Unit",
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          items: promotionProgramInputState.unitPageDropdownState.choiceList.map((item) {
+                            return DropdownMenuItem(
+                              child: Text(item),
+                              value: item,
+                            );
+                          }).toList(),
+                          onChanged: (value) => inputPagePresenter.changeUnit(index, value),
+                        ),
+                      ),
+                      // Spacer(),
+                      // //multiply
+                      // Container(
+                      //   width: 150,
+                      //   child: DropdownButtonFormField(
+                      //     value: promotionProgramInputState.multiplyInputPageDropdownState.selectedChoice,
+                      //     hint: Text(
+                      //       "Multiply",
+                      //       style: TextStyle(fontSize: 12),
+                      //     ),
+                      //     items: promotionProgramInputState.multiplyInputPageDropdownState.choiceList.map((item) {
+                      //       return DropdownMenuItem(
+                      //         child: Text(item.value),
+                      //         value: item,
+                      //       );
+                      //     }).toList(),
+                      //     onChanged: (value) => inputPagePresenter.changeMultiply(index, value),
+                      //   ),
+                      // ),
+                    ],
+                  ),
+                ],
+              ),
+              // SizedBox(height: 8,),
+              Row(
+                children: [
                   Container(
-                    width: 60,
+                    width: 140,
                     child: TextFormField(
                       keyboardType: TextInputType.number,
                       controller: promotionProgramInputState.qtyFrom,
                       decoration: InputDecoration(
                         labelText: 'Qty From',
                         labelStyle: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 12,
-                          fontFamily: 'AvenirLight'
+                            color: Colors.black87,
+                            fontSize: 12,
+                            fontFamily: 'AvenirLight',
                         ),
+
                         focusedBorder: UnderlineInputBorder(
                           borderSide:
                           BorderSide(color: Colors.purple),
@@ -188,7 +278,7 @@ class InputPageNew extends StatelessWidget {
                   ),
                   Spacer(),
                   Container(
-                    width: 60,
+                    width: 140,
                     child: TextFormField(
                       keyboardType: TextInputType.number,
                       controller: promotionProgramInputState.qtyTo,
@@ -215,51 +305,6 @@ class InputPageNew extends StatelessWidget {
                   ),
                 ],
               ),
-
-              //unit multiply
-              Row(
-                children: [
-                  //unit
-                  Container(
-                    width: 150,
-                    child: SearchChoices.single(
-                      isExpanded: true,
-                      value: promotionProgramInputState.unitPageDropdownState.selectedChoice,
-                      hint: Text(
-                        "Unit",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      items: promotionProgramInputState.unitPageDropdownState.choiceList.map((item) {
-                        return DropdownMenuItem(
-                          child: Text(item),
-                          value: item,
-                        );
-                      }).toList(),
-                      onChanged: (value) => inputPagePresenter.changeUnit(index, value),
-                    ),
-                  ),
-                  Spacer(),
-                  //multiply
-                  Container(
-                    width: 150,
-                    child: DropdownButtonFormField(
-                      value: promotionProgramInputState.multiplyInputPageDropdownState.selectedChoice,
-                      hint: Text(
-                        "Multiply",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      items: promotionProgramInputState.multiplyInputPageDropdownState.choiceList.map((item) {
-                        return DropdownMenuItem(
-                          child: Text(item.value),
-                          value: item,
-                        );
-                      }).toList(),
-                      onChanged: (value) => inputPagePresenter.changeMultiply(index, value),
-                    ),
-                  ),
-                ],
-              ),
-
               //datetime
               Row(
                 children: [
@@ -359,27 +404,27 @@ class InputPageNew extends StatelessWidget {
               inputPagePresenter.promotionTypeInputPageDropdownStateRx.value.selectedChoice.value=="Bonus"?SizedBox():Row(
                 children: [
                   //unit
-                  Container(
-                    width: 150,
-                    child: DropdownButtonFormField(
-                      value: promotionProgramInputState.currencyInputPageDropdownState.selectedChoice,
-                      hint: Text(
-                        "Currency",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      items: promotionProgramInputState.currencyInputPageDropdownState.choiceList.map((item) {
-                        return DropdownMenuItem(
-                          child: Text(item),
-                          value: item,
-                        );
-                      }).toList(),
-                      onChanged: (value) => inputPagePresenter.changeCurrency(index, value),
-                    ),
-                  ),
-                  Spacer(),
+                  // Container(
+                  //   width: 150,
+                  //   child: DropdownButtonFormField(
+                  //     value: promotionProgramInputState.currencyInputPageDropdownState.selectedChoice,
+                  //     hint: Text(
+                  //       "Currency",
+                  //       style: TextStyle(fontSize: 12),
+                  //     ),
+                  //     items: promotionProgramInputState.currencyInputPageDropdownState.choiceList.map((item) {
+                  //       return DropdownMenuItem(
+                  //         child: Text(item),
+                  //         value: item,
+                  //       );
+                  //     }).toList(),
+                  //     onChanged: (value) => inputPagePresenter.changeCurrency(index, value),
+                  //   ),
+                  // ),
+                  // Spacer(),
                   //multiply
-                  Container(
-                    width: 150,
+                  Expanded(
+                    // width: 150,
                     child: DropdownButtonFormField(
                       value: promotionProgramInputState.percentValueInputPageDropdownState.selectedChoice,
                       hint: Text(
@@ -388,7 +433,7 @@ class InputPageNew extends StatelessWidget {
                       ),
                       items: promotionProgramInputState.percentValueInputPageDropdownState.choiceList.map((item) {
                         return DropdownMenuItem(
-                          child: Text(item.value),
+                          child: Text(item.value,style: TextStyle(fontSize: 12),),
                           value: item,
                         );
                       }).toList(),
@@ -710,7 +755,6 @@ class InputPageNew extends StatelessWidget {
                           fontSize: 17,
                           fontFamily: 'AvenirLight'),
                       //  controller: _passwordController,
-
                     ),
                   ),
                   Spacer(),
@@ -752,20 +796,20 @@ class InputPageNew extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("Build lahh");
     final inputPagePresenter = Get.put(InputPagePresenterNew());
+    final tabController = Get.put(DashboardPPTabController());
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColorDark,
-        title: Text("New Promotion Program"),
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: Theme.of(context).primaryColorDark,
+      //   title: Text("New Promotion Program"),
+      // ),
       body: SafeArea(
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Column(
             children: [
               Container(
-                margin: EdgeInsets.only(top: 30, left: 20, right: 20),
+                margin: EdgeInsets.only(top: 10, left: 10, right: 10),
                 child: Card(
                   elevation: 20,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -788,40 +832,40 @@ class InputPageNew extends StatelessWidget {
                         Row(
                           children: [
                             //Program number
-                            Container(
-                              width: 150,
-                              child: Obx(() => TextFormField(
-                                controller: inputPagePresenter.programNumberTextEditingControllerRx.value,
-                                keyboardType: TextInputType.text,
-                                onChanged: (value) => inputPagePresenter.checkAddItemStatus(),
-                                decoration: InputDecoration(
-                                  labelText: 'Program Number',
-                                  labelStyle: TextStyle(
-                                    color: Colors.black87,
-                                    fontSize: 12,
-                                    fontFamily: 'AvenirLight'
-                                  ),
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide:
-                                    BorderSide(color: Colors.purple),
-                                  ),
-                                  enabledBorder: new UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Colors.grey, width: 1.0
-                                    )
-                                  ),
-                                ),
-                                style: TextStyle(
-                                  color: Colors.black87,
-                                  fontSize: 17,
-                                  fontFamily: 'AvenirLight'
-                                ),
-                              )),
-                            ),
-                            Spacer(),
+                            // Container(
+                            //   width: 150,
+                            //   child: Obx(() => TextFormField(
+                            //     controller: inputPagePresenter.programNumberTextEditingControllerRx.value,
+                            //     keyboardType: TextInputType.text,
+                            //     onChanged: (value) => inputPagePresenter.checkAddItemStatus(),
+                            //     decoration: InputDecoration(
+                            //       labelText: 'Program Number',
+                            //       labelStyle: TextStyle(
+                            //         color: Colors.black87,
+                            //         fontSize: 12,
+                            //         fontFamily: 'AvenirLight'
+                            //       ),
+                            //       focusedBorder: UnderlineInputBorder(
+                            //         borderSide:
+                            //         BorderSide(color: Colors.purple),
+                            //       ),
+                            //       enabledBorder: new UnderlineInputBorder(
+                            //         borderSide: BorderSide(
+                            //           color: Colors.grey, width: 1.0
+                            //         )
+                            //       ),
+                            //     ),
+                            //     style: TextStyle(
+                            //       color: Colors.black87,
+                            //       fontSize: 17,
+                            //       fontFamily: 'AvenirLight'
+                            //     ),
+                            //   )),
+                            // ),
+                            // Spacer(),
                             //Program name
-                            Container(
-                              width: 150,
+                            Expanded(
+                              // width: 150,
                               child: Obx(() => TextFormField(
                                 controller: inputPagePresenter.programNameTextEditingControllerRx.value,
                                 onChanged: (value) => inputPagePresenter.checkAddItemStatus(),
@@ -850,11 +894,10 @@ class InputPageNew extends StatelessWidget {
                           ],
                         ),
 
-                        //dropdown
                         Row(
                           children: [
-                            Container(
-                              width: 150,
+                            Expanded(
+                              // width: 150,
                               child: Obx(() => DropdownButtonFormField(
                                 value: inputPagePresenter.promotionTypeInputPageDropdownStateRx.value.selectedChoice,
                                 hint: Text(
@@ -870,69 +913,136 @@ class InputPageNew extends StatelessWidget {
                                 onChanged: (value) => inputPagePresenter.changePromotionType(value),
                               )),
                             ),
-                            Spacer(),
-
-                            //xx
-                            Container(
-                              width: 150,
-                              child: Obx(() => SearchChoices.single(
-                                isExpanded: true,
-                                value: inputPagePresenter.vendorInputPageDropdownStateRx.value.selectedChoice,
-                                hint: Text(
-                                    "Vendor",
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                                items: inputPagePresenter.vendorInputPageDropdownStateRx.value.choiceList.map((item) {
-                                  return DropdownMenuItem(
-                                    child: Text(
-                                      item.value,
-                                      style: TextStyle(fontSize: 12)
-                                    ),
-                                    value: item,
-                                  );
-                                }).toList(),
-                                onChanged: (value) => inputPagePresenter.changeVendor(value),
-                              )),
-                            ),
+                            // Spacer(),
+                            // //xx
+                            // Container(
+                            //   width: 150,
+                            //   child: Obx(() => SearchChoices.single(
+                            //     isExpanded: true,
+                            //     value: inputPagePresenter.vendorInputPageDropdownStateRx.value.selectedChoice,
+                            //     hint: Text(
+                            //         "Principal",
+                            //       style: TextStyle(fontSize: 12),
+                            //     ),
+                            //     items: inputPagePresenter.vendorInputPageDropdownStateRx.value.choiceList.map((item) {
+                            //       return DropdownMenuItem(
+                            //         child: Text(
+                            //           item.value,
+                            //           style: TextStyle(fontSize: 12)
+                            //         ),
+                            //         value: item,
+                            //       );
+                            //     }).toList(),
+                            //     onChanged: (value) => inputPagePresenter.changeVendor(value),
+                            //   )),
+                            // ),
                           ],
                         ),
+
+                        // Row(
+                        //   children: [
+                        //     Container(
+                        //       width: 150,
+                        //       child: Obx(() => DropdownButtonFormField(
+                        //         isExpanded: true,
+                        //         value: inputPagePresenter.locationInputPageDropdownStateRx.value.selectedChoice,
+                        //         hint: Text(
+                        //           "Location",
+                        //           style: TextStyle(fontSize: 12),
+                        //         ),
+                        //         items: inputPagePresenter.locationInputPageDropdownStateRx.value.choiceList.map((item) {
+                        //           return DropdownMenuItem(
+                        //             child: Text(item.value),
+                        //             value: item,
+                        //           );
+                        //         }).toList(),
+                        //         onChanged: (value){
+                        //           setState(() {
+                        //             inputPagePresenter.changeLocation(value);
+                        //           });
+                        //         },
+                        //       )),
+                        //     ),
+                        //     Spacer(),
+                        //     Container(
+                        //       width: 150,
+                        //       child: Obx(() => DropdownButtonFormField(
+                        //         value: inputPagePresenter.statusTestingInputPageDropdownStateRx.value.selectedChoice,
+                        //         hint: Text(
+                        //           "Status Testing",
+                        //           style: TextStyle(fontSize: 12),
+                        //         ),
+                        //         items: inputPagePresenter.statusTestingInputPageDropdownStateRx.value.choiceList.map((item) {
+                        //           return DropdownMenuItem(
+                        //             child: Text(item),
+                        //             value: item,
+                        //           );
+                        //         }).toList(),
+                        //         onChanged: (value) => inputPagePresenter.changeStatusTesting(value),
+                        //       ))
+                        //     ),
+                        //   ],
+                        // ),
+
                         Row(
                           children: [
                             Container(
                               width: 150,
-                              child: Obx(() => DropdownButtonFormField(
-                                isExpanded: true,
-                                value: inputPagePresenter.locationInputPageDropdownStateRx.value.selectedChoice,
-                                hint: Text(
-                                  "Location",
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                                items: inputPagePresenter.locationInputPageDropdownStateRx.value.choiceList.map((item) {
-                                  return DropdownMenuItem(
-                                    child: Text(item.value),
-                                    value: item,
-                                  );
-                                }).toList(),
-                                onChanged: (value) => inputPagePresenter.changeLocation(value),
-                              )),
+                              child: Obx(() => DropdownButtonFormField<String>(
+                                  isExpanded: true,
+                                  isDense: true,
+                                  value: inputPagePresenter.customerGroupInputPageDropdownState.value.selectedChoice,
+                                  hint: Text(
+                                    "Customer/Cust Group",
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                  items: inputPagePresenter.customerGroupInputPageDropdownState.value.choiceList.map((item) {
+                                    return DropdownMenuItem(
+                                      child: Text(
+                                        item,
+                                        style: TextStyle(fontSize: 12),
+                                        overflow: TextOverflow.fade,
+                                      ),
+                                      value: item,
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      inputPagePresenter.changeCustomerGroupHeader(value);
+                                      Future.delayed(Duration(seconds: 1),(){
+                                        setState(() {
+                                        });
+                                      });
+                                    });
+                                  }
+                              ),)
                             ),
                             Spacer(),
+                            //xx
                             Container(
                               width: 150,
-                              child: Obx(() => DropdownButtonFormField(
-                                value: inputPagePresenter.statusTestingInputPageDropdownStateRx.value.selectedChoice,
-                                hint: Text(
-                                  "Status Testing",
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                                items: inputPagePresenter.statusTestingInputPageDropdownStateRx.value.choiceList.map((item) {
+                              child: Obx(() => SearchChoices.single(
+                                items: inputPagePresenter.custNameHeaderValueDropdownStateRx.value.choiceList.map((item){
                                   return DropdownMenuItem(
-                                    child: Text(item),
+                                    child: Text(
+                                        item.value,
+                                        style: TextStyle(fontSize: 12)
+                                    ),
                                     value: item,
                                   );
                                 }).toList(),
-                                onChanged: (value) => inputPagePresenter.changeStatusTesting(value),
-                              ))
+                                value: inputPagePresenter.custNameHeaderValueDropdownStateRx.value.selectedChoice,
+                                hint: Text(
+                                  inputPagePresenter.customerGroupInputPageDropdownState.value.selectedChoice=="Customer"?"Select Customer": "Select Discount Group",
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                                onChanged: (value) {
+                                  setState(() {
+                                    inputPagePresenter.changeCustomerNameOrDiscountGroupHeader(value);
+                                  });
+                                },
+                                isExpanded: true,
+                              ),),
                             ),
                           ],
                         ),
@@ -950,13 +1060,16 @@ class InputPageNew extends StatelessWidget {
                 InputPageWrapper inputPageWrapper = inputPagePresenter.promotionProgramInputStateRx.value;
                 List<PromotionProgramInputState> promotionProgramInputStateList = inputPageWrapper.promotionProgramInputState;
                 bool isAddItem = inputPageWrapper.isAddItem;
-                return promotionProgramInputStateList.length == 0 ? RaisedButton(
-                  color: Colors.green,
+                return promotionProgramInputStateList.length == 0 ? ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                  ),
                   child: Text("Add Lines"),
                   onPressed: isAddItem ? () => inputPagePresenter.addItem() : null
                 ) : ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
+                  reverse: true,
                   itemCount: promotionProgramInputStateList.length,
                   itemBuilder: (context, index) => Column(
                     children: [
@@ -964,51 +1077,10 @@ class InputPageNew extends StatelessWidget {
                       SizedBox(
                         height: 10,
                       ),
-
-                      index == promotionProgramInputStateList.length -1 ? Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                            child: Card(
-                              child: Signature(
-                                controller: _signaturecontrollersales,
-                                height: 200,
-                                backgroundColor: Colors.white,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            decoration: const BoxDecoration(
-                              color: Colors.black,
-                            ),
-                            child: Container(
-                              width: 355,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                mainAxisSize: MainAxisSize.max,
-                                children: <Widget>[
-                                  //Clear Canvass
-                                  // ignore: deprecated_member_use
-                                  RaisedButton(
-                                    color: Colors.blue,
-                                    child: Text(
-                                      "Clear",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                          _signaturecontrollersales.clear();
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ) : SizedBox(),
-                      index == promotionProgramInputStateList.length -1 ? RaisedButton(
-                        color: Colors.green,
+                      index == promotionProgramInputStateList.length - promotionProgramInputStateList.length ? ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                        ),
                         child: Text("Submit"),
                         onPressed: (){
                           inputPagePresenter.submitPromotionProgram();

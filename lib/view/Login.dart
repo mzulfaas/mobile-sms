@@ -293,8 +293,8 @@ class _LoginViewState extends State<LoginView> {
               alignment: Alignment.bottomCenter,
               child: Container(
                 child: Consumer<LoginProvider>(
-                  builder: (context, objectLogin, _) => RaisedButton(
-                    elevation: 6,
+                  builder: (context, objectLogin, _) => ElevatedButton(
+
                     onPressed: () {
                       if (_formKey.currentState.validate()) {
                         // _alertLoading(context);
@@ -316,9 +316,13 @@ class _LoginViewState extends State<LoginView> {
                         }
                       }
                     },
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            ScreenUtil().setWidth(40))),
+                    style: ElevatedButton.styleFrom(
+                      elevation: 6,
+                      backgroundColor: Theme.of(context).primaryColor,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              ScreenUtil().setWidth(40))),
+                    ),
                     child: Container(
                         width: ScreenUtil().setWidth(90),
                         height: ScreenUtil().setWidth(30),
@@ -333,7 +337,6 @@ class _LoginViewState extends State<LoginView> {
                                 fontWeight: FontWeight.bold),
                           ),
                         )),
-                    color: Theme.of(context).primaryColor,
                   ),
                 ),
               ),

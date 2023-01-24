@@ -40,6 +40,8 @@ class User {
   int code;
   @HiveField(13)
   User user;
+  @HiveField(14)
+  dynamic so;
 
   User(
       {this.id,
@@ -55,6 +57,7 @@ class User {
       this.token,
       this.message,
       this.code,
+      this.so,
       this.user});
 
   User.fromJson(Map<String, dynamic> json) {
@@ -72,6 +75,7 @@ class User {
     message = json['message'];
     code = json['code'];
     user = json['user'];
+    so = json['so'];
   }
 
   // User();
@@ -103,6 +107,7 @@ class User {
       prefs.setString("username", _user.username);
       prefs.setString("token", _user.token);
       prefs.setInt("userid", _user.id);
+      prefs.setString("so", _user.so);
       print("ini username login : ${_user.username}");
       print("ini userid : ${_user.id}");
       return _user;

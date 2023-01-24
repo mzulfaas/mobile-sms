@@ -595,7 +595,7 @@ class InputPagePresenter extends GetxController {
                       Container(
                         alignment: Alignment.bottomRight,
                         height: 30,
-                        child: RaisedButton(
+                        child: ElevatedButton(
                             child: const Text("Submit\nAbsent"),
                             onPressed: () {
                               Navigator.pop(context);

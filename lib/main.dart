@@ -3,7 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:mobile_sms/view/dashboard/DashboardPage.dart';
 import 'package:mobile_sms/view/Login.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'assets/global.dart';
@@ -24,11 +26,39 @@ class _MyAppState extends State<MyApp> {
   String value;
   int flag;
 
+  String onesignalUserID;
+
+  getOneSignal() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    OneSignal.shared.setAppId("1e72c3a5-63f4-447a-a56e-8aeda29e46d3");
+    OneSignal.shared.getDeviceState().then((deviceState) {
+      onesignalUserID = deviceState.userId;
+      setState(() {
+        prefs.setString("getPlayerID", onesignalUserID);
+      });
+      print("ini onesignaluserid: $onesignalUserID");
+      print("OneSignal: device state: ${deviceState.jsonRepresentation()}");
+    }
+    );
+    OneSignal.shared
+        .setSubscriptionObserver((OSSubscriptionStateChanges changes) {
+      print(
+          "OneSignal: subscription changed:: ${changes.jsonRepresentation()}");
+    });
+    OneSignal.shared.setNotificationWillShowInForegroundHandler(
+            (OSNotificationReceivedEvent event) {
+          event.complete(event.notification);
+        });
+    OneSignal.shared.setNotificationOpenedHandler((
+        OSNotificationOpenedResult result) {});
+  }
+
   void initState() {
     super.initState();
     WidgetsFlutterBinding.ensureInitialized();
     registeredAdapter();
     resetSharedPrefs();
+    getOneSignal();
   }
 
   resetSharedPrefs()async{
@@ -45,7 +75,7 @@ class _MyAppState extends State<MyApp> {
       builder:()=> GetMaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
-        home: flag == 0 ? LoginView() : HistoryNomorPP(),
+        home: flag == 0 ? LoginView() : DashboardPage()/*HistoryNomorPP()*/,
         // HistoryNomorPP(),
         theme: ThemeData(
           fontFamily: 'Poppins',

@@ -9,8 +9,13 @@ class PromotionProgramInputState {
   InputPageDropdownState<String> itemGroupInputPageDropdownState;
   InputPageDropdownState<IdAndValue<String>> selectProductPageDropdownState;
   WrappedInputPageDropdownState<IdAndValue<String>> wareHousePageDropdownState;
+  WrappedInputPageDropdownState<IdAndValue<String>> productTransactionPageDropdownState;
   TextEditingController qtyFrom;
   TextEditingController qtyTo;
+  TextEditingController qtyTransaction;
+  TextEditingController priceTransaction;
+  TextEditingController discTransaction;
+  TextEditingController totalTransaction;
   InputPageDropdownState<String> currencyInputPageDropdownState;
   InputPageDropdownState<IdAndValue<String>> percentValueInputPageDropdownState;
   InputPageDropdownState<String> unitPageDropdownState;
@@ -35,6 +40,7 @@ class PromotionProgramInputState {
     this.itemGroupInputPageDropdownState,
     this.selectProductPageDropdownState,
     this.wareHousePageDropdownState,
+    this.productTransactionPageDropdownState,
     this.qtyFrom,
     this.qtyTo,
     this.currencyInputPageDropdownState,
@@ -53,6 +59,10 @@ class PromotionProgramInputState {
     this.value2,
     this.supplyItem,
     this.qtyItem,
-    this.unitSupplyItem
+    this.unitSupplyItem,
+    this.qtyTransaction,
+    this.discTransaction,
+    this.priceTransaction,
+    this.totalTransaction,
   });
 }

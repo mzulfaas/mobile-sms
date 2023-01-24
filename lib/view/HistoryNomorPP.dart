@@ -11,6 +11,8 @@ import 'package:mobile_sms/view/HistoryNomorPP_All.dart';
 import 'package:mobile_sms/view/HistoryNomorPP_Pending.dart';
 import 'package:mobile_sms/view/input-page/input-page-new.dart';
 import 'package:mobile_sms/view/input-page/input-page-presenter-new.dart';
+import 'package:mobile_sms/view/transaction/transaction_history_page.dart';
+import 'package:mobile_sms/view/transaction/transaction_page.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -79,6 +81,15 @@ class _HistoryNomorPPState extends State<HistoryNomorPP> {
 
   final ScrollController listController  = ScrollController();
 
+  Future<bool> onBackPressLines() {
+
+    Get.back();
+    // return Navigator.pushReplacement(context,
+    //     MaterialPageRoute(builder: (context) {
+    //   return HistoryNomorPP();
+    // }));
+  }
+
   @override
   Widget build(BuildContext context) {
     // ScreenUtil.init(
@@ -88,21 +99,42 @@ class _HistoryNomorPPState extends State<HistoryNomorPP> {
     //   )
     // );
     return WillPopScope(
-      onWillPop: () async => false,
+      onWillPop: onBackPressLines,
       child: MaterialApp(
         theme: Theme.of(context),
         home: Scaffold(
-          floatingActionButton: FloatingActionButton.extended(
-              onPressed: (){
-                setState(() {
-                  listController.animateTo(
-                    listController.position.maxScrollExtent,
-                    duration: Duration(seconds: 2),
-                    curve: Curves.fastOutSlowIn,
-                  );
-                });
-              },
-              label: Text("All History")),
+          floatingActionButton: Column(
+            // crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              FloatingActionButton.extended(
+                  heroTag: "TransactionList",
+                  onPressed: (){
+                    Get.to(TransactionHistoryPage());
+                  },
+                  label: Text("Order Taking List")),
+              SizedBox(height: 10,),
+              FloatingActionButton.extended(
+                heroTag: "Transaction",
+                  onPressed: (){
+                    Get.to(TransactionPage());
+                  },
+                  label: Text("Order Taking")),
+              SizedBox(height: 10,),
+              FloatingActionButton.extended(
+                heroTag: "All PP",
+                  onPressed: (){
+                    setState(() {
+                      listController.animateTo(
+                        listController.position.maxScrollExtent,
+                        duration: Duration(seconds: 2),
+                        curve: Curves.fastOutSlowIn,
+                      );
+                    });
+                  },
+                  label: Text("All History")),
+            ],
+          ),
           appBar: AppBar(
             backgroundColor: Theme.of(context).primaryColorDark,
             leading: IconButton(
@@ -165,7 +197,7 @@ class _HistoryNomorPPState extends State<HistoryNomorPP> {
               title: "Customer",
               value: promosi.customer,
             ),
-            FlatButton(
+            TextButton(
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 margin: EdgeInsets.all(ScreenUtil().setWidth(7)),
@@ -189,15 +221,17 @@ class _HistoryNomorPPState extends State<HistoryNomorPP> {
                   );
                 }));
               },
-              color: Theme.of(context).accentColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-                side: BorderSide(
-                    color: Theme.of(context).primaryColor,
-                    style: BorderStyle.solid,
-                    width: 2),
+              style: TextButton.styleFrom(
+                backgroundColor: Theme.of(context).accentColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: BorderSide(
+                      color: Theme.of(context).primaryColor,
+                      style: BorderStyle.solid,
+                      width: 2),
+                ),
+                padding: EdgeInsets.all(ScreenUtil().setWidth(7)),
               ),
-              padding: EdgeInsets.all(ScreenUtil().setWidth(7)),
             )
           ],
         ));
@@ -244,10 +278,10 @@ class _HistoryNomorPPState extends State<HistoryNomorPP> {
               title: Text('Log Out'),
               content: Text('Are you sure log out ?'),
               actions: <Widget>[
-                FlatButton(
+                TextButton(
                     onPressed: () => Navigator.pop(context, 'Cancel'),
                     child: Text('Cancel')),
-                FlatButton(onPressed: onBackPress, child: Text('Ok')),
+                TextButton(onPressed: onBackPress, child: Text('Ok')),
               ],
             ));
   }

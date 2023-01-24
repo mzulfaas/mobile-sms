@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_sms/ext/rx_ext.dart';
+import 'package:mobile_sms/view/dashboard/DashboardPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/IdAndValue.dart';
@@ -13,6 +14,7 @@ import '../../models/Wrapper.dart';
 import '../../models/input-page-wrapper.dart';
 import '../../models/promotion-program-input-state.dart';
 import '../HistoryNomorPP.dart';
+import '../dashboard/dashboard_pp.dart';
 import 'input-page-dropdown-state.dart';
 
 class InputPagePresenterNew extends GetxController {
@@ -27,13 +29,14 @@ class InputPagePresenterNew extends GetxController {
   Rx<InputPageDropdownState<IdAndValue<String>>> locationInputPageDropdownStateRx = InputPageDropdownState<IdAndValue<String>>().obs;
   Rx<InputPageDropdownState<IdAndValue<String>>> vendorInputPageDropdownStateRx = InputPageDropdownState<IdAndValue<String>>().obs;
   Rx<InputPageDropdownState<String>> statusTestingInputPageDropdownStateRx = InputPageDropdownState<String>().obs;
-  InputPageDropdownState<String> _customerGroupInputPageDropdownState = InputPageDropdownState<String>(
+  Rx<InputPageDropdownState<String>> customerGroupInputPageDropdownState = InputPageDropdownState<String>(
     choiceList: <String>[
       "Customer",
-      "Disc Group"
+      /*"Disc Group"*/
     ],
     loadingState: 2
-  );
+  ).obs;
+  Rx<InputPageDropdownState<IdAndValue<String>>> custNameHeaderValueDropdownStateRx = InputPageDropdownState<IdAndValue<String>>().obs;
   InputPageDropdownState<String> _itemGroupInputPageDropdownState = InputPageDropdownState<String>(
     choiceList: <String>[
       "Item",
@@ -41,6 +44,7 @@ class InputPagePresenterNew extends GetxController {
     ],
     loadingState: 0
   );
+
   WrappedInputPageDropdownState<IdAndValue<String>> _warehouseInputPageDropdownState = WrappedInputPageDropdownState<IdAndValue<String>>(
     choiceListWrapper: Wrapper(value: <IdAndValue<String>>[]),
     loadingStateWrapper: Wrapper(value: 0),
@@ -53,9 +57,9 @@ class InputPagePresenterNew extends GetxController {
   InputPageDropdownState<IdAndValue<String>> _multiplyInputPageDropdownState = InputPageDropdownState<IdAndValue<String>>(
     choiceList: <IdAndValue<String>>[
       IdAndValue<String>(id: "0", value: "No"),
-      IdAndValue<String>(id: "1", value: "Yes")
+      IdAndValue<String>(id: "1", value: "Yes"),
     ],
-    loadingState: 0
+    loadingState: 0,
   );
   InputPageDropdownState<String> _currencyInputPageDropdownState = InputPageDropdownState<String>(
     choiceList: <String>[
@@ -68,6 +72,7 @@ class InputPagePresenterNew extends GetxController {
     choiceList: <IdAndValue<String>>[
       IdAndValue<String>(id: "1", value: "Percent"),
       IdAndValue<String>(id: "2", value: "Value"),
+
       // "Percent",
       // "Value"
     ],
@@ -81,13 +86,13 @@ class InputPagePresenterNew extends GetxController {
       choiceList: <IdAndValue<String>>[
         IdAndValue<String>(id: "1", value: "Diskon"),
         IdAndValue<String>(id: "2", value: "Bonus"),
-        IdAndValue<String>(id: "3", value: "Diskon & Bonus"),
-        IdAndValue<String>(id: "4", value: "Sample"),
-        IdAndValue<String>(id: "5", value: "Listing"),
-        IdAndValue<String>(id: "6", value: "Rebate"),
-        IdAndValue<String>(id: "7", value: "Rafraksi"),
-        IdAndValue<String>(id: "8", value: "Gimmick"),
-        IdAndValue<String>(id: "9", value: "Trading Term"),
+        IdAndValue<String>(id: "3", value: "Sample"),
+        IdAndValue<String>(id: "4", value: "Listing"),
+        IdAndValue<String>(id: "5", value: "Rebate"),
+        IdAndValue<String>(id: "6", value: "Rafraksi"),
+        IdAndValue<String>(id: "7", value: "Gimmick"),
+        IdAndValue<String>(id: "8", value: "Trading Term"),
+        IdAndValue<String>(id: "9", value: "Diskon & Bonus"),
       ],
       loadingState: 2
     ));
@@ -98,6 +103,8 @@ class InputPagePresenterNew extends GetxController {
       ],
       loadingState: 2
     ));
+    _multiplyInputPageDropdownState.selectedChoice = _multiplyInputPageDropdownState.choiceList[1];
+    _currencyInputPageDropdownState.selectedChoice = _currencyInputPageDropdownState.choiceList[0];
     _loadLocation();
     _loadVendor();
     _loadWarehouse();
@@ -138,28 +145,32 @@ class InputPagePresenterNew extends GetxController {
   }
 
   void checkAddItemStatus() {
-    promotionProgramInputStateRx.value.isAddItem = programNumberTextEditingControllerRx.value.text.isBlank == false
-      && programNameTextEditingControllerRx.value.text.isBlank == false
-      && promotionTypeInputPageDropdownStateRx.value.selectedChoice != null
-      && vendorInputPageDropdownStateRx.value.selectedChoice != null
-      && locationInputPageDropdownStateRx.value.selectedChoice != null
-      && statusTestingInputPageDropdownStateRx.value.selectedChoice != null;
+    promotionProgramInputStateRx.value.isAddItem =
+        // programNumberTextEditingControllerRx.value.text.isBlank == false
+      /*&&*/ programNameTextEditingControllerRx.value.text.isBlank == false
+      && promotionTypeInputPageDropdownStateRx.value.selectedChoice != null;
+      // && vendorInputPageDropdownStateRx.value.selectedChoice != null;
+      // && locationInputPageDropdownStateRx.value.selectedChoice != null
+      // && statusTestingInputPageDropdownStateRx.value.selectedChoice != null;
     _updateState();
   }
 
   void _loadCustomerOrGroup(int index) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     PromotionProgramInputState promotionProgramInputState = promotionProgramInputStateRx.value.promotionProgramInputState[index];
     InputPageDropdownState<IdAndValue<String>> locationGroupInputPageDropdownState = locationInputPageDropdownStateRx.value;
     InputPageDropdownState<String> customerGroupInputPageDropdownState = promotionProgramInputState.customerGroupInputPageDropdownState;
     InputPageDropdownState<IdAndValue<String>> customerNameOrDiscountGroupInputPageDropdownState = promotionProgramInputState.customerNameOrDiscountGroupInputPageDropdownState;
     String selectedChoice = customerGroupInputPageDropdownState.selectedChoice;
     if (selectedChoice == customerGroupInputPageDropdownState.choiceList[0]) {
-      var urlGetCustomerChoice = "http://119.18.157.236:8869/api/custtables?salesOffice=${locationGroupInputPageDropdownState.selectedChoice.id}";
+      var urlGetCustomerChoice = "http://119.18.157.236:8869/api/custtables?salesOffice=${prefs.getString("so")/*locationGroupInputPageDropdownState.selectedChoice.id*/}";
+      print("urlGetCustomerChoice :$urlGetCustomerChoice}");
       final response = await get(Uri.parse(urlGetCustomerChoice));
       var listData = jsonDecode(response.body);
+      print("value urlGetCustomerChoice : $listData");
       customerNameOrDiscountGroupInputPageDropdownState.loadingState = 2;
       customerNameOrDiscountGroupInputPageDropdownState.choiceList = listData.map<IdAndValue<String>>(
-        (element) => IdAndValue<String>(id: element["ACCOUNTNUM"], value: element["CUSTNAME"])
+        (element) => IdAndValue<String>(id: element["ACCOUNTNUM"], value: "${element["CUSTNAME"]}-${element["ACCOUNTNUM"]}-${element["CUSTNAME_ALIAS"]}")
       ).toList();
       _updateState();
     } else if (selectedChoice == customerGroupInputPageDropdownState.choiceList[1]) {
@@ -174,6 +185,34 @@ class InputPagePresenterNew extends GetxController {
     }
   }
 
+  void _loadCustomerOrGroupHeader() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    InputPageDropdownState<IdAndValue<String>> locationGroupInputPageDropdownState = locationInputPageDropdownStateRx.value;
+    print(customerGroupInputPageDropdownState.value.selectedChoice);
+    String selectedChoice = customerGroupInputPageDropdownState.value.selectedChoice;
+    if (selectedChoice == customerGroupInputPageDropdownState.value.choiceList[0]) {
+      var urlGetCustomerChoice = "http://119.18.157.236:8869/api/custtables?salesOffice=${prefs.getString("so")/*locationGroupInputPageDropdownState.selectedChoice.id*/}";
+      print("urlGetCustomerChoice :$urlGetCustomerChoice");
+      final response = await get(Uri.parse(urlGetCustomerChoice));
+      var listData = jsonDecode(response.body);
+      custNameHeaderValueDropdownStateRx.value.loadingState = 2;
+      custNameHeaderValueDropdownStateRx.value.choiceList = listData.map<IdAndValue<String>>(
+              (element) => IdAndValue<String>(id: element["ACCOUNTNUM"], value: "${element["CUSTNAME"]}-${element["ACCOUNTNUM"]}-${element["CUSTNAME_ALIAS"]}")
+      ).toList();
+      _updateState();
+    } else if (selectedChoice == customerGroupInputPageDropdownState.value.choiceList[1]) {
+      print("object");
+      var urlGetDiscGroup = "http://119.18.157.236:8869/api/CustPriceDiscGroup";
+      final response = await get(Uri.parse(urlGetDiscGroup));
+      var listData = jsonDecode(response.body);
+      custNameHeaderValueDropdownStateRx.value.loadingState = 2;
+      custNameHeaderValueDropdownStateRx.value.choiceList = listData.map<IdAndValue<String>>(
+              (element) => IdAndValue<String>(id: element["GROUPID"].toString(), value: element["NAME"])
+      ).toList();
+      _updateState();
+    }
+  }
+
   void _loadProduct(int index) async {
     PromotionProgramInputState promotionProgramInputState = promotionProgramInputStateRx.value.promotionProgramInputState[index];
     InputPageDropdownState<IdAndValue<String>> customerNameOrDiscountGroupInputPageDropdownState = promotionProgramInputState.customerNameOrDiscountGroupInputPageDropdownState;
@@ -181,12 +220,14 @@ class InputPagePresenterNew extends GetxController {
     InputPageDropdownState<IdAndValue<String>> selectProductPageDropdownState = promotionProgramInputState.selectProductPageDropdownState;
     String selectedChoice = itemGroupInputPageDropdownState.selectedChoice;
     if (selectedChoice == itemGroupInputPageDropdownState.choiceList[0]) {
-      var urlGetCustomerChoice = "http://119.18.157.236:8878/api/product?idSales=rp004&idCustomer=${customerNameOrDiscountGroupInputPageDropdownState.selectedChoice.id}&condition=1";
-      final response = await get(Uri.parse(urlGetCustomerChoice));
+      var urlGetProduct = "http://119.18.157.236:8869/api/PrbItemTables";
+      // var urlGetProduct = "http://119.18.157.236:8878/api/product?idSales=rp004&idCustomer=${customerNameOrDiscountGroupInputPageDropdownState.selectedChoice.id}&condition=1";
+      print("urlGetProduct : $urlGetProduct");
+      final response = await get(Uri.parse(urlGetProduct));
       var listData = jsonDecode(response.body);
       selectProductPageDropdownState.loadingState = 2;
       selectProductPageDropdownState.choiceList = listData.map<IdAndValue<String>>(
-        (element) => IdAndValue<String>(id: element["idProduct"], value: element["nameProduct"])
+        (element) => IdAndValue<String>(id: element["ITEMID"], value: "${element["ITEMID"]}-${element["ITEMNAME"]}-${element["PK_BRAND"]}-${element["PK_PACKING"]}")
       ).toList();
       _updateState();
     } else if (selectedChoice == itemGroupInputPageDropdownState.choiceList[1]) {
@@ -234,12 +275,14 @@ class InputPagePresenterNew extends GetxController {
     PromotionProgramInputState promotionProgramInputState = promotionProgramInputStateRx.value.promotionProgramInputState[index];
     InputPageDropdownState<IdAndValue<String>> customerNameOrDiscountGroupInputPageDropdownState = promotionProgramInputState.customerNameOrDiscountGroupInputPageDropdownState;
     InputPageDropdownState<IdAndValue<String>> supplyItemPageDropdownState = promotionProgramInputState.supplyItem;
-    var urlGetCustomerChoice = "http://119.18.157.236:8878/api/product?idSales=rp004&idCustomer=${customerNameOrDiscountGroupInputPageDropdownState.selectedChoice.id}&condition=1";
-    final response = await get(Uri.parse(urlGetCustomerChoice));
+    // var urlGetSupplyItem = "http://119.18.157.236:8878/api/product?idSales=rp004&idCustomer=${custNameHeaderValueDropdownStateRx.value.selectedChoice.id}&condition=1";
+    var urlGetSupplyItem = "http://119.18.157.236:8869/api/PrbItemTables";
+    print("url supply item : ${urlGetSupplyItem}");
+    final response = await get(Uri.parse(urlGetSupplyItem));
     var listData = jsonDecode(response.body);
     print(response.body);
     supplyItemPageDropdownState.loadingState = 2;
-    supplyItemPageDropdownState.choiceList = listData.map<IdAndValue<String>>((element) => IdAndValue<String>(id: element["idProduct"], value: element["nameProduct"])).toList();
+    supplyItemPageDropdownState.choiceList = listData.map<IdAndValue<String>>((element) => IdAndValue<String>(id: element["ITEMID"], value: element["ITEMNAME"])).toList();
     _updateState();
   }
 
@@ -261,6 +304,7 @@ class InputPagePresenterNew extends GetxController {
   }
 
   void changePromotionType(IdAndValue<String> selectedChoice) {
+    print("promotionType :${selectedChoice.id}");
     promotionTypeInputPageDropdownStateRx.value.selectedChoice = selectedChoice;
     checkAddItemStatus();
   }
@@ -268,10 +312,12 @@ class InputPagePresenterNew extends GetxController {
   void changeVendor(IdAndValue<String> selectedChoice) {
     vendorInputPageDropdownStateRx.value.selectedChoice = selectedChoice;
     checkAddItemStatus();
+
   }
 
   void changeLocation(IdAndValue<String> selectedChoice) {
     locationInputPageDropdownStateRx.value.selectedChoice = selectedChoice;
+    print(locationInputPageDropdownStateRx.value.selectedChoice.value);
     checkAddItemStatus();
   }
 
@@ -284,7 +330,7 @@ class InputPagePresenterNew extends GetxController {
     List<PromotionProgramInputState> promotionProgramInputState = promotionProgramInputStateRx.value.promotionProgramInputState;
     promotionProgramInputState.add(
       PromotionProgramInputState(
-        customerGroupInputPageDropdownState: _customerGroupInputPageDropdownState.copy(),
+        customerGroupInputPageDropdownState: customerGroupInputPageDropdownState.value.copy(),
         customerNameOrDiscountGroupInputPageDropdownState: InputPageDropdownState<IdAndValue<String>>(),
         itemGroupInputPageDropdownState: _itemGroupInputPageDropdownState.copy(),
         selectProductPageDropdownState: InputPageDropdownState<IdAndValue<String>>(
@@ -341,12 +387,26 @@ class InputPagePresenterNew extends GetxController {
     _loadCustomerOrGroup(index);
   }
 
+  void changeCustomerGroupHeader(String selectedChoice) {
+    print("selectedChoice : $selectedChoice");
+    customerGroupInputPageDropdownState.value.selectedChoice = selectedChoice;
+    _loadCustomerOrGroupHeader();
+    _updateState();
+  }
+
   void changeCustomerNameOrDiscountGroup(int index, IdAndValue<String> selectedChoice) {
     PromotionProgramInputState promotionProgramInputState = promotionProgramInputStateRx.value.promotionProgramInputState[index];
     InputPageDropdownState<IdAndValue<String>> customerNameOrDiscountGroupInputPageDropdownState = promotionProgramInputState.customerNameOrDiscountGroupInputPageDropdownState;
     customerNameOrDiscountGroupInputPageDropdownState.selectedChoice = selectedChoice;
     _updateState();
     _loadSupplyItem(index);
+  }
+
+  void changeCustomerNameOrDiscountGroupHeader(IdAndValue<String> selectedChoice) {
+    // PromotionProgramInputState promotionProgramInputState = promotionProgramInputStateRx.value.promotionProgramInputState[index];
+    // custNameHeaderValueDropdownStateRx.value.selectedChoice = selectedChoice;
+    custNameHeaderValueDropdownStateRx.value.selectedChoice = selectedChoice;
+    _updateState();
   }
 
   void changeItemGroup(int index, String selectedChoice) {
@@ -359,8 +419,9 @@ class InputPagePresenterNew extends GetxController {
   void changeProduct(int index, IdAndValue<String> selectedChoice) {
     promotionProgramInputStateRx.value.promotionProgramInputState[index]
       .selectProductPageDropdownState.selectedChoice = selectedChoice;
-    _updateState();
     _loadUnit(index);
+    _loadSupplyItem(index);
+    _updateState();
   }
 
   void changeWarehouse(int index, IdAndValue<String> selectedChoice) {
@@ -424,19 +485,20 @@ class InputPagePresenterNew extends GetxController {
     );
 
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    String token = preferences.getString("token");
     String username = preferences.getString("username");
+    String token = preferences.getString("token");
     int ppTypeConvert = int.parse(promotionTypeInputPageDropdownStateRx.value.selectedChoice.id);
     // int multiplyConvert = int.parse(element.multiplyInputPageDropdownState.selectedChoice.id);
     int typeConvert = int.parse(promotionTypeInputPageDropdownStateRx.value.selectedChoice.id);
     final isiBody = jsonEncode(<String, dynamic>{
       "PPtype": ppTypeConvert,
       "PPname": programNameTextEditingControllerRx.value.text,
-      "PPnum": programNumberTextEditingControllerRx.value.text,
-      "Location": locationInputPageDropdownStateRx.value.selectedChoice.value,
-      "Vendor": vendorInputPageDropdownStateRx.value.selectedChoice.id,
+      // "PPnum": programNumberTextEditingControllerRx.value.text,
+      "Location": preferences.getString("so"),
+      // "Vendor": vendorInputPageDropdownStateRx.value.selectedChoice.id,
+      "customerId": custNameHeaderValueDropdownStateRx.value.selectedChoice.id,
       "Lines": promotionProgramInputStateRx.value.promotionProgramInputState.map<Map<String, dynamic>>((element) => <String, dynamic>{
-        "Customer": element.customerNameOrDiscountGroupInputPageDropdownState.selectedChoice.id,
+        "Customer": custNameHeaderValueDropdownStateRx.value.selectedChoice.id,//element.customerNameOrDiscountGroupInputPageDropdownState.selectedChoice.id,
         "ItemId": element.selectProductPageDropdownState.selectedChoice.id,
         "QtyFrom": element.qtyFrom.text.isEmpty ? 0 : element.qtyFrom.text,
         "QtyTo": element.qtyTo.text.isEmpty ? 0 : element.qtyTo.text,
@@ -456,11 +518,13 @@ class InputPagePresenterNew extends GetxController {
         "SupplyItem": element.supplyItem.selectedChoice.isNull ? "" : element.supplyItem.selectedChoice.id,
         "QtySupply": element.qtyItem.text.isEmpty ? 0 : element.qtyItem.text,
         "UnitSupply": element.unitSupplyItem.selectedChoice,
-        "SalesPrice": element.salesPrice.text,
-        "PriceTo": element.priceToCustomer.text
+        "SalesPrice": element.salesPrice.text.replaceAll(RegExp(r"[.,]"), ""),
+        "PriceTo": element.priceToCustomer.text.replaceAll(RegExp(r"[.,]"), "")
       }).toList()
     });
     print(isiBody);
+    print("token :$token");
+    print("url :${'http://119.18.157.236:8869/api/activity?username=$username'}");
     final response = await post(
       Uri.parse('http://119.18.157.236:8869/api/activity?username=$username'),
       headers: {
@@ -470,12 +534,17 @@ class InputPagePresenterNew extends GetxController {
       body: isiBody
     );
     print("status submit : ${response.statusCode}");
+    final tabController = Get.put(DashboardPPTabController());
     Future.delayed(Duration(seconds: 2),(){
       if (response.statusCode == 201) {
-        // If the server did return a 201 CREATED response,
-        // then parse the JSON.
         Future.delayed(Duration(seconds: 2),(){
-          Get.offAll(HistoryNomorPP());
+          tabController.initialIndex = 1;
+          Get.offAll(
+              DashboardPage(),
+          );
+          Get.to(DashboardPP(initialIndexs: 1,));
+          update();
+          // Get.offAll(HistoryNomorPP());
         });
         Get.dialog(
             SimpleDialog(

@@ -2,6 +2,7 @@ import 'package:mobile_sms/models/promotion-program-input-state.dart';
 
 class InputPageWrapper {
   List<PromotionProgramInputState> promotionProgramInputState;
+  List<String> originalPrice = [];
   bool isAddItem;
 
   InputPageWrapper({

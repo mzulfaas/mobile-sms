@@ -7,6 +7,7 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_sms/assets/global.dart';
 import 'package:mobile_sms/models/User.dart';
+import 'package:mobile_sms/view/dashboard/DashboardPage.dart';
 import 'package:mobile_sms/view/HistoryNomorPP.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,7 +34,7 @@ class LoginProvider with ChangeNotifier {
         Navigator.pop(context);
       } else {
         setBoxLogin(value, code);
-        Get.offAll(HistoryNomorPP());
+        Get.offAll(DashboardPage());
         // Navigator.pushReplacement(context,
         //     MaterialPageRoute(
         //       maintainState: true,

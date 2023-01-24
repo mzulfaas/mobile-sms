@@ -23,12 +23,12 @@ class SalesOrderAdapter extends StatelessWidget {
           TextResultCard(
             context: context,
             title: 'No. Sales Order',
-            value: models.nomorPP,
+            value: models.nomorPP??"",
           ),
           TextResultCard(
             context: context,
             title: 'Product',
-            value: models.product,
+            value: models.product??"",
           ),
           TextResultCard(
             context: context,
@@ -38,17 +38,17 @@ class SalesOrderAdapter extends StatelessWidget {
           TextResultCard(
             context: context,
             title: 'Unit',
-            value: models.unitId,
+            value: models.unitId??"",
           ),
           TextResultCard(
             context: context,
             title: 'Price',
-            value: models.price,
+            value: models.price??"",
           ),
           TextResultCard(
             context: context,
             title: 'Disc(%)',
-            value: models.disc1,
+            value: models.disc1??"",
           ),
           TextResultCard(
             context: context,

@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:ffi';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +19,8 @@ import 'package:mobile_sms/models/Lines.dart';
 import 'package:mobile_sms/models/Promosi.dart';
 import 'package:mobile_sms/models/User.dart';
 import 'package:mobile_sms/providers/LinesProvider.dart';
+import 'package:mobile_sms/view/HistoryNomorPP_Pending.dart';
+import 'package:mobile_sms/view/dashboard/dashboard_approvalpp.dart';
 import 'package:money_input_formatter/money_input_formatter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +28,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/ApiConstant.dart';
 import 'HistoryNomorPP.dart';
 import 'HistorySO.dart';
+import 'dashboard/DashboardPage.dart';
 
 class HistoryLines extends StatefulWidget {
   @override
@@ -49,9 +54,10 @@ class _HistoryLinesState extends State<HistoryLines> {
   int code;
 
   bool valueSelectAll = false;
+  bool startApp = false;
 
   Future<Null> listHistorySO() async {
-    await Future.delayed(Duration(seconds: 5));
+    await Future.delayed(Duration(seconds: 1));
     Promosi.getListLines(widget.numberPP, code, _user.token, _user.username)
         .then((value) {
       setState(() {
@@ -67,68 +73,57 @@ class _HistoryLinesState extends State<HistoryLines> {
     super.initState();
     refreshKey = GlobalKey<RefreshIndicatorState>();
     getSharedPreference();
-    Future.delayed(const Duration(seconds: 1), () {
-      listHistorySO();
-      setState(() {
-        print("cek ini 1 :$_listHistorySO");
-        List<Promosi> data = _listHistorySO;
-        print(_listHistorySO);
-        List disc1 = data.map((element) => element.disc1).toList();
-        List disc2 = data.map((element) => element.disc2).toList();
-        List disc3 = data.map((element) => element.disc3).toList();
-        List disc4 = data.map((element) => element.disc4).toList();
-        List value1 = data.map((element) => element.value1).toList();
-        List value2 = data.map((element) => element.value2).toList();
-        List suppQty = data.map((element) => element.suppQty).toList();
-        print("cek ini 2 :${disc2}");
-        for (int i = 0; i < disc1.length ; i++){
-          disc1Controller.add(TextEditingController()..text = disc1[i]);
-          // disc1Controller[i]..text = disc1[i];
-        }
-        for (int i = 0; i < disc2.length ; i++){
-          disc2Controller.add(TextEditingController()..text = disc2[i]);
-          // disc2Controller[i]..text = disc2[i];
-        }
-        for (int i = 0; i < disc3.length ; i++){
-          disc3Controller.add(TextEditingController()..text = disc3[i]);
-          // disc3Controller[i]..text = disc3[i];
-        }
-        for (int i = 0; i < disc4.length ; i++){
-          disc4Controller.add(TextEditingController()..text = disc4[i]);
-          // disc4Controller[i]..text = disc4[i];
-        }
-        for (int i = 0; i < value1.length ; i++){
-          value1Controller.add(TextEditingController()..text = value1[i]);
-          // value1Controller[i]..text = value1[i];
-        }
-        for (int i = 0; i < value2.length ; i++){
-          value2Controller.add(TextEditingController()..text = value2[i]);
-          // value2Controller[i]..text = value2[i];
-        }
-        for (int i = 0; i < suppQty.length ; i++){
-          suppQtyController.add(TextEditingController()..text = suppQty[i]);
-          // suppQtyController[i]..text = suppQty[i];
-        }
-      });
-    });
+    Future.delayed(const Duration(seconds: 2), () {
+      startApp = true;
+        listHistorySO();
+        // setState(() {
+          print("cek ini 1 :$_listHistorySO");
+          List<Promosi> data = _listHistorySO;
+          print(_listHistorySO);
+          List disc1 = data.map((element) => element.disc1).toList();
+          List disc2 = data.map((element) => element.disc2).toList();
+          List disc3 = data.map((element) => element.disc3).toList();
+          List disc4 = data.map((element) => element.disc4).toList();
+          List value1 = data.map((element) => element.value1).toList();
+          List value2 = data.map((element) => element.value2).toList();
+          List suppQty = data.map((element) => element.suppQty).toList();
+          print("cek ini 2 :${disc2}");
+          for (int i = 0; i < disc1.length ; i++){
+            disc1Controller.add(TextEditingController()..text = disc1[i]);
+            // disc1Controller[i]..text = disc1[i];
+          }
+          for (int i = 0; i < disc2.length ; i++){
+            disc2Controller.add(TextEditingController()..text = disc2[i]);
+            // disc2Controller[i]..text = disc2[i];
+          }
+          for (int i = 0; i < disc3.length ; i++){
+            disc3Controller.add(TextEditingController()..text = disc3[i]);
+            // disc3Controller[i]..text = disc3[i];
+          }
+          for (int i = 0; i < disc4.length ; i++){
+            disc4Controller.add(TextEditingController()..text = disc4[i]);
+            // disc4Controller[i]..text = disc4[i];
+          }
+          for (int i = 0; i < value1.length ; i++){
+            value1Controller.add(TextEditingController()..text = value1[i]);
+            // value1Controller[i]..text = value1[i];
+          }
+          for (int i = 0; i < value2.length ; i++){
+            value2Controller.add(TextEditingController()..text = value2[i]);
+            // value2Controller[i]..text = value2[i];
+          }
+          for (int i = 0; i < suppQty.length ; i++){
+            suppQtyController.add(TextEditingController()..text = suppQty[i]);
+            // suppQtyController[i]..text = suppQty[i];
+          }
+        });
+    // });
   }
 
   Promosi promosi;
 
   @override
   Widget build(BuildContext context) {
-    // print("isi :${jsonEncode(_listHistorySO)}");
-    // print("isi2 :$_listHistorySOEncode");
-    // List response = jsonDecode(_listHistorySOEncode);
-    // print("isi3 :${response.where((element) => element['status'])}");
-    // ScreenUtil.init(
-    //   BoxConstraints(
-    //     maxWidth: MediaQuery.of(context).size.width,
-    //     maxHeight: MediaQuery.of(context).size.height,
-    //   )
-    // );
-
-    // print("value : ${value}");
     return WillPopScope(
       onWillPop: onBackPressLines,
       child: MaterialApp(
@@ -137,19 +132,107 @@ class _HistoryLinesState extends State<HistoryLines> {
           create: (ctx) => LinesProvider(),
           // builder: (context) => LinesProvider(),
           child: Scaffold(
-            floatingActionButton: FloatingActionButton.extended(
-              label: Text("Select All"),
-              onPressed: () {
-                setState(() {
-                  valueSelectAll = !valueSelectAll;
-                  List<Promosi> data = _listHistorySO;
-                  print(_listHistorySO);
-                  List<bool> status = data.map((element) => element.status).toList();
-                  print("status 1 : $status");
-                  print("status 2 : ${status.map<bool>((e) => true).toList()}");
-                });
-                //xx
-              },
+            floatingActionButton: startApp==false?null:Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                FloatingActionButton.extended(
+                  label: Text("Select All"),
+                  onPressed: () {
+                    setState(() {
+                      valueSelectAll = !valueSelectAll;
+                      List<Promosi> data = _listHistorySO;
+                      print(_listHistorySO);
+                      List<bool> status = data.map((element) => element.status).toList();
+                      if(valueSelectAll==true){
+                        _listHistorySO.map((e) => e.status=true).toList();
+                        // status = status.map<bool>((e) => true).toList();
+                      }else{
+                        _listHistorySO.map((e) => e.status=false).toList();
+                        // status = status.map<bool>((e) => false).toList();
+                      }
+                      print("status 1 : $status");
+                      print("status 2 : ${jsonEncode(_listHistorySO)}");
+
+                      // print("status 2 : ${status.map<bool>((e) => true).toList()}");
+                    });
+                    //xx
+                  },
+                ),
+                SizedBox(height: 30,),
+                startApp==false?null:Padding(
+                  padding: const EdgeInsets.only(left: 60, right: 20),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: Consumer<LinesProvider>(
+                      builder: (context, linesProv, _) => Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                padding: EdgeInsets.all(ScreenUtil().setWidth(13)),
+                                backgroundColor: Colors.red,
+                              ),
+                              child: Text(
+                                'Reject',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: ScreenUtil().setSp(25),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              onPressed: () {
+                                print("valueSelectAll :$valueSelectAll");
+                                // print("promosi.status :${promosi.status}");
+                                List checkBox = _listHistorySO.map((element) => element.status).toList();
+                                log("valcheck :${jsonEncode(_listHistorySO)}");
+                                log("check0 :${checkBox}");
+                                if(checkBox.contains(false)){
+                                  // GetSnackBar();
+                                  Get.snackbar("Error", "Checklist all for reject!!",backgroundColor: Colors.red,icon: Icon(Icons.error));
+                                }else{
+                                  approveNew("Reject");
+                                }
+                              },
+                            ),
+                          ),
+                          SizedBox(width: 20,),
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                padding: EdgeInsets.all(ScreenUtil().setWidth(13)),
+                                backgroundColor: Theme.of(context).primaryColorDark,
+                              ),
+                              child: Text(
+                                'Approve',
+                                style: TextStyle(
+                                  color: Theme.of(context).accentColor,
+                                  fontSize: ScreenUtil().setSp(25),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              onPressed: () {
+                                // valueSelectAll?valueSelectAll:promosi.status;
+                                print("valueSelectAll :$valueSelectAll");
+                                // print("promosi.status :${promosi.status}");
+                                List checkBox = _listHistorySO.map((element) => element.status).toList();
+                                log("valcheck :${jsonEncode(_listHistorySO)}");
+                                log("check0 :${checkBox}");
+                                if(checkBox.contains(false)){
+                                  // GetSnackBar();
+                                  Get.snackbar("Error", "Checklist all for approve!!",backgroundColor: Colors.red,icon: Icon(Icons.error));
+                                }else{
+                                  approveNew("Approve");
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
             appBar: AppBar(
               backgroundColor: Theme.of(context).primaryColorDark,
@@ -168,12 +251,11 @@ class _HistoryLinesState extends State<HistoryLines> {
                     color: Theme.of(context).accentColor),
               ),
             ),
-            body: Scaffold(
+            body: /*startApp==false?Center(child: CircularProgressIndicator()):*/Scaffold(
               body: RefreshIndicator(
                 onRefresh: listHistorySO,
                 child: FutureBuilder(
-                  future: Promosi.getListLines(
-                      widget.numberPP, code, _user?.token, _user?.username),
+                  future: Promosi.getListLines(widget.numberPP, code, _user?.token, _user?.username),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     _listHistorySO == null
                         ? _listHistorySO = snapshot.data
@@ -192,11 +274,10 @@ class _HistoryLinesState extends State<HistoryLines> {
                         return ConditionNull(
                             message: _listHistorySO[0].message);
                       } else {
-                        return ListView.builder(
+                        return startApp==false?Center(child: CircularProgressIndicator()):ListView.builder(
                           itemCount: _listHistorySO?.length,
+                          padding: EdgeInsets.only(bottom: Get.height - 655),
                           itemBuilder: (BuildContext context, int index) {
-                            // print("_listHistorySO?.length :${_listHistorySO?.length}");
-                            // print("_listHistorySO[0].message :${_listHistorySO[0].status}");
                             return CardLinesAdapter(
                                 widget.numberPP, _listHistorySO[index], index);
                           },
@@ -207,55 +288,74 @@ class _HistoryLinesState extends State<HistoryLines> {
                 ),
               ),
             ),
-            bottomNavigationBar: Container(
-              width: MediaQuery.of(context).size.width,
-              child: Consumer<LinesProvider>(
-                builder: (context, linesProv, _) => Row(
-                  children: [
-                    Expanded(
-                      child: RaisedButton(
-                        padding: EdgeInsets.all(ScreenUtil().setWidth(13)),
-                        color: Colors.red,
-                        child: Text(
-                          'Reject',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: ScreenUtil().setSp(25),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        onPressed: () {
-                          approveNew("Reject");
-//                    listDisc = getUpdateData() as List<Lines>;
-//                    String result = linesProv.getBundleLines;
-//                           getUpdateData(context, listDisc, widget.idEmp, code);
-                        },
-                      ),
-                    ),
-                    Expanded(
-                      child: RaisedButton(
-                        padding: EdgeInsets.all(ScreenUtil().setWidth(13)),
-                        color: Theme.of(context).primaryColorDark,
-                        child: Text(
-                          'Approve',
-                          style: TextStyle(
-                            color: Theme.of(context).accentColor,
-                            fontSize: ScreenUtil().setSp(25),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        onPressed: () {
-                          approveNew("Approve");
-//                    listDisc = getUpdateData() as List<Lines>;
-//                    String result = linesProv.getBundleLines;
-//                           getUpdateData(context, listDisc, widget.idEmp, code);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            // bottomNavigationBar: startApp==false?null:Container(
+            //   width: MediaQuery.of(context).size.width,
+            //   child: Consumer<LinesProvider>(
+            //     builder: (context, linesProv, _) => Row(
+            //       children: [
+            //         Expanded(
+            //           child: ElevatedButton(
+            //             style: ElevatedButton.styleFrom(
+            //               padding: EdgeInsets.all(ScreenUtil().setWidth(13)),
+            //               backgroundColor: Colors.red,
+            //             ),
+            //             child: Text(
+            //               'Reject',
+            //               style: TextStyle(
+            //                 color: Colors.white,
+            //                 fontSize: ScreenUtil().setSp(25),
+            //                 fontWeight: FontWeight.bold,
+            //               ),
+            //             ),
+            //             onPressed: () {
+            //               print("valueSelectAll :$valueSelectAll");
+            //               // print("promosi.status :${promosi.status}");
+            //               List checkBox = _listHistorySO.map((element) => element.status).toList();
+            //               log("valcheck :${jsonEncode(_listHistorySO)}");
+            //               log("check0 :${checkBox}");
+            //               if(checkBox.contains(false)){
+            //                 // GetSnackBar();
+            //                 Get.snackbar("Error", "Checklist all for reject!!",backgroundColor: Colors.red,icon: Icon(Icons.error));
+            //               }else{
+            //                 approveNew("Reject");
+            //               }
+            //             },
+            //           ),
+            //         ),
+            //         Expanded(
+            //           child: ElevatedButton(
+            //             style: ElevatedButton.styleFrom(
+            //               padding: EdgeInsets.all(ScreenUtil().setWidth(13)),
+            //               backgroundColor: Theme.of(context).primaryColorDark,
+            //             ),
+            //             child: Text(
+            //               'Approve',
+            //               style: TextStyle(
+            //                 color: Theme.of(context).accentColor,
+            //                 fontSize: ScreenUtil().setSp(25),
+            //                 fontWeight: FontWeight.bold,
+            //               ),
+            //             ),
+            //             onPressed: () {
+            //               // valueSelectAll?valueSelectAll:promosi.status;
+            //               print("valueSelectAll :$valueSelectAll");
+            //               // print("promosi.status :${promosi.status}");
+            //               List checkBox = _listHistorySO.map((element) => element.status).toList();
+            //               log("valcheck :${jsonEncode(_listHistorySO)}");
+            //               log("check0 :${checkBox}");
+            //               if(checkBox.contains(false)){
+            //                 // GetSnackBar();
+            //                 Get.snackbar("Error", "Checklist all for approve!!",backgroundColor: Colors.red,icon: Icon(Icons.error));
+            //               }else{
+            //                 approveNew("Approve");
+            //               }
+            //             },
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
           ),
         ),
       ),
@@ -277,10 +377,10 @@ class _HistoryLinesState extends State<HistoryLines> {
     print(_listHistorySO);
     List qtyFrom = data.map((element) => element.qty).toList();
     List fromDate = data.map((element) => element.toDate).toList();
-    print("fromDate :${fromDate}");
-    print("qty from :$qtyFrom");
+    print("fromDateCard :${fromDate}");
+    print("qty fromCard :$qtyFrom");
     List qtyTo = data.map((element) => element.qtyTo).toList();
-    print("qty to :$qtyTo");
+    print("qty toCard :$qtyTo");
     return Container(
         margin: EdgeInsets.all(ScreenUtil().setWidth(10)),
         padding: EdgeInsets.all(ScreenUtil().setWidth(5)),
@@ -292,7 +392,7 @@ class _HistoryLinesState extends State<HistoryLines> {
           children: <Widget>[
             Stack(
               children: [
-                Container(
+                startApp==false?SizedBox():Container(
                   alignment: Alignment.topLeft,
                   child: CheckboxListTile(
                     value: valueSelectAll?valueSelectAll:promosi.status,
@@ -310,27 +410,6 @@ class _HistoryLinesState extends State<HistoryLines> {
                     activeColor: Colors.red,
                   ),
                 ),
-                // Container(
-                //   // height: 10,
-                //   // width: 10,
-                //   alignment: Alignment.topRight,
-                //   margin: EdgeInsets.only(left: 100.w),
-                //   child: CheckboxListTile(
-                //     value: promosi.status,
-                //     onChanged: (bool value) {
-                //       setState(() {
-                //         promosi.status = value;
-                //         // _statusDisable = value;
-                //         value == true
-                //             ? _statusDisable = false //_listid.add(promosi.id)
-                //             : _statusDisable =
-                //                 true; //_listid.remove(promosi.id);
-                //       });
-                //     },
-                //     controlAffinity: ListTileControlAffinity.leading,
-                //     activeColor: Colors.red,
-                //   ),
-                // ),
               ],
             ),
             TextResultCard(
@@ -341,7 +420,7 @@ class _HistoryLinesState extends State<HistoryLines> {
             TextResultCard(
               context: context,
               title: "No. PP",
-              value: promosi.nomorPP,
+              value: RegExp(r"\d{2}-\d{2}-\d{4} \d{2}:\d{2}:\d{2}").hasMatch(promosi.nomorPP)==true?promosi.nomorPP.replaceRange(34, null, ""):promosi.nomorPP,
             ),
             TextResultCard(
               context: context,
@@ -724,7 +803,7 @@ class _HistoryLinesState extends State<HistoryLines> {
               title: "Total",
               value: promosi.totalAmount,
             ),
-            FlatButton(
+            TextButton(
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 margin: EdgeInsets.all(ScreenUtil().setWidth(7)),
@@ -749,15 +828,17 @@ class _HistoryLinesState extends State<HistoryLines> {
                       idEmp: widget.idEmp);
                 }));
               },
-              color: Theme.of(context).accentColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-                side: BorderSide(
-                    color: Theme.of(context).primaryColor,
-                    style: BorderStyle.solid,
-                    width: 2),
+              style: TextButton.styleFrom(
+                backgroundColor: Theme.of(context).accentColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: BorderSide(
+                      color: Theme.of(context).primaryColor,
+                      style: BorderStyle.solid,
+                      width: 2),
+                ),
+                padding: EdgeInsets.all(ScreenUtil().setWidth(7)),
               ),
-              padding: EdgeInsets.all(ScreenUtil().setWidth(7)),
             )
           ],
         ));
@@ -812,9 +893,9 @@ class _HistoryLinesState extends State<HistoryLines> {
         "disc2": disc2Controller[i].text==null?disc1lines[i]:double.parse(disc2Controller[i].text),
         "disc3": disc3Controller[i].text==null?disc1lines[i]:double.parse(disc3Controller[i].text),
         "disc4": disc4Controller[i].text==null?disc1lines[i]:double.parse(disc4Controller[i].text),
-        "value1": value1Controller[i].text==null?value1lines[i]:value1Controller[i].text.replaceAll('.', ''),
-        "value2": value2Controller[i].text==null?value2lines[i]:value2Controller[i].text.replaceAll('.', ''),
-        "suppQty": suppQtyController[i].text==null?suppQtylines[i]:suppQtyController[i].text,
+        "value1": value1Controller[i].text==null?value1lines[i]:double.parse(value1Controller[i].text.replaceAll('.', '')),
+        "value2": value2Controller[i].text==null?value2lines[i]:double.parse(value2Controller[i].text.replaceAll('.', '')),
+        "suppQty": suppQtyController[i].text==null?suppQtylines[i]:double.parse(suppQtyController[i].text),
       });
     }
     dynamic isiBody = jsonEncode(<String, dynamic>{
@@ -823,7 +904,8 @@ class _HistoryLinesState extends State<HistoryLines> {
         lines
     });
     print("isi BodyApprove: $isiBody");
-    print("wakwan: ${idLines}");
+    print("idLines: ${idLines}");
+    print("url: ${url}");
     final response = await put(Uri.parse(url),
       headers: <String, String>{
         // 'authorization': basicAuth,
@@ -837,7 +919,12 @@ class _HistoryLinesState extends State<HistoryLines> {
     print(response.statusCode);
     print(response.body);
     if(response.statusCode==200){
-      Get.offAll(HistoryNomorPP());
+      Get.offAll(
+        DashboardPage(),
+      );
+      // Get.to(DashboardOrderTaking(initialIndexs: 1,));
+      Get.off(DashboardApprovalPP(initialIndexs: 0,));
+      // Get.offAll(HistoryNomorPP());
     }
     else{
       Get.dialog(
@@ -851,7 +938,7 @@ class _HistoryLinesState extends State<HistoryLines> {
   void getUpdateData(
       BuildContext context, List<Lines> listDisc, int idEmp, int code) async {List<Lines> listDisc = new List<Lines>();
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    Future.delayed(Duration(milliseconds: 10));
+    Future.delayed(Duration(seconds: 1));
     String result = preferences.getString("result");
     var listStringResult = json.decode(result);
     for (var objectResult in listStringResult) {
@@ -894,7 +981,7 @@ class _HistoryLinesState extends State<HistoryLines> {
     Box _userBox = await Hive.openBox('users');
     List<User> listUser = _userBox.values.map((e) => e as User).toList();
     SharedPreferences pref = await SharedPreferences.getInstance();
-    Future.delayed(Duration(milliseconds: 10));
+    Future.delayed(Duration(seconds: 1));
     setState(() {
       _user = listUser[0];
       code = pref.getInt("code");
@@ -902,9 +989,10 @@ class _HistoryLinesState extends State<HistoryLines> {
   }
 
   Future<bool> onBackPressLines() {
-    return Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (context) {
-      return HistoryNomorPP();
-    }));
+    Get.off(DashboardApprovalPP(initialIndexs: 0,));
+    // return Navigator.pushReplacement(context,
+    //     MaterialPageRoute(builder: (context) {
+    //   return HistoryNomorPP();
+    // }));
   }
 }
