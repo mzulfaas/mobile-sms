@@ -33,10 +33,10 @@ class _MyAppState extends State<MyApp> {
     OneSignal.shared.setAppId("ffad8398-fdf5-4aef-a16b-a33696f48630");
     OneSignal.shared.getDeviceState().then((deviceState) {
       onesignalUserID = deviceState.userId;
+      print("playerID ${onesignalUserID}");
       setState(() {
         prefs.setString("getPlayerID", onesignalUserID);
       });
-      print("ini onesignaluserid: $onesignalUserID");
       print("OneSignal: device state: ${deviceState.jsonRepresentation()}");
     }
     );
@@ -58,7 +58,9 @@ class _MyAppState extends State<MyApp> {
     WidgetsFlutterBinding.ensureInitialized();
     registeredAdapter();
     resetSharedPrefs();
-    getOneSignal();
+    Future.delayed(Duration(seconds: 1),(){
+      getOneSignal();
+    });
   }
 
   resetSharedPrefs()async{

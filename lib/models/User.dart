@@ -82,7 +82,9 @@ class User {
 
   static Future<User> getUsers(
       String username, String password, int code) async {
-    String url = ApiConstant(code).urlApi + "api/LoginSMS";
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // http://localhost:65123/api/LoginSMS?playerId=d297d465-bba2-4dbb-9e16-8f9e72727f05
+    String url = ApiConstant(code).urlApi + "api/LoginSMS?playerId=${prefs.getString("getPlayerID")}";
     print("ini url login $url");
     dynamic dataLogin = {
       "username": username,
@@ -94,6 +96,7 @@ class User {
       'Content-Type': 'application/json; charset=UTF-8',},
       body: jsonEncode(dataLogin),
     );
+    print("apiResultLogin :${apiResult.statusCode}\n${apiResult.body}");
     if(apiResult.statusCode==200){
       print("ini api result login : ${apiResult.statusCode}");
       print("ini api result login : ${apiResult.body}");
