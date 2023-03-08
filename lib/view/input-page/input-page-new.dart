@@ -198,60 +198,41 @@ class _InputPageNewState extends State<InputPageNew> {
               ),
 
               //unit multiply
-              Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Text("Unit",style: TextStyle(fontSize: 10,color: Colors.black54)),
-                  ),
-                  Row(
-                    children: [
-                      //unit
-                      Expanded(
-                        child: SearchChoices.single(
-                          isExpanded: true,
-                          value: promotionProgramInputState.unitPageDropdownState.selectedChoice,
-                          hint: Text(
-                            "Unit",
-                            style: TextStyle(fontSize: 12),
-                          ),
-                          items: promotionProgramInputState.unitPageDropdownState.choiceList.map((item) {
-                            return DropdownMenuItem(
-                              child: Text(item),
-                              value: item,
-                            );
-                          }).toList(),
-                          onChanged: (value) => inputPagePresenter.changeUnit(index, value),
-                        ),
-                      ),
-                      // Spacer(),
-                      // //multiply
-                      // Container(
-                      //   width: 150,
-                      //   child: DropdownButtonFormField(
-                      //     value: promotionProgramInputState.multiplyInputPageDropdownState.selectedChoice,
-                      //     hint: Text(
-                      //       "Multiply",
-                      //       style: TextStyle(fontSize: 12),
-                      //     ),
-                      //     items: promotionProgramInputState.multiplyInputPageDropdownState.choiceList.map((item) {
-                      //       return DropdownMenuItem(
-                      //         child: Text(item.value),
-                      //         value: item,
-                      //       );
-                      //     }).toList(),
-                      //     onChanged: (value) => inputPagePresenter.changeMultiply(index, value),
-                      //   ),
-                      // ),
-                    ],
-                  ),
-                ],
-              ),
-              // SizedBox(height: 8,),
+              // Stack(
+              //   children: [
+              //     Padding(
+              //       padding: const EdgeInsets.only(left: 10),
+              //       child: Text("Unit",style: TextStyle(fontSize: 10,color: Colors.black54)),
+              //     ),
+              //     Row(
+              //       children: [
+              //         //unit
+              //         Expanded(
+              //           child: SearchChoices.single(
+              //             isExpanded: true,
+              //             value: promotionProgramInputState.unitPageDropdownState.selectedChoice,
+              //             hint: Text(
+              //               "Unit",
+              //               style: TextStyle(fontSize: 12),
+              //             ),
+              //             items: promotionProgramInputState.unitPageDropdownState.choiceList.map((item) {
+              //               return DropdownMenuItem(
+              //                 child: Text(item),
+              //                 value: item,
+              //               );
+              //             }).toList(),
+              //             onChanged: (value) => inputPagePresenter.changeUnit(index, value),
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ],
+              // ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width: 140,
+                    width: 50,
                     child: TextFormField(
                       keyboardType: TextInputType.number,
                       controller: promotionProgramInputState.qtyFrom,
@@ -262,7 +243,7 @@ class _InputPageNewState extends State<InputPageNew> {
                             fontSize: 12,
                             fontFamily: 'AvenirLight',
                         ),
-
+                        contentPadding: EdgeInsets.only(bottom: 20),
                         focusedBorder: UnderlineInputBorder(
                           borderSide:
                           BorderSide(color: Colors.purple),
@@ -278,9 +259,8 @@ class _InputPageNewState extends State<InputPageNew> {
                       //  controller: _passwordController,
                     ),
                   ),
-                  Spacer(),
                   Container(
-                    width: 140,
+                    width: 50,
                     child: TextFormField(
                       keyboardType: TextInputType.number,
                       controller: promotionProgramInputState.qtyTo,
@@ -297,12 +277,32 @@ class _InputPageNewState extends State<InputPageNew> {
                         enabledBorder: new UnderlineInputBorder(
                             borderSide: BorderSide(
                                 color: Colors.grey, width: 1.0)),
+                        contentPadding: EdgeInsets.only(bottom: 20)
                       ),
                       style: TextStyle(
                           color: Colors.black87,
                           fontSize: 17,
                           fontFamily: 'AvenirLight'),
                       //  controller: _passwordController,
+                    ),
+                  ),
+                  Container(
+                    width: 100,
+                    height: 68,
+                    child: SearchChoices.single(
+                      isExpanded: true,
+                      value: promotionProgramInputState.unitPageDropdownState.selectedChoice,
+                      hint: Text(
+                        "Unit",
+                        style: TextStyle(fontSize: 12),
+                      ),
+                      items: promotionProgramInputState.unitPageDropdownState.choiceList.map((item) {
+                        return DropdownMenuItem(
+                          child: Text(item),
+                          value: item,
+                        );
+                      }).toList(),
+                      onChanged: (value) => inputPagePresenter.changeUnit(index, value),
                     ),
                   ),
                 ],
@@ -774,67 +774,62 @@ class _InputPageNewState extends State<InputPageNew> {
                             ),
                           ],
                         ),
-                        Row(
-                          children: [
-                            Container(
-                              width: 150,
-                              child: Obx(() => DropdownButtonFormField<String>(
-                                  isExpanded: true,
-                                  isDense: true,
-                                  value: inputPagePresenter.customerGroupInputPageDropdownState.value.selectedChoice,
-                                  hint: Text(
-                                    "Customer/Cust Group",
-                                    style: TextStyle(fontSize: 12),
-                                  ),
-                                  items: inputPagePresenter.customerGroupInputPageDropdownState.value.choiceList.map((item) {
-                                    return DropdownMenuItem(
-                                      child: Text(
-                                        item,
-                                        style: TextStyle(fontSize: 12),
-                                        overflow: TextOverflow.fade,
-                                      ),
-                                      value: item,
-                                    );
-                                  }).toList(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      inputPagePresenter.changeCustomerGroupHeader(value);
-                                      Future.delayed(Duration(seconds: 1),(){
-                                        setState(() {
-                                        });
-                                      });
-                                    });
-                                  }
-                              ),)
-                            ),
-                            Spacer(),
-                            //xx
-                            Container(
-                              width: 150,
-                              child: Obx(() => SearchChoices.single(
-                                items: inputPagePresenter.custNameHeaderValueDropdownStateRx.value.choiceList.map((item){
+                        Container(
+                            width: Get.width,
+                            child: Obx(() => DropdownButtonFormField<String>(
+                                isExpanded: true,
+                                isDense: true,
+                                value: inputPagePresenter.customerGroupInputPageDropdownState.value.selectedChoice,
+                                hint: Text(
+                                  "Customer/Cust Group",
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                                items: inputPagePresenter.customerGroupInputPageDropdownState.value.choiceList.map((item) {
                                   return DropdownMenuItem(
                                     child: Text(
-                                        item.value,
-                                        style: TextStyle(fontSize: 12)
+                                      item,
+                                      style: TextStyle(fontSize: 12),
+                                      overflow: TextOverflow.fade,
                                     ),
                                     value: item,
                                   );
                                 }).toList(),
-                                value: inputPagePresenter.custNameHeaderValueDropdownStateRx.value.selectedChoice,
-                                hint: Text(
-                                  inputPagePresenter.customerGroupInputPageDropdownState.value.selectedChoice=="Customer"?"Select Customer": "Select Discount Group",
-                                  style: TextStyle(fontSize: 12),
-                                ),
                                 onChanged: (value) {
                                   setState(() {
-                                    inputPagePresenter.changeCustomerNameOrDiscountGroupHeader(value);
+                                    inputPagePresenter.changeCustomerGroupHeader(value);
+                                    Future.delayed(Duration(seconds: 1),(){
+                                      setState(() {
+                                      });
+                                    });
                                   });
-                                },
-                                isExpanded: true,
-                              ),),
+                                }
+                            ),)
+                        ),
+
+                        Container(
+                          width: Get.width,
+                          child: Obx(() => SearchChoices.single(
+                            items: inputPagePresenter.custNameHeaderValueDropdownStateRx.value.choiceList.map((item){
+                              return DropdownMenuItem(
+                                child: Text(
+                                    item.value,
+                                    style: TextStyle(fontSize: 12)
+                                ),
+                                value: item,
+                              );
+                            }).toList(),
+                            value: inputPagePresenter.custNameHeaderValueDropdownStateRx.value.selectedChoice,
+                            hint: Text(
+                              inputPagePresenter.customerGroupInputPageDropdownState.value.selectedChoice=="Customer"?"Select Customer": "Select Discount Group",
+                              style: TextStyle(fontSize: 12),
                             ),
-                          ],
+                            onChanged: (value) {
+                              setState(() {
+                                inputPagePresenter.changeCustomerNameOrDiscountGroupHeader(value);
+                              });
+                            },
+                            isExpanded: true,
+                          ),),
                         ),
 
                         Row(
