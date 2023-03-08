@@ -106,7 +106,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index){
                     return Container(
-                      width: 100,
+                      width: 110,
                       margin: EdgeInsets.only(right: 5,left: 5),
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
@@ -125,7 +125,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                     padding: const EdgeInsets.only(bottom: 3),
                                     child: Align(
                                         alignment: Alignment.bottomCenter,
-                                        child: Text(dataMenu[index]['title'],textAlign: TextAlign.center,)),
+                                        child: Text(dataMenu[index]['title'],style: TextStyle(fontSize: 16), textAlign: TextAlign.center,)),
                                   ),
                                 ],
                               ))),

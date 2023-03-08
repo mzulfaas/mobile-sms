@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:money_input_formatter/money_input_formatter.dart';
 import 'package:search_choices/search_choices.dart';
 import 'package:signature/signature.dart';
-
 import '../../models/input-page-wrapper.dart';
 import '../../models/promotion-program-input-state.dart';
 import '../dashboard/dashboard_pp.dart';
@@ -19,12 +18,15 @@ class InputPageNew extends StatefulWidget {
 }
 
 class _InputPageNewState extends State<InputPageNew> {
+
+
+
   Widget customCard(int index, InputPagePresenterNew inputPagePresenter){
     PromotionProgramInputState promotionProgramInputState = inputPagePresenter.promotionProgramInputStateRx.value.promotionProgramInputState[index];
     // promotionProgramInputState.qtyFrom.text = 1.toString();
     // promotionProgramInputState.qtyTo.text = 1.toString();
-    promotionProgramInputState.fromDate.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
-    promotionProgramInputState.toDate.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    // promotionProgramInputState.fromDate.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    // promotionProgramInputState.toDate.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
     return Container(
       margin: EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 0),
       child: Card(
@@ -305,130 +307,15 @@ class _InputPageNewState extends State<InputPageNew> {
                   ),
                 ],
               ),
-              //datetime
-              Row(
-                children: [
-                  //from date
-                  Container(
-                    width: 150,
-                    child: Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          DateTimeField(
-                            decoration: InputDecoration(
-                              label: Text("From Date"),
-                              suffixIcon: Icon(Icons.arrow_drop_down)
-                            ),
-                            controller: promotionProgramInputState.fromDate,
-                            initialValue: DateTime.now(),
-                            style: TextStyle(fontSize: 12),
-                            format: DateFormat('dd-MM-yyyy'),
-                            //xx
-                            // format: DateFormat('yyyy-MM-dd'),
-                            onShowPicker: (context, currentValue) {
-                              return showDatePicker(
-                                  context: context,
-                                  firstDate: DateTime(
-                                      DateTime
-                                          .now()
-                                          .year - 1),
-                                  initialDate: DateTime.now(),
-                                  lastDate: DateTime(
-                                      DateTime
-                                          .now()
-                                          .year + 1),
-                                  builder: (BuildContext context,
-                                      Widget child) {
-                                    return Theme(
-                                      data: ThemeData.light(),
-                                      child: child,
-                                    );
-                                  });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Spacer(),
-
-                  //todate
-                  Container(
-                    width: 150,
-                    child: Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          DateTimeField(
-                            decoration: InputDecoration(
-                                label: Text("To Date"),
-                                suffixIcon: Icon(Icons.arrow_drop_down)
-                            ),
-                            controller: promotionProgramInputState.toDate,
-                            initialValue: DateTime.now(),
-                            style: TextStyle(fontSize: 12),
-                            format: DateFormat('dd-MM-yyyy'),
-                            // format: DateFormat('yyyy-MM-dd'),
-                            onShowPicker: (context, currentValue) {
-                              return showDatePicker(
-                                  context: context,
-                                  firstDate: DateTime(
-                                      DateTime
-                                          .now()
-                                          .year - 1),
-                                  initialDate: DateTime.now(),
-                                  lastDate: DateTime(
-                                      DateTime
-                                          .now()
-                                          .year + 1),
-                                  builder: (BuildContext context,
-                                      Widget child) {
-                                    return Theme(
-                                      data: ThemeData.light(),
-                                      child: child,
-                                    );
-                                  });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
 
               //curency percent
               inputPagePresenter.promotionTypeInputPageDropdownStateRx.value.selectedChoice.value=="Bonus"?SizedBox():Row(
                 children: [
-                  //unit
-                  // Container(
-                  //   width: 150,
-                  //   child: DropdownButtonFormField(
-                  //     value: promotionProgramInputState.currencyInputPageDropdownState.selectedChoice,
-                  //     hint: Text(
-                  //       "Currency",
-                  //       style: TextStyle(fontSize: 12),
-                  //     ),
-                  //     items: promotionProgramInputState.currencyInputPageDropdownState.choiceList.map((item) {
-                  //       return DropdownMenuItem(
-                  //         child: Text(item),
-                  //         value: item,
-                  //       );
-                  //     }).toList(),
-                  //     onChanged: (value) => inputPagePresenter.changeCurrency(index, value),
-                  //   ),
-                  // ),
-                  // Spacer(),
-                  //multiply
                   Expanded(
-                    // width: 150,
                     child: DropdownButtonFormField(
                       value: promotionProgramInputState.percentValueInputPageDropdownState.selectedChoice,
                       hint: Text(
-                        "Percent/Value",
+                        "Disc Type (percent/value)",
                         style: TextStyle(fontSize: 12),
                       ),
                       items: promotionProgramInputState.percentValueInputPageDropdownState.choiceList.map((item) {
@@ -437,7 +324,9 @@ class _InputPageNewState extends State<InputPageNew> {
                           value: item,
                         );
                       }).toList(),
-                      onChanged: (value) => inputPagePresenter.changePercentValue(index, value),
+                      onChanged: (value){
+                        inputPagePresenter.changePercentValue(index, value);
+                      },
                     ),
                   ),
                 ],
@@ -524,6 +413,9 @@ class _InputPageNewState extends State<InputPageNew> {
                             MoneyInputFormatter(thousandSeparator: ".", decimalSeparator: ",")
                           ],
                           controller: promotionProgramInputState.value1,
+                          onChanged: (value){
+                            inputPagePresenter.getPriceToCustomer(index);
+                          },
                           decoration: InputDecoration(
                             labelText: 'Value 1',
                             labelStyle: TextStyle(
@@ -554,6 +446,9 @@ class _InputPageNewState extends State<InputPageNew> {
                           ],
                           keyboardType: TextInputType.number,
                           controller: promotionProgramInputState.value2,
+                          onChanged: (value){
+                            inputPagePresenter.getPriceToCustomer(index);
+                          },
                           decoration: InputDecoration(
                             labelText: 'Value 2',
                             labelStyle: TextStyle(
@@ -707,11 +602,11 @@ class _InputPageNewState extends State<InputPageNew> {
               ),
 
 
-              inputPagePresenter.promotionTypeInputPageDropdownStateRx.value.selectedChoice.value=="Diskon"?SizedBox():SearchChoices.single(
+              inputPagePresenter.promotionTypeInputPageDropdownStateRx.value.selectedChoice.value=="Discount"?SizedBox():SearchChoices.single(
                 isExpanded: true,
                 value: promotionProgramInputState.supplyItem.selectedChoice,
                 hint: Text(
-                  "Supply Item",
+                  "Bonus Item",
                   style: TextStyle(fontSize: 12),
                 ),
                 items: promotionProgramInputState.supplyItem.choiceList.map((item) {
@@ -728,7 +623,7 @@ class _InputPageNewState extends State<InputPageNew> {
               ),
 
               //unit multiply
-              inputPagePresenter.promotionTypeInputPageDropdownStateRx.value.selectedChoice.value=="Diskon"?SizedBox():Row(
+              inputPagePresenter.promotionTypeInputPageDropdownStateRx.value.selectedChoice.value=="Discount"?SizedBox():Row(
                 children: [
                   //unit
                   Container(
@@ -765,7 +660,7 @@ class _InputPageNewState extends State<InputPageNew> {
                       isExpanded: true,
                       value: promotionProgramInputState.unitSupplyItem.selectedChoice,
                       hint: Text(
-                        "Unit Supply Item",
+                        "Unit Bonus Item",
                         style: TextStyle(fontSize: 12),
                       ),
                       items: promotionProgramInputState.unitSupplyItem.choiceList.map((item) {
@@ -794,15 +689,13 @@ class _InputPageNewState extends State<InputPageNew> {
     exportBackgroundColor: Colors.white,
   );
 
+  final noteFocusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     final inputPagePresenter = Get.put(InputPagePresenterNew());
-    final tabController = Get.put(DashboardPPTabController());
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Theme.of(context).primaryColorDark,
-      //   title: Text("New Promotion Program"),
-      // ),
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
@@ -831,41 +724,7 @@ class _InputPageNewState extends State<InputPageNew> {
                         ),
                         Row(
                           children: [
-                            //Program number
-                            // Container(
-                            //   width: 150,
-                            //   child: Obx(() => TextFormField(
-                            //     controller: inputPagePresenter.programNumberTextEditingControllerRx.value,
-                            //     keyboardType: TextInputType.text,
-                            //     onChanged: (value) => inputPagePresenter.checkAddItemStatus(),
-                            //     decoration: InputDecoration(
-                            //       labelText: 'Program Number',
-                            //       labelStyle: TextStyle(
-                            //         color: Colors.black87,
-                            //         fontSize: 12,
-                            //         fontFamily: 'AvenirLight'
-                            //       ),
-                            //       focusedBorder: UnderlineInputBorder(
-                            //         borderSide:
-                            //         BorderSide(color: Colors.purple),
-                            //       ),
-                            //       enabledBorder: new UnderlineInputBorder(
-                            //         borderSide: BorderSide(
-                            //           color: Colors.grey, width: 1.0
-                            //         )
-                            //       ),
-                            //     ),
-                            //     style: TextStyle(
-                            //       color: Colors.black87,
-                            //       fontSize: 17,
-                            //       fontFamily: 'AvenirLight'
-                            //     ),
-                            //   )),
-                            // ),
-                            // Spacer(),
-                            //Program name
                             Expanded(
-                              // width: 150,
                               child: Obx(() => TextFormField(
                                 controller: inputPagePresenter.programNameTextEditingControllerRx.value,
                                 onChanged: (value) => inputPagePresenter.checkAddItemStatus(),
@@ -913,77 +772,8 @@ class _InputPageNewState extends State<InputPageNew> {
                                 onChanged: (value) => inputPagePresenter.changePromotionType(value),
                               )),
                             ),
-                            // Spacer(),
-                            // //xx
-                            // Container(
-                            //   width: 150,
-                            //   child: Obx(() => SearchChoices.single(
-                            //     isExpanded: true,
-                            //     value: inputPagePresenter.vendorInputPageDropdownStateRx.value.selectedChoice,
-                            //     hint: Text(
-                            //         "Principal",
-                            //       style: TextStyle(fontSize: 12),
-                            //     ),
-                            //     items: inputPagePresenter.vendorInputPageDropdownStateRx.value.choiceList.map((item) {
-                            //       return DropdownMenuItem(
-                            //         child: Text(
-                            //           item.value,
-                            //           style: TextStyle(fontSize: 12)
-                            //         ),
-                            //         value: item,
-                            //       );
-                            //     }).toList(),
-                            //     onChanged: (value) => inputPagePresenter.changeVendor(value),
-                            //   )),
-                            // ),
                           ],
                         ),
-
-                        // Row(
-                        //   children: [
-                        //     Container(
-                        //       width: 150,
-                        //       child: Obx(() => DropdownButtonFormField(
-                        //         isExpanded: true,
-                        //         value: inputPagePresenter.locationInputPageDropdownStateRx.value.selectedChoice,
-                        //         hint: Text(
-                        //           "Location",
-                        //           style: TextStyle(fontSize: 12),
-                        //         ),
-                        //         items: inputPagePresenter.locationInputPageDropdownStateRx.value.choiceList.map((item) {
-                        //           return DropdownMenuItem(
-                        //             child: Text(item.value),
-                        //             value: item,
-                        //           );
-                        //         }).toList(),
-                        //         onChanged: (value){
-                        //           setState(() {
-                        //             inputPagePresenter.changeLocation(value);
-                        //           });
-                        //         },
-                        //       )),
-                        //     ),
-                        //     Spacer(),
-                        //     Container(
-                        //       width: 150,
-                        //       child: Obx(() => DropdownButtonFormField(
-                        //         value: inputPagePresenter.statusTestingInputPageDropdownStateRx.value.selectedChoice,
-                        //         hint: Text(
-                        //           "Status Testing",
-                        //           style: TextStyle(fontSize: 12),
-                        //         ),
-                        //         items: inputPagePresenter.statusTestingInputPageDropdownStateRx.value.choiceList.map((item) {
-                        //           return DropdownMenuItem(
-                        //             child: Text(item),
-                        //             value: item,
-                        //           );
-                        //         }).toList(),
-                        //         onChanged: (value) => inputPagePresenter.changeStatusTesting(value),
-                        //       ))
-                        //     ),
-                        //   ],
-                        // ),
-
                         Row(
                           children: [
                             Container(
@@ -1046,12 +836,134 @@ class _InputPageNewState extends State<InputPageNew> {
                             ),
                           ],
                         ),
+
+                        Row(
+                          children: [
+                            //from date
+                            Container(
+                              width: 150,
+                              child: Padding(
+                                padding: EdgeInsets.all(8),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    DateTimeField(
+                                      decoration: InputDecoration(
+                                          label: Text("From Date"),
+                                          suffixIcon: Icon(Icons.arrow_drop_down)
+                                      ),
+                                      controller: inputPagePresenter.programFromDateTextEditingControllerRx.value,
+                                      initialValue: DateTime.now(),
+                                      style: TextStyle(fontSize: 12),
+                                      format: DateFormat('dd-MM-yyyy'),
+                                      onShowPicker: (context, currentValue) {
+                                        return showDatePicker(
+                                            context: context,
+                                            firstDate: DateTime(
+                                                DateTime
+                                                    .now()
+                                                    .year - 1),
+                                            initialDate: DateTime.now(),
+                                            lastDate: DateTime(
+                                                DateTime
+                                                    .now()
+                                                    .year + 1),
+                                            builder: (BuildContext context,
+                                                Widget child) {
+                                              return Theme(
+                                                data: ThemeData.light(),
+                                                child: child,
+                                              );
+                                            });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Spacer(),
+
+                            //todate
+                            Container(
+                              width: 150,
+                              child: Padding(
+                                padding: EdgeInsets.all(8),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    DateTimeField(
+                                      decoration: InputDecoration(
+                                          label: Text("To Date"),
+                                          suffixIcon: Icon(Icons.arrow_drop_down)
+                                      ),
+                                      controller: inputPagePresenter.programToDateTextEditingControllerRx.value,
+                                      initialValue: DateTime.now(),
+                                      style: TextStyle(fontSize: 12),
+                                      format: DateFormat('dd-MM-yyyy'),
+                                      onShowPicker: (context, currentValue) {
+                                        return showDatePicker(
+                                            context: context,
+                                            firstDate: DateTime(
+                                                DateTime
+                                                    .now()
+                                                    .year - 1),
+                                            initialDate: DateTime.now(),
+                                            lastDate: DateTime(
+                                                DateTime
+                                                    .now()
+                                                    .year + 1),
+                                            builder: (BuildContext context,
+                                                Widget child) {
+                                              return Theme(
+                                                data: ThemeData.light(),
+                                                child: child,
+                                              );
+                                            });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Obx(() => TextFormField(
+                                maxLines: 1,
+                                controller: inputPagePresenter.programNoteTextEditingControllerRx.value,
+                                onTapOutside: (_){
+                                  FocusScope.of(context).unfocus();
+                                },
+                                decoration: InputDecoration(
+                                  labelText: 'Note',
+                                  labelStyle: TextStyle(
+                                      color: Colors.black87,
+                                      fontSize: 12,
+                                      fontFamily: 'AvenirLight'),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide:
+                                    BorderSide(color: Colors.purple),
+                                  ),
+                                  enabledBorder: new UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.grey, width: 1.0)),
+                                ),
+                                style: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 17,
+                                    fontFamily: 'AvenirLight'),
+                              )),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
                 ),
               ),
-
               SizedBox(
                 height: 10,
               ),
@@ -1061,35 +973,84 @@ class _InputPageNewState extends State<InputPageNew> {
                 List<PromotionProgramInputState> promotionProgramInputStateList = inputPageWrapper.promotionProgramInputState;
                 bool isAddItem = inputPageWrapper.isAddItem;
                 return promotionProgramInputStateList.length == 0 ? ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                  ),
-                  child: Text("Add Lines"),
-                  onPressed: isAddItem ? () => inputPagePresenter.addItem() : null
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                    ),
+                    child: Text("Add Lines"),
+                    onPressed: isAddItem ? () => inputPagePresenter.addItem() : null
                 ) : ListView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  reverse: true,
-                  itemCount: promotionProgramInputStateList.length,
-                  itemBuilder: (context, index) => Column(
-                    children: [
-                      customCard(index, inputPagePresenter),
-                      SizedBox(
-                        height: 10,
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    reverse: true,
+                    itemCount: promotionProgramInputStateList.length,
+                    itemBuilder: (context, index) => GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        FocusScope.of(context).unfocus();
+                      },
+                      child: Column(
+                        children: [
+                          customCard(index, inputPagePresenter),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          index == promotionProgramInputStateList.length - promotionProgramInputStateList.length ?
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 500),
+                            child: Column(
+                              children: [
+                                // Container(
+                                //   margin: EdgeInsets.all(30),
+                                //   color: Colors.white,
+                                //   child: TextFormField(
+                                //     maxLines: 5,
+                                //     controller: inputPagePresenter.programNoteTextEditingControllerRx.value,
+                                //     onTapOutside: (_){
+                                //       FocusScope.of(context).unfocus();
+                                //     },
+                                //     decoration: InputDecoration(
+                                //       focusedBorder: OutlineInputBorder(
+                                //         borderSide: BorderSide(
+                                //           color: Colors.green,
+                                //         ),
+                                //       ),
+                                //       border: OutlineInputBorder(
+                                //         borderSide: BorderSide(
+                                //           color: Colors.black,
+                                //         ),
+                                //       ),
+                                //       hintText: "Note",
+                                //     ),
+                                //   ),
+                                // ),
+                                Visibility(
+                                  visible: !inputPagePresenter.onTap.value,
+                                  child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.green,
+                                      ),
+                                      child: Text("Submit"),
+                                      onPressed: (){
+                                        setState(() {
+                                          inputPagePresenter.onTap.value = true;
+                                          inputPagePresenter.submitPromotionProgram();
+                                        });
+                                      }
+                                  ),
+                                ),
+                                Visibility(
+                                  visible: inputPagePresenter.onTap.value,
+                                  child: Center(child: CircularProgressIndicator()),
+                                ),
+                              ],
+                            ),
+                          ) : SizedBox()
+                        ],
                       ),
-                      index == promotionProgramInputStateList.length - promotionProgramInputStateList.length ? ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                        ),
-                        child: Text("Submit"),
-                        onPressed: (){
-                          inputPagePresenter.submitPromotionProgram();
-                        }
-                      ) : SizedBox()
-                    ],
-                  )
+                    )
                 );
-              }),
+              })
+
             ],
           ),
         )

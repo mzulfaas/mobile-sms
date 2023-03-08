@@ -8,141 +8,166 @@ import 'ApiConstant.dart';
 import 'Lines.dart';
 
 class Promosi {
-  int id;
+  dynamic id;
   String nomorPP;
-  String namePP;
-  String date;
-  String group;
+  String ppType;
+  dynamic namePP;
+  dynamic date;
+  String fromDate;
+  String toDate;
+  dynamic group;
   String idProduct;
   String product;
   String idCustomer;
   String customer;
-  String fromDate;
-  String toDate;
-  // DateTime fromDates;
-
-  double qty;
-  double qtyTo;
+  dynamic salesman;
+  dynamic qty;
+  dynamic qtyTo;
+  String unitId;
+  String note;
   String disc1;
   String disc2;
   String disc3;
   String disc4;
   String value1;
   String value2;
-  String suppQty;
   String suppItem;
+  String suppUnit;
+  String warehouse;
+  String suppQty;
   String salesOffice;
-  String businessUnit;
+  dynamic businessUnit;
   String price;
   String totalAmount;
   bool status;
-  String unitId;
-  int codeError;
-  String message;
-  String suppUnit;
-  String ppType;
+  dynamic codeError;
+  dynamic message;
+  dynamic listId;
+  dynamic listLines;
+  dynamic listPromosi;
+  dynamic detailpromosi;
 
   Promosi(
       {this.id,
-      this.nomorPP,
-      this.namePP,
-      this.date,
-      this.group,
-      this.idProduct,
-      this.product,
-      this.idCustomer,
-      this.customer,
-      this.fromDate,
-      this.toDate,
-      // this.fromDates,
-      this.qty,
-      this.qtyTo,
-      this.disc1,
-      this.disc2,
-      this.disc3,
-      this.disc4,
-      this.value1,
-      this.value2,
-      this.suppQty,
-      this.suppUnit,
-      this.suppItem,
-      this.salesOffice,
-      this.businessUnit,
-      this.price,
-      this.totalAmount,
-      this.status,
-      this.unitId,
-      this.codeError,
-      this.ppType,
-      this.message});
+        this.nomorPP,
+        this.ppType,
+        this.namePP,
+        this.date,
+        this.fromDate,
+        this.toDate,
+        this.group,
+        this.idProduct,
+        this.product,
+        this.idCustomer,
+        this.customer,
+        this.salesman,
+        this.qty,
+        this.qtyTo,
+        this.unitId,
+        this.note,
+        this.disc1,
+        this.disc2,
+        this.disc3,
+        this.disc4,
+        this.value1,
+        this.value2,
+        this.suppItem,
+        this.suppUnit,
+        this.warehouse,
+        this.suppQty,
+        this.salesOffice,
+        this.businessUnit,
+        this.price,
+        this.totalAmount,
+        this.status,
+        this.codeError,
+        this.message,
+        this.listId,
+        this.listLines,
+        this.listPromosi,
+        this.detailpromosi});
 
   Promosi.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     nomorPP = json['nomorPP'];
+    ppType = json['type'];
     namePP = json['namePP'];
     date = json['date'];
+    fromDate = json['fromDate'];
+    toDate = json['toDate'];
     group = json['group'];
     idProduct = json['idProduct'];
     product = json['product'];
     idCustomer = json['idCustomer'];
     customer = json['customer'];
-    fromDate = json['fromDate'];
-    toDate = json['toDate'];
-    // fromDates = DateTime.parse(json['fromDate']);
+    salesman = json['salesman'];
     qty = json['qty'];
     qtyTo = json['qtyTo'];
+    unitId = json['unitId'];
+    note = json['note'];
     disc1 = json['disc1'];
     disc2 = json['disc2'];
     disc3 = json['disc3'];
     disc4 = json['disc4'];
     value1 = json['value1'];
     value2 = json['value2'];
-    suppQty = json['suppQty'];
     suppItem = json['suppItem'];
     suppUnit = json['suppUnit'];
+    warehouse = json['warehouse'];
+    suppQty = json['suppQty'];
     salesOffice = json['salesOffice'];
     businessUnit = json['businessUnit'];
     price = json['price'];
     totalAmount = json['totalAmount'];
     status = json['status'];
-    unitId = json['unitId'];
     codeError = json['codeError'];
     message = json['message'];
-    ppType = json['type'];
+    listId = json['listId'];
+    listLines = json['listLines'];
+    listPromosi = json['listPromosi'];
+    detailpromosi = json['detailpromosi'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['nomorPP'] = this.nomorPP;
+    data['type'] = this.ppType;
     data['namePP'] = this.namePP;
     data['date'] = this.date;
+    data['fromDate'] = this.fromDate;
+    data['toDate'] = this.toDate;
     data['group'] = this.group;
     data['idProduct'] = this.idProduct;
     data['product'] = this.product;
     data['idCustomer'] = this.idCustomer;
     data['customer'] = this.customer;
+    data['salesman'] = this.salesman;
     data['qty'] = this.qty;
     data['qtyTo'] = this.qtyTo;
+    data['unitId'] = this.unitId;
+    data['note'] = this.note;
     data['disc1'] = this.disc1;
     data['disc2'] = this.disc2;
     data['disc3'] = this.disc3;
     data['disc4'] = this.disc4;
     data['value1'] = this.value1;
     data['value2'] = this.value2;
+    data['suppItem'] = this.suppItem;
+    data['suppUnit'] = this.suppUnit;
+    data['warehouse'] = this.warehouse;
+    data['suppQty'] = this.suppQty;
     data['salesOffice'] = this.salesOffice;
     data['businessUnit'] = this.businessUnit;
     data['price'] = this.price;
     data['totalAmount'] = this.totalAmount;
     data['status'] = this.status;
-    data['unitId'] = this.unitId;
     data['codeError'] = this.codeError;
     data['message'] = this.message;
-    data['suppQty'] = this.suppQty;
-    data['qtyTo'] = this.qtyTo;
-    data['suppItem'] = this.suppItem;
-    data['suppUnit'] = this.suppUnit;
-    data['type'] = this.ppType;
+    data['listId'] = this.listId;
+    data['listLines'] = this.listLines;
+    data['listPromosi'] = this.listPromosi;
+    data['detailpromosi'] = this.detailpromosi;
     return data;
   }
 
@@ -214,33 +239,32 @@ class Promosi {
 
   var promosiLength;
 
-  static Future<List<Promosi>> getListLines(
-      String nomorPP, int code, String token, String username) async {
-    String url = ApiConstant(code).urlApi +
-        "api/PromosiLines/" +
-        nomorPP +
-        "?username=" +
-        username;
-    print(token);
-    print("ini url listLines :$url");
+  static Future<List<Promosi>> getListLines(String nomorPP, int code, String token, String username) async {
+    final url = '${ApiConstant(code).urlApi}api/PromosiLines/$nomorPP?username=$username';
+    print('Token: $token');
+    print('URL listLines: $url');
 
-    var dio = Dio();
-    dio.options.headers['Authorization'] = token;
-    Response response = await dio.get(url);
-    var jsonObject = response.data;
-    var promosiLength = response.data;
-    print(jsonObject);
-    List<Promosi> models = [];
-    for (var salesOrder in jsonObject) {
-      var objects = Promosi.fromJson(salesOrder as Map<String, dynamic>);
-      models.add(objects);
+    final dio = Dio()
+      ..options.headers['Authorization'] = token;
+    final response = await dio.get(url);
+
+    // Check for errors in the response
+    if (response.statusCode != 200) {
+      throw Exception('Failed to get list of lines');
     }
-    return models;
+
+    // Extract the JSON data from the response
+    final jsonObject = response.data;
+    final promosiList = List<Promosi>.from(jsonObject.map((model) => Promosi.fromJson(model)));
+
+    return promosiList;
   }
+
 
   // api/SalesOrder?idProduct={idProduct}&idCustomer={idCustomer}
   static Future<List<Promosi>> getListSalesOrder(String idProduct,
       String idCustomer, int code, String token, String username) async {
+    print("token :$token");
     String url = ApiConstant(code).urlApi +
         "api/SalesOrder?idProduct=" +
         idProduct +
@@ -253,6 +277,7 @@ class Promosi {
     var dio = Dio();
     dio.options.headers['Authorization'] = token;
     Response response = await dio.get(url);
+    print("status salesHistory : ${response.statusMessage}");
     var jsonObject = response.data;
     List<Promosi> models = [];
     for (var salesOrder in jsonObject) {

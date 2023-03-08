@@ -173,13 +173,15 @@ class TransactionPresenter extends GetxController {
   }
 
   void _loadCustomerOrGroup(int index) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     PromotionProgramInputState promotionProgramInputState = promotionProgramInputStateRx.value.promotionProgramInputState[index];
     InputPageDropdownState<IdAndValue<String>> locationGroupInputPageDropdownState = locationInputPageDropdownStateRx.value;
     InputPageDropdownState<String> customerGroupInputPageDropdownState = promotionProgramInputState.customerGroupInputPageDropdownState;
     InputPageDropdownState<IdAndValue<String>> customerNameOrDiscountGroupInputPageDropdownState = promotionProgramInputState.customerNameOrDiscountGroupInputPageDropdownState;
     String selectedChoice = customerGroupInputPageDropdownState.selectedChoice;
     if (selectedChoice == customerGroupInputPageDropdownState.choiceList[0]) {
-      var urlGetCustomerChoice = "http://119.18.157.236:8869/api/custtables?salesOffice=${locationGroupInputPageDropdownState.selectedChoice.id}";
+      // var urlGetCustomerChoice = "http://119.18.157.236:8869/api/custtables?salesOffice=${locationGroupInputPageDropdownState.selectedChoice.id}";
+      var urlGetCustomerChoice = "http://119.18.157.236:8869/api/custtables?userId=${prefs.getInt("userid")}";
       print("urlGetCustomerChoice :$urlGetCustomerChoice");
       final response = await get(Uri.parse(urlGetCustomerChoice));
       var listData = jsonDecode(response.body);
@@ -528,6 +530,7 @@ class TransactionPresenter extends GetxController {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String token = preferences.getString("token");
     String username = preferences.getString("username");
+    int userId = preferences.getInt("userid");
     print(promotionProgramInputStateRx.value.promotionProgramInputState.map<Map<String, dynamic>>((element) => <String, dynamic>{
       "price": element.priceTransaction.text.replaceAll(",", ""),
     }));
@@ -546,10 +549,10 @@ class TransactionPresenter extends GetxController {
     });
     print(isiBody);
     List<PromotionProgramInputState> promotionProgramInputState = promotionProgramInputStateRx.value.promotionProgramInputState.toList();
-    print("mazda :${promotionProgramInputState.map((e) => e.totalTransaction.text).toList()}");
     List dataTotal = promotionProgramInputState.map((e) => e.totalTransaction.text).toList();
+    print(token);
     final response = await post(
-        Uri.parse('http://119.18.157.236:8869/api/transaction'),
+        Uri.parse('http://119.18.157.236:8869/api/transaction?idUser=$userId'),
         headers: {
           "Content-Type": "application/json",
           'Authorization': '$token',

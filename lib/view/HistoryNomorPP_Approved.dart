@@ -66,6 +66,16 @@ class _HistoryApprovedState extends State<HistoryApproved> {
               title: "Type",
               value: promosi.customer,
             ),
+            TextResultCard(
+              context: context,
+              title: "Salesman",
+              value: promosi.salesman,
+            ),
+            TextResultCard(
+              context: context,
+              title: "Sales Office",
+              value: promosi.salesOffice,
+            ),
             TextButton(
               child: Container(
                 width: MediaQuery.of(context).size.width,

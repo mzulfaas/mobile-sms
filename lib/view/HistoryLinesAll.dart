@@ -51,13 +51,19 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
 
   bool valueSelectAll = false;
 
+  var dataHeader;
+  bool startApp = false;
+
+  var listLines;
   Future<Null> listHistorySO() async {
-    await Future.delayed(Duration(seconds: 5));
+    await Future.delayed(Duration(seconds: 1));
     Promosi.getListLines(widget.numberPP, code, _user.token, _user.username)
         .then((value) {
       setState(() {
+        listLines = value;
         _listHistorySO = value;
         _listHistorySOEncode = jsonEncode(_listHistorySO);
+        dataHeader = jsonDecode(_listHistorySOEncode);
       });
     });
     return null;
@@ -67,20 +73,23 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
     super.initState();
     refreshKey = GlobalKey<RefreshIndicatorState>();
     getSharedPreference();
-    listHistorySO();
+    Future.delayed(Duration(seconds: 2),(){
+      startApp = true;
+      listHistorySO();
+    });
   }
 
   Promosi promosi;
 
   @override
   Widget build(BuildContext context) {
+    print("listLines :${jsonEncode(listLines)}");
     return WillPopScope(
       onWillPop: onBackPressLines,
       child: MaterialApp(
         theme: Theme.of(context),
         home: ChangeNotifierProvider<LinesProvider>(
           create: (ctx) => LinesProvider(),
-          // builder: (context) => LinesProvider(),
           child: Scaffold(
             appBar: AppBar(
               backgroundColor: Theme.of(context).primaryColorDark,
@@ -126,14 +135,107 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
                         return ConditionNull(
                             message: _listHistorySO[0].message);
                       } else {
-                        return ListView.builder(
-                          itemCount: _listHistorySO?.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            // print("_listHistorySO?.length :${_listHistorySO?.length}");
-                            // print("_listHistorySO[0].message :${_listHistorySO[0].status}");
-                            return CardLinesAdapter(
-                                widget.numberPP, _listHistorySO[index], index);
-                          },
+                        return startApp==false?Center(child: CircularProgressIndicator()):SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  children: [
+                                    TextResultCard(
+                                      context: context,
+                                      title: "No. PP",
+                                      value: RegExp(r"\d{2}-\d{2}-\d{4} \d{2}:\d{2}:\d{2}").hasMatch(dataHeader[0]["nomorPP"])==true?dataHeader[0]["nomorPP"].replaceRange(34, null, ""):dataHeader[0]["nomorPP"],
+                                    ),
+                                    TextResultCard(
+                                      context: context,
+                                      title: "PP. Type",
+                                      value: "${dataHeader[0]["type"]}",
+                                    ),
+                                    TextResultCard(
+                                      context: context,
+                                      title: "Customer",
+                                      value: "${dataHeader[0]["customer"]}",
+                                    ),
+                                    TextResultCard(
+                                      context: context,
+                                      title: "Note",
+                                      value: "${dataHeader[0]["note"]}",
+                                    ),
+                                    Container(
+                                        width: ScreenUtil().setHeight(MediaQuery.of(context).size.width),
+                                        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                        child: Consumer<LinesProvider>(
+                                            builder: (context, linesProv, _) => TextFormField(
+                                              readOnly: true,
+                                              initialValue: dataHeader[0]["fromDate"].split(" ")[0].toString(),
+                                              keyboardType: TextInputType.datetime,
+                                              decoration: InputDecoration(
+                                                  border: OutlineInputBorder(),
+                                                  filled: true,
+                                                  labelText: 'From Date',
+                                                  hintStyle: TextStyle(
+                                                      color: Theme.of(context).primaryColor,
+                                                      fontSize: 15),
+                                                  errorStyle: TextStyle(
+                                                      color: Theme.of(context).errorColor,
+                                                      fontSize: 15)),
+                                            ))),
+                                    Container(
+                                        width:
+                                        ScreenUtil().setHeight(MediaQuery.of(context).size.width),
+                                        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                        child: Consumer<LinesProvider>(
+                                            builder: (context, linesProv, _) => TextFormField(
+                                              readOnly: true,
+                                              initialValue: dataHeader[0]["toDate"].split(" ")[0],
+                                              keyboardType: TextInputType.datetime,
+                                              decoration: InputDecoration(
+                                                  border: OutlineInputBorder(),
+                                                  filled: true,
+                                                  labelText: 'To Date',
+                                                  hintStyle: TextStyle(
+                                                      color: Theme.of(context).primaryColor,
+                                                      fontSize: 15),
+                                                  errorStyle: TextStyle(
+                                                      color: Theme.of(context).errorColor,
+                                                      fontSize: 15)),
+                                              // ignore: missing_return
+                                              // onShowPicker: (context, currentValue) {
+                                              //   return showDatePicker(
+                                              //       context: context,
+                                              //       firstDate: DateTime(DateTime.now().year - 1),
+                                              //       initialDate: currentValue ??
+                                              //           DateTime.parse(promosi.toDate),
+                                              //       lastDate: DateTime(DateTime.now().year + 1),
+                                              //       builder: (BuildContext context, Widget child) {
+                                              //         return Theme(
+                                              //           data: ThemeData.light(),
+                                              //           child: child,
+                                              //         );
+                                              //       });
+                                              // },
+                                              // onChanged: (value) {
+                                              //   if (value != null) {
+                                              //     setBundleLines(promosi.id, null, null, value);
+                                              //   }
+                                              // },
+                                            ))),
+                                  ],
+                                ),
+                              ),
+                              ListView.builder(
+                                itemCount: _listHistorySO?.length,
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemBuilder: (BuildContext context, int index) {
+                                  print("notoling ${jsonEncode(_listHistorySO[0])}");
+                                  return CardLinesAdapter(
+                                      widget.numberPP, _listHistorySO[index], index);
+                                },
+                              ),
+                            ],
+                          ),
                         );
                       }
                     }
@@ -148,14 +250,16 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
   }
 
   Container CardLinesAdapter(String namePP, Promosi promosi, int index) {
-
-    print("qq : ${jsonEncode(promosi.price)}");
+    print("qq : ${jsonEncode(promosi.fromDate)}");
     double price = double.parse(promosi.price.replaceAll(RegExp("Rp"), "").replaceAll(".", ""));
-    print("pricee $price");
     double disc1 = double.parse(promosi.disc1);
-    print("priceeDisc $disc1");
-    double totalPrice = price - (price * (disc1/100));
-    print("totalPricee :$totalPrice");
+    double disc2 = double.parse(promosi.disc2);
+    double disc3 = double.parse(promosi.disc3);
+    double disc4 = double.parse(promosi.disc4);
+    double discValue1 = double.parse(promosi.value1);
+    double discValue2 = double.parse(promosi.value2);
+    double totalPriceDiscOnly = price - (price * ((disc1+disc2+disc3+disc4)/100));
+    double totalPriceDiscValue = price - (discValue1+discValue2);
     List<Promosi> data = _listHistorySO;
     print("dataDetail :${jsonEncode(_listHistorySO)}");
     List qtyFrom = data.map((element) => element.qty).toList();
@@ -163,9 +267,8 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
     List qtyTo = data.map((element) => element.qtyTo).toList();
     print("qty to :$qtyTo");
     print("no pp :${promosi.nomorPP}");
-    print("pp type :${promosi.ppType}");
+    print("pp type :${promosi.disc1}");
     String str = promosi.nomorPP;
-
     bool hasDateTime = RegExp(r"\d{2}-\d{2}-\d{4} \d{2}:\d{2}:\d{2}").hasMatch(str);
     print("hasDateTime : ${hasDateTime}"); // Output: true
     return Container(
@@ -177,64 +280,6 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
         ),
         child: Column(
           children: <Widget>[
-            // Stack(
-            //   children: [
-            //     Container(
-            //       alignment: Alignment.topLeft,
-            //       child: CheckboxListTile(
-            //         value: valueSelectAll?valueSelectAll:promosi.status,
-            //         onChanged: (bool value) {
-            //           setState(() {
-            //             promosi.status = value;
-            //             // _statusDisable = value;
-            //             value == true
-            //                 ? _statusDisable = false //_listid.add(promosi.id)
-            //                 : _statusDisable =
-            //                     true; //_listid.remove(promosi.id);
-            //           });
-            //         },
-            //         controlAffinity: ListTileControlAffinity.leading,
-            //         activeColor: Colors.red,
-            //       ),
-            //     ),
-            //     // Container(
-            //     //   // height: 10,
-            //     //   // width: 10,
-            //     //   alignment: Alignment.topRight,
-            //     //   margin: EdgeInsets.only(left: 100.w),
-            //     //   child: CheckboxListTile(
-            //     //     value: promosi.status,
-            //     //     onChanged: (bool value) {
-            //     //       setState(() {
-            //     //         promosi.status = value;
-            //     //         // _statusDisable = value;
-            //     //         value == true
-            //     //             ? _statusDisable = false //_listid.add(promosi.id)
-            //     //             : _statusDisable =
-            //     //                 true; //_listid.remove(promosi.id);
-            //     //       });
-            //     //     },
-            //     //     controlAffinity: ListTileControlAffinity.leading,
-            //     //     activeColor: Colors.red,
-            //     //   ),
-            //     // ),
-            //   ],
-            // ),
-            TextResultCard(
-              context: context,
-              title: "PP. Type",
-              value: promosi.ppType,
-            ),
-            TextResultCard(
-              context: context,
-              title: "No. PP",
-              value: RegExp(r"\d{2}-\d{2}-\d{4} \d{2}:\d{2}:\d{2}").hasMatch(promosi.nomorPP)==true?promosi.nomorPP.replaceRange(34, null, ""):promosi.nomorPP,
-            ),
-            TextResultCard(
-              context: context,
-              title: "Customer",
-              value: promosi.customer,
-            ),
             TextResultCard(
               context: context,
               title: "Product",
@@ -270,101 +315,8 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
               title: "Price",
               value: promosi.price,
             ),
-            //Period Date
-            Container(
-                margin: EdgeInsets.all(ScreenUtil().setWidth(5)),
-                width: ScreenUtil().setWidth(MediaQuery.of(context).size.width),
-                child: Text(
-                    'Period Date(hapus dgn klik X jika ingin ganti period)',
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColorDark,
-                      fontSize: ScreenUtil().setSp(15),
-                    ))),
-            Container(
-                width:
-                    ScreenUtil().setHeight(MediaQuery.of(context).size.width),
-                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                child: Consumer<LinesProvider>(
-                    builder: (context, linesProv, _) => TextFormField(
-                          readOnly: true,
-                          // format: DateFormat('dd/MMM/yyyy'),
-                          initialValue: promosi.fromDate.split(" ")[0].toString(),
-                          keyboardType: TextInputType.datetime,
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              filled: true,
-                              labelText: 'From Date',
-                              hintStyle: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                  fontSize: 15),
-                              errorStyle: TextStyle(
-                                  color: Theme.of(context).errorColor,
-                                  fontSize: 15)),
-                          // ignore: missing_return
-                          // onShowPicker: (context, currentValue) {
-                          //   return showDatePicker(
-                          //       context: context,
-                          //       firstDate: DateTime(DateTime.now().year - 1),
-                          //       initialDate: currentValue ??
-                          //           DateTime.parse(promosi.fromDate),
-                          //       lastDate: DateTime(DateTime.now().year + 1),
-                          //       builder: (BuildContext context, Widget child) {
-                          //         return Theme(
-                          //           data: ThemeData.light(),
-                          //           child: child,
-                          //         );
-                          //       });
-                          // },
-                          // onChanged: (value) {
-                          //   if (value != null) {
-                          //     setBundleLines(promosi.id, null, value, null);
-                          //   }
-                          // },
-                        ))),
-            Container(
-                width:
-                    ScreenUtil().setHeight(MediaQuery.of(context).size.width),
-                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                child: Consumer<LinesProvider>(
-                    builder: (context, linesProv, _) => TextFormField(
-                          readOnly: true,
-                          // format: DateFormat('dd/MMM/yyyy'),
-                          // initialValue: convertDate(promosi.toDate),
-                          initialValue: promosi.toDate.split(" ")[0],
-                          keyboardType: TextInputType.datetime,
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              filled: true,
-                              labelText: 'To Date',
-                              hintStyle: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                  fontSize: 15),
-                              errorStyle: TextStyle(
-                                  color: Theme.of(context).errorColor,
-                                  fontSize: 15)),
-                          // ignore: missing_return
-                          // onShowPicker: (context, currentValue) {
-                          //   return showDatePicker(
-                          //       context: context,
-                          //       firstDate: DateTime(DateTime.now().year - 1),
-                          //       initialDate: currentValue ??
-                          //           DateTime.parse(promosi.toDate),
-                          //       lastDate: DateTime(DateTime.now().year + 1),
-                          //       builder: (BuildContext context, Widget child) {
-                          //         return Theme(
-                          //           data: ThemeData.light(),
-                          //           child: child,
-                          //         );
-                          //       });
-                          // },
-                          // onChanged: (value) {
-                          //   if (value != null) {
-                          //     setBundleLines(promosi.id, null, null, value);
-                          //   }
-                          // },
-                        ))),
             //Discount
-            Row(
+            promosi.ppType=="Bonus"?SizedBox():Row(
               children: <Widget>[
                 Container(
                   margin: EdgeInsets.all(ScreenUtil().setWidth(5)),
@@ -409,7 +361,7 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
                     builder: (context, linesProv, _) => TextFormField(
                       readOnly: _statusDisable,
                       keyboardType: TextInputType.text,
-                      initialValue: promosi.disc2,
+                      initialValue: promosi.disc2.split(".").first,
                       onFieldSubmitted: (value) {
                         setBundleLines(
                             promosi.id, double.parse(value), null, null);
@@ -419,7 +371,7 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
                 ),
               ],
             ),
-            Row(
+            promosi.ppType=="Bonus"?SizedBox():Row(
               children: <Widget>[
                 Container(
                   margin: EdgeInsets.all(ScreenUtil().setWidth(5)),
@@ -438,7 +390,7 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
                     builder: (context, linesProv, _) => TextFormField(
                       readOnly: _statusDisable,
                       keyboardType: TextInputType.text,
-                      initialValue: promosi.disc3,
+                      initialValue: promosi.disc3.split(".").first,
                       onFieldSubmitted: (value) {
                         setBundleLines(
                             promosi.id, double.parse(value), null, null);
@@ -464,7 +416,7 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
                     builder: (context, linesProv, _) => TextFormField(
                       readOnly: _statusDisable,
                       keyboardType: TextInputType.text,
-                      initialValue: promosi.disc4,
+                      initialValue: promosi.disc4.split(".").first,
                       onFieldSubmitted: (value) {
                         setBundleLines(
                             promosi.id, double.parse(value), null, null);
@@ -474,7 +426,7 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
                 ),
               ],
             ),
-            Row(
+            promosi.ppType=="Bonus"?SizedBox():Row(
               children: <Widget>[
                 Container(
                   margin: EdgeInsets.all(ScreenUtil().setWidth(5)),
@@ -529,65 +481,26 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
                 ),
               ],
             ),
-            TextResultCard(
+            promosi.ppType=="Diskon"?SizedBox():TextResultCard(
               context: context,
-              title: 'SuppItem',
+              title: 'Bonus Item',
               value: promosi.suppItem,
             ),
-            TextResultCard(
+            promosi.ppType=="Diskon"?SizedBox():TextResultCard(
               context: context,
-              title: 'SuppQty',
+              title: 'Bonus Qty',
               value: promosi.suppQty,
             ),
-            TextResultCard(
+            promosi.ppType=="Diskon"?SizedBox():TextResultCard(
               context: context,
-              title: 'SuppUnit',
+              title: 'Bonus Unit',
               value: promosi.suppUnit,
             ),
-
-
             TextResultCard(
               context: context,
               title: "Total",
-              value: "Rp${MoneyFormatter(amount: totalPrice).output.withoutFractionDigits.replaceAll(",", ".")}"//promosi.totalAmount,
+              value: "Rp${MoneyFormatter(amount: promosi.disc1=="0.00"&&promosi.disc2=="0.00"&&promosi.disc3=="0.00"&&promosi.disc4=="0.00"?totalPriceDiscValue:totalPriceDiscOnly).output.withoutFractionDigits.replaceAll(",", ".")}"//promosi.totalAmount,
             ),
-            // TextButton(
-            //   child: Container(
-            //     width: MediaQuery.of(context).size.width,
-            //     margin: EdgeInsets.all(ScreenUtil().setWidth(7)),
-            //     padding: EdgeInsets.all(ScreenUtil().setWidth(5)),
-            //     child: Center(
-            //       child: Text(
-            //         "VIEW SALES HISTORY",
-            //         style: TextStyle(
-            //             color: Theme.of(context).primaryColorDark,
-            //             fontSize: ScreenUtil().setSp(13),
-            //             fontWeight: FontWeight.w900),
-            //       ),
-            //     ),
-            //   ),
-            //   onPressed: () {
-            //     Navigator.pushReplacement(context,
-            //         MaterialPageRoute(builder: (context) {
-            //       return HistorySOAll(
-            //           namePP: namePP,
-            //           idCustomer: promosi.idCustomer,
-            //           idProduct: promosi.idProduct,
-            //           idEmp: widget.idEmp);
-            //     }));
-            //   },
-            //   style: TextButton.styleFrom(
-            //     backgroundColor: Theme.of(context).accentColor,
-            //     shape: RoundedRectangleBorder(
-            //       borderRadius: BorderRadius.circular(12),
-            //       side: BorderSide(
-            //           color: Theme.of(context).primaryColor,
-            //           style: BorderStyle.solid,
-            //           width: 2),
-            //     ),
-            //     padding: EdgeInsets.all(ScreenUtil().setWidth(7)),
-            //   ),
-            // )
           ],
         ));
   }

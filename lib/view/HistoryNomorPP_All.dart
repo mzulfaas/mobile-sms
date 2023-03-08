@@ -2,7 +2,10 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:http/http.dart';
+import 'package:mobile_sms/models/ApiConstant.dart';
 import 'package:mobile_sms/view/HistoryLinesAll.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -68,41 +71,130 @@ class _HistoryAllState extends State<HistoryAll> {
               title: "Type",
               value: promosi.customer,
             ),
-            TextButton(
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                margin: EdgeInsets.all(ScreenUtil().setWidth(7)),
-                padding: EdgeInsets.all(ScreenUtil().setWidth(5)),
-                child: Center(
-                  child: Text(
-                    "VIEW LINES",
-                    style: TextStyle(
-                        color: Theme.of(context).primaryColorDark,
-                        fontSize: ScreenUtil().setSp(13),
-                        fontWeight: FontWeight.w900),
+            Row(
+              children: [
+                Expanded(
+                  child: TextButton(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      margin: EdgeInsets.all(ScreenUtil().setWidth(7)),
+                      padding: EdgeInsets.all(ScreenUtil().setWidth(5)),
+                      child: Center(
+                        child: Text(
+                          "VIEW LINES",
+                          style: TextStyle(
+                              color: Theme.of(context).primaryColorDark,
+                              fontSize: ScreenUtil().setSp(13),
+                              fontWeight: FontWeight.w900),
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) {
+                            return HistoryLinesAll(
+                              numberPP: promosi?.namePP,
+                              idEmp: _user.id,
+                            );
+                          }));
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: Theme.of(context).accentColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                            style: BorderStyle.solid,
+                            width: 2),
+                      ),
+                      padding: EdgeInsets.all(ScreenUtil().setWidth(7)),
+                    ),
                   ),
                 ),
-              ),
-              onPressed: () {
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) {
-                      return HistoryLinesAll(
-                        numberPP: promosi?.namePP,
-                        idEmp: _user.id,
+                SizedBox(width: 5.w,),
+                Expanded(
+                  child: TextButton(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      margin: EdgeInsets.all(ScreenUtil().setWidth(7)),
+                      padding: EdgeInsets.all(ScreenUtil().setWidth(5)),
+                      child: Center(
+                        child: Text(
+                          "VIEW STATUS",
+                          style: TextStyle(
+                              color: Theme.of(context).primaryColorDark,
+                              fontSize: ScreenUtil().setSp(13),
+                              fontWeight: FontWeight.w900),
+                        ),
+                      ),
+                    ),
+                    onPressed: () async{
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      var url = "${ApiConstant(1).urlApi}api/PromosiHeader?username=${prefs.getString("username")}&NoPP=${promosi.namePP}";
+                      print("url :$url");
+                      print("promo :${jsonEncode(promosi)}");
+                      final response = await get(
+                          Uri.parse(url),
+                          headers: <String, String>{'authorization': _user.token}
                       );
-                    }));
-              },
-              style: TextButton.styleFrom(
-                backgroundColor: Theme.of(context).accentColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  side: BorderSide(
-                      color: Theme.of(context).primaryColor,
-                      style: BorderStyle.solid,
-                      width: 2),
+                      final listData = jsonDecode(response.body);
+                      if(listData!=null&&response.statusCode==200){
+                        Get.defaultDialog(
+                          title: "Status",
+                          content: SingleChildScrollView(
+                            child: Container(
+                              width: Get.width,
+                              height: Get.height-630,
+                              child: ListView.builder(
+                                  itemCount: listData.length,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemBuilder: (context, index){
+                                    return Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text("User :"),
+                                              Text("${listData[index]['User']}")
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text("Status :"),
+                                              Text("${listData[index]['Status']}")
+                                            ],
+                                          ),
+                                          SizedBox(height: 10,),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                              ),
+                            )
+                          )
+                        );
+                      }
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: Theme.of(context).accentColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                            style: BorderStyle.solid,
+                            width: 2),
+                      ),
+                      padding: EdgeInsets.all(ScreenUtil().setWidth(7)),
+                    ),
+                  ),
                 ),
-                padding: EdgeInsets.all(ScreenUtil().setWidth(7)),
-              ),
+              ],
             )
           ],
         ));

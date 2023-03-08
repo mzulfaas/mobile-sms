@@ -74,7 +74,7 @@ class _MyAppState extends State<MyApp> {
       designSize: Size(360, 690),
       minTextAdapt: true,
       splitScreenMode: true,
-      builder:()=> GetMaterialApp(
+      builder:(context,widget)=> GetMaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         home: flag == 0 ? LoginView() : DashboardPage()/*HistoryNomorPP()*/,
@@ -97,7 +97,7 @@ class _MyAppState extends State<MyApp> {
                   side: BorderSide(color: colorAccent))),
         ),
         builder:  (context, widget) {
-          ScreenUtil.setContext(context);
+          ScreenUtil.init(context);
           return MediaQuery(
             //Setting font does not change with system font size
             data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),

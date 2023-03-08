@@ -9,10 +9,11 @@ class TextResultCard extends StatelessWidget {
   @override
   Widget build(BuildContext context2) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Container(
           margin: EdgeInsets.all(ScreenUtil().setWidth(5)),
-          // width: MediaQuery.of(context).size.width / 5,
+          width: MediaQuery.of(context).size.width / 4,
           child: Text(
             title??"",
             style: TextStyle(
@@ -22,11 +23,10 @@ class TextResultCard extends StatelessWidget {
           ),
         ),
         Expanded(
-          flex: 3,
           child: Container(
-            margin: EdgeInsets.all(ScreenUtil().setWidth(5)),
+            margin: EdgeInsets.only(right: ScreenUtil().setWidth(5)),
             child: Text(
-              ":  "+value??"",
+              "$value",
               style: TextStyle(
                   color: Theme.of(context).primaryColorDark,
                   // fontWeight: FontWeight.bold,

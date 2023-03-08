@@ -100,10 +100,4 @@ class DashboardPPTabController extends GetxController with GetSingleTickerProvid
       controller = TabController(vsync: this, length: 2, initialIndex: initialIndex);
     });
   }
-
-  @override
-  void onClose() {
-    controller.dispose();
-    super.onClose();
-  }
 }
