@@ -480,7 +480,7 @@ class InputPagePresenterNew extends GetxController {
       String valueConvert = MoneyFormatter(amount: double.parse(response.body)).output.withoutFractionDigits;
       promotionProgramInputStateRx.value.promotionProgramInputState[index].salesPrice.text = valueConvert;
     }else{
-      print("isi error getSalesPrice :${response.body}");
+
     }
   }
 
@@ -534,15 +534,6 @@ class InputPagePresenterNew extends GetxController {
     if (!promotionProgramInputValidation()) {
       return;
     }
-    // print(
-    //     "test :${
-    //         promotionProgramInputStateRx.value.promotionProgramInputState.map<Map<String, dynamic>>((element) => <String, dynamic>{
-    //           // "FromDate": DateTime.parse(element.fromDate.text),
-    //           "FromDate": element.fromDate.text.replaceAll(element.fromDate.text, "${element.fromDate.text.split('-')[2]}-${element.fromDate.text.split('-')[1]}-${element.fromDate.text.split('-')[0]}"),
-    //           // "FromDate": element.fromDate.text.split('-')[0],
-    //         })}"
-    // );
-
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String username = preferences.getString("username");
     String token = preferences.getString("token");
@@ -585,7 +576,6 @@ class InputPagePresenterNew extends GetxController {
         "PriceTo": element.priceToCustomer.text.replaceAll(RegExp(r"[.,]"), "")
       }).toList()
     });
-    print(isiBody);
     print("token :$token");
     print("url :${'http://119.18.157.236:8869/api/activity?username=$username'}");
     final response = await post(
@@ -597,12 +587,13 @@ class InputPagePresenterNew extends GetxController {
       body: isiBody
     );
     print("status submit : ${response.statusCode}");
+    print("status body : ${response.body}");
     final tabController = Get.put(DashboardPPTabController());
     Future.delayed(Duration(seconds: 2),(){
       if (response.statusCode == 201) {
         Future.delayed(Duration(seconds: 2),(){
           tabController.initialIndex = 1;
-          onTap.value = false;
+          onTap.value = true;
           Get.offAll(
               DashboardPage(),
           );

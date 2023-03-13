@@ -46,12 +46,14 @@ class _InputPageNewState extends State<InputPageNew> {
                   IconButton(
                     onPressed: (){
                       inputPagePresenter.addItem();
+                      WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
                     },
                     icon: Icon(Icons.add)
                   ),
                   IconButton(
                     onPressed: (){
                       inputPagePresenter.removeItem(index);
+                      inputPagePresenter.onTap.value = false;
                     },
                     icon: Icon(Icons.delete,)
                   ),
@@ -229,7 +231,7 @@ class _InputPageNewState extends State<InputPageNew> {
               //   ],
               // ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Container(
                     width: 50,
@@ -259,6 +261,7 @@ class _InputPageNewState extends State<InputPageNew> {
                       //  controller: _passwordController,
                     ),
                   ),
+                  SizedBox(width: 30,),
                   Container(
                     width: 50,
                     child: TextFormField(
@@ -286,6 +289,7 @@ class _InputPageNewState extends State<InputPageNew> {
                       //  controller: _passwordController,
                     ),
                   ),
+                  SizedBox(width: 30,),
                   Container(
                     width: 100,
                     height: 68,
@@ -691,6 +695,16 @@ class _InputPageNewState extends State<InputPageNew> {
 
   final noteFocusNode = FocusNode();
 
+  final _scrollController = ScrollController();
+
+  void _scrollToBottom() {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent-500,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final inputPagePresenter = Get.put(InputPagePresenterNew());
@@ -699,6 +713,7 @@ class _InputPageNewState extends State<InputPageNew> {
       body: SafeArea(
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
+          controller: _scrollController,
           child: Column(
             children: [
               Container(
@@ -972,11 +987,13 @@ class _InputPageNewState extends State<InputPageNew> {
                       backgroundColor: Colors.green,
                     ),
                     child: Text("Add Lines"),
-                    onPressed: isAddItem ? () => inputPagePresenter.addItem() : null
+                    onPressed: isAddItem ? (){
+                      inputPagePresenter.addItem();
+                    } : null
                 ) : ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    reverse: true,
+                    // reverse: true,
                     itemCount: promotionProgramInputStateList.length,
                     itemBuilder: (context, index) => GestureDetector(
                       behavior: HitTestBehavior.translucent,
@@ -989,35 +1006,11 @@ class _InputPageNewState extends State<InputPageNew> {
                           SizedBox(
                             height: 10,
                           ),
-                          index == promotionProgramInputStateList.length - promotionProgramInputStateList.length ?
+                          index == promotionProgramInputStateList.length - 1 ?
                           Padding(
                             padding: EdgeInsets.only(bottom: 500),
                             child: Column(
                               children: [
-                                // Container(
-                                //   margin: EdgeInsets.all(30),
-                                //   color: Colors.white,
-                                //   child: TextFormField(
-                                //     maxLines: 5,
-                                //     controller: inputPagePresenter.programNoteTextEditingControllerRx.value,
-                                //     onTapOutside: (_){
-                                //       FocusScope.of(context).unfocus();
-                                //     },
-                                //     decoration: InputDecoration(
-                                //       focusedBorder: OutlineInputBorder(
-                                //         borderSide: BorderSide(
-                                //           color: Colors.green,
-                                //         ),
-                                //       ),
-                                //       border: OutlineInputBorder(
-                                //         borderSide: BorderSide(
-                                //           color: Colors.black,
-                                //         ),
-                                //       ),
-                                //       hintText: "Note",
-                                //     ),
-                                //   ),
-                                // ),
                                 Visibility(
                                   visible: !inputPagePresenter.onTap.value,
                                   child: ElevatedButton(
@@ -1027,14 +1020,40 @@ class _InputPageNewState extends State<InputPageNew> {
                                       child: Text("Submit"),
                                       onPressed: (){
                                         setState(() {
-                                          inputPagePresenter.onTap.value = true;
-                                          inputPagePresenter.submitPromotionProgram();
+                                          bool isInvalid = false;
+                                          for (int i = 0; i < promotionProgramInputStateList.length; i++) {
+                                            PromotionProgramInputState element = promotionProgramInputStateList[i];
+                                            if (element.selectProductPageDropdownState.selectedChoice == null ||
+                                                element.qtyFrom.text.isEmpty ||
+                                                element.qtyTo.text.isEmpty ||
+                                                element.unitPageDropdownState.selectedChoice == null
+                                            // ||
+                                                /*element.multiplyInputPageDropdownState.selectedChoice == null ||
+                                                element.currencyInputPageDropdownState.selectedChoice == null ||
+                                                element.wareHousePageDropdownState.selectedChoiceWrapper.value == null ||
+                                                element.salesPrice.text.isEmpty ||
+                                                element.priceToCustomer.text.isEmpty*/) {
+                                              isInvalid = true;
+                                              break;
+                                            }
+                                          }
+
+                                          if (isInvalid) {
+                                            // Handle empty fields in promotionProgramInputList
+                                            inputPagePresenter.onTap.value = false;
+                                            Get.snackbar("Error", "Found empty fields in Lines",backgroundColor: Colors.red,icon: Icon(Icons.error));
+                                          } else {
+                                            // Submit the data to the server
+                                            inputPagePresenter.onTap.value = true;
+                                            inputPagePresenter.submitPromotionProgram();
+                                          }
+                                          // inputPagePresenter.submitPromotionProgram();
                                         });
                                       }
                                   ),
                                 ),
                                 Visibility(
-                                  visible: inputPagePresenter.onTap.value,
+                                  visible: inputPagePresenter.onTap.value==true,
                                   child: Center(child: CircularProgressIndicator()),
                                 ),
                               ],
@@ -1045,11 +1064,86 @@ class _InputPageNewState extends State<InputPageNew> {
                     )
                 );
               })
-
             ],
           ),
         )
       ),
     );
   }
+
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   final inputPagePresenter = Get.put(InputPagePresenterNew());
+  //   return Scaffold(
+  //     resizeToAvoidBottomInset: false,
+  //     body: SafeArea(
+  //         child: SingleChildScrollView(
+  //           scrollDirection: Axis.vertical,
+  //           child: Column(
+  //             children: [
+  //               Obx(() {
+  //                 InputPageWrapper inputPageWrapper = inputPagePresenter.promotionProgramInputStateRx.value;
+  //                 List<PromotionProgramInputState> promotionProgramInputStateList = inputPageWrapper.promotionProgramInputState;
+  //                 bool isAddItem = inputPageWrapper.isAddItem;
+  //                 return promotionProgramInputStateList.length == 0 ? ElevatedButton(
+  //                     style: ElevatedButton.styleFrom(
+  //                       backgroundColor: Colors.green,
+  //                     ),
+  //                     child: Text("Add Lines"),
+  //                     onPressed: isAddItem ? () => inputPagePresenter.addItem() : null
+  //                 ) : ListView.builder(
+  //                     physics: NeverScrollableScrollPhysics(),
+  //                     shrinkWrap: true,
+  //                     // reverse: true,
+  //                     itemCount: promotionProgramInputStateList.length,
+  //                     itemBuilder: (context, index) => GestureDetector(
+  //                       behavior: HitTestBehavior.translucent,
+  //                       onTap: () {
+  //                         FocusScope.of(context).unfocus();
+  //                       },
+  //                       child: Column(
+  //                         children: [
+  //                           customCard(index, inputPagePresenter),
+  //                           SizedBox(
+  //                             height: 10,
+  //                           ),
+  //                           index == promotionProgramInputStateList.length - 1 ?
+  //                           Padding(
+  //                             padding: EdgeInsets.only(bottom: 500),
+  //                             child: Column(
+  //                               children: [
+  //                                 Visibility(
+  //                                   visible: !inputPagePresenter.onTap.value,
+  //                                   child: ElevatedButton(
+  //                                       style: ElevatedButton.styleFrom(
+  //                                         backgroundColor: Colors.green,
+  //                                       ),
+  //                                       child: Text("Submit"),
+  //                                       onPressed: (){
+  //                                         setState(() {
+  //                                           inputPagePresenter.onTap.value = true;
+  //                                           inputPagePresenter.submitPromotionProgram();
+  //                                         });
+  //                                       }
+  //                                   ),
+  //                                 ),
+  //                                 Visibility(
+  //                                   visible: inputPagePresenter.onTap.value,
+  //                                   child: Center(child: CircularProgressIndicator()),
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                           ) : SizedBox()
+  //                         ],
+  //                       ),
+  //                     )
+  //                 );
+  //               })
+  //             ],
+  //           ),
+  //         )
+  //     ),
+  //   );
+  // }
 }
