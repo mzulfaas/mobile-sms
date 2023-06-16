@@ -62,7 +62,7 @@ class _HistoryLinesState extends State<HistoryLines> {
 
   Future<Null> listHistorySO() async {
     await Future.delayed(Duration(seconds: 1));
-    Promosi.getListLines(widget.numberPP, code, _user.token, _user.username)
+    Promosi.getListLinesPending(widget.numberPP, code, _user.token, _user.username)
         .then((value) {
       setState(() {
         _listHistorySO = value;
@@ -85,6 +85,21 @@ class _HistoryLinesState extends State<HistoryLines> {
         dataSupplyItem = listData;
       });
       print("dataSupplyItem :$dataSupplyItem");
+    }
+  }
+
+  List dataUnit = [];
+
+  getUnit(String itemId) async {
+    var url = "http://119.18.157.236:8878/api/Unit?item=${itemId}";
+    print("urlGetUnit : $url");
+    final response = await get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final listData = jsonDecode(response.body);
+      setState(() {
+        dataUnit = listData;
+      });
+      print("dataUnit :$dataUnit");
     }
   }
 
@@ -149,12 +164,15 @@ class _HistoryLinesState extends State<HistoryLines> {
           .toList();
       List suppQty = data.map((element) => element.suppQty).toList();
       List suppItem = data.map((element) => element.suppItem).toList();
+      List unit = data.map((element) => element.unitId).toList();
       List suppUnit = data.map((element) => element.suppUnit).toList();
       List warehouse = data.map((element) => element.warehouse).toList();
       List fromDate =
           data.map((element) => element.fromDate.split(" ").first).toList();
       List toDate =
           data.map((element) => element.toDate.split(" ").first).toList();
+      List qtyFrom = data.map((element) => element.qty).toList();
+      List qtyTo = data.map((element) => element.qtyTo).toList();
       for (int i = 0; i < disc1.length; i++) {
         disc1Controller.add(TextEditingController()..text = disc1[i]);
         // disc1Controller[i]..text = disc1[i];
@@ -187,6 +205,10 @@ class _HistoryLinesState extends State<HistoryLines> {
         suppItemController.add(suppItem[i]);
         // suppQtyController[i]..text = suppQty[i];
       }
+      for (int i = 0; i < unit.length; i++) {
+        unitController.add(unit[i]);
+        // suppQtyController[i]..text = suppQty[i];
+      }
       for (int i = 0; i < suppUnit.length; i++) {
         suppUnitController.add(suppUnit[i]);
         // suppQtyController[i]..text = suppQty[i];
@@ -202,6 +224,12 @@ class _HistoryLinesState extends State<HistoryLines> {
       for (int i = 0; i < toDate.length; i++) {
         toDateController.add(TextEditingController()..text = toDate[i]);
         // suppQtyController[i]..text = suppQty[i];
+      }
+      for (int i = 0; i < qtyFrom.length; i++) {
+        qtyFromController.add(TextEditingController()..text = qtyFrom[i].toString());
+      }
+      for (int i = 0; i < qtyTo.length; i++) {
+        qtyToController.add(TextEditingController()..text = qtyTo[i].toString());
       }
     });
     // });
@@ -230,21 +258,59 @@ class _HistoryLinesState extends State<HistoryLines> {
                           setState(() {
                             valueSelectAll = !valueSelectAll;
                             List<Promosi> data = _listHistorySO;
-                            print(_listHistorySO);
-                            List<bool> status =
-                                data.map((element) => element.status).toList();
+                            List<bool> status = data.map((element) => element.status).toList();
                             if (valueSelectAll == true) {
-                              _listHistorySO
-                                  .map((e) => e.status = true)
-                                  .toList();
-                              // status = status.map<bool>((e) => true).toList();
+                              _listHistorySO.map((e) => e.status = true).toList();
+                              for(int index = 0; index<data.length; index++){
+                                List idLines = data.map((element) => element.id).toList();
+                                List disc1lines = data.map((element) => element.disc1).toList();
+                                List disc2lines = data.map((element) => element.disc2).toList();
+                                List disc3lines = data.map((element) => element.disc3).toList();
+                                List disc4lines = data.map((element) => element.disc4).toList();
+                                List value1lines = data.map((element) => element.value1).toList();
+                                List value2lines = data.map((element) => element.value2).toList();
+                                List suppQtylines = data.map((element) => element.suppQty).toList();
+                                List qtyFromLines = data.map((element) => element.qty).toList();
+                                List qtyToLines = data.map((element) => element.qtyTo).toList();
+                                List suppItemlines = data.map((element) => element.suppItem.toString().split(" ").first).toList();
+                                List suppUnitlines = data.map((element) => element.suppUnit).toList();
+                                List unitlines = data.map((element) => element.unitId).toList();
+                                List warehouselines = data.map((element) => element.warehouse).toList();
+                                List fromDatelines = data.map((element) => element.fromDate).toList();
+                                List toDatelines = data.map((element) => element.toDate).toList();
+                                var suppItemLinesAlt = suppItemlines[index];
+                                final dataAddToLines = jsonEncode(<String, dynamic>{
+                                  "id": idLines[index],
+                                  "qtyFrom": qtyFromController[index].text == null || qtyFromController[index].text == ""? qtyFromLines[index]: double.parse(qtyFromController[index].text),
+                                  "qtyTo": qtyToController[index].text == null || qtyToController[index].text == ""? qtyToLines[index]: double.parse(qtyToController[index].text),
+                                  "unit": unitController[index] == null ? unitlines[index] : unitController[index],
+                                  "disc1": disc1Controller[index].text == null || disc1Controller[index].text == "" ? disc1lines[index] : double.parse(disc1Controller[index].text),
+                                  "disc2": disc2Controller[index].text == null || disc2Controller[index].text == "" ? disc2lines[index] : double.parse(disc2Controller[index].text),
+                                  "disc3": disc3Controller[index].text == null || disc3Controller[index].text == "" ? disc3lines[index] : double.parse(disc3Controller[index].text),
+                                  "disc4": disc4Controller[index].text == null || disc4Controller[index].text == "" ? disc4lines[index] : double.parse(disc4Controller[index].text),
+                                  "value1": value1Controller[index].text == null || value1Controller[index].text == "" ? value1lines[index] : double.parse(value1Controller[index].text.replaceAll(",", "").replaceAll(".", "").toString()),
+                                  "value2": value2Controller[index].text == null || value2Controller[index].text == "" ? value2lines[index] : double.parse(value2Controller[index].text.replaceAll(",", "").replaceAll(".", "").toString()),
+                                  "suppQty": suppQtyController[index].text == null ? suppQtylines[index] : double.parse(suppQtyController[index].text),
+                                  "suppItem": suppItemController[index] == null ? suppItemLinesAlt : suppItemController[index].split(" ").first,
+                                  "suppUnit": suppUnitController[index] == null ? suppUnitlines[index] : suppUnitController[index],
+                                  "warehouse": warehouseController[index] == null ? warehouselines[index] : warehouseController[index],
+                                  'fromDate': fromDateHeaderController.text == null ? dataHeader[0]['fromDate'].split(" ").first : fromDateHeaderController.text,
+                                  'toDate': fromDateHeaderController.text == null ? dataHeader[0]['toDate'].split(" ").first : toDateHeaderController.text,
+                                });
+                                setState(() {
+                                  addToLines.add(dataAddToLines);
+                                  print("addToLInes checklist : ${addToLines}");
+                                  print("addToLInes checklist : ${addToLines.length}");
+                                });
+                              }
                             } else {
-                              _listHistorySO
-                                  .map((e) => e.status = false)
-                                  .toList();
+                              _listHistorySO.map((e) => e.status = false).toList();
+                              setState(() {
+                                addToLines.clear();
+                                print("addToLInes not checklist : ${addToLines}");
+                                print("addToLInes not checklist : ${addToLines.length}");
+                              });
                             }
-                            print("status 1 : $status");
-                            print("status 2 : ${jsonEncode(_listHistorySO)}");
                           });
                         },
                       ),
@@ -277,19 +343,10 @@ class _HistoryLinesState extends State<HistoryLines> {
                                             ),
                                           ),
                                           onPressed: () {
-                                            print(
-                                                "valueSelectAll :$valueSelectAll");
-                                            // print("promosi.status :${promosi.status}");
-                                            List checkBox = _listHistorySO
-                                                .map(
-                                                    (element) => element.status)
-                                                .toList();
-                                            // log("valcheck :${jsonEncode(_listHistorySO)}");
-                                            log("check0 :${checkBox}");
-                                            if (checkBox.contains(false)) {
-                                              // GetSnackBar();
+                                            List checkBox = _listHistorySO.map((element) => element.status).toList();
+                                            if (checkBox.every((element) => element==false)) {
                                               Get.snackbar("Error",
-                                                  "Checklist all for reject!!",
+                                                  "Checklist for reject!!",
                                                   backgroundColor: Colors.red,
                                                   icon: Icon(Icons.error));
                                             } else {
@@ -319,20 +376,10 @@ class _HistoryLinesState extends State<HistoryLines> {
                                             ),
                                           ),
                                           onPressed: () {
-                                            // valueSelectAll?valueSelectAll:promosi.status;
-                                            print(
-                                                "valueSelectAll :$valueSelectAll");
-                                            // print("promosi.status :${promosi.status}");
-                                            List checkBox = _listHistorySO
-                                                .map(
-                                                    (element) => element.status)
-                                                .toList();
-                                            // log("valcheck :${jsonEncode(_listHistorySO)}");
-                                            log("check0 :${checkBox}");
-                                            if (checkBox.contains(false)) {
-                                              // GetSnackBar();
+                                            List checkBox = _listHistorySO.map((element) => element.status).toList();
+                                            if (checkBox.every((element) => element==false)) {
                                               Get.snackbar("Error",
-                                                  "Checklist all for approve!!",
+                                                  "Checklist for approve!!",
                                                   backgroundColor: Colors.red,
                                                   icon: Icon(Icons.error));
                                             } else {
@@ -353,7 +400,7 @@ class _HistoryLinesState extends State<HistoryLines> {
               automaticallyImplyLeading: false,
               leading: IconButton(
                 icon: Icon(
-                  Icons.arrow_back,
+                  Icons.arrow_back,   
                   color: Theme.of(context).accentColor,
                 ),
                 onPressed: onBackPressLines,
@@ -370,7 +417,7 @@ class _HistoryLinesState extends State<HistoryLines> {
               body: RefreshIndicator(
                 onRefresh: listHistorySO,
                 child: FutureBuilder(
-                  future: Promosi.getListLines(
+                  future: Promosi.getListLinesPending(
                       widget.numberPP, code, _user?.token, _user?.username),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     _listHistorySO == null
@@ -565,74 +612,6 @@ class _HistoryLinesState extends State<HistoryLines> {
                 ),
               ),
             ),
-            // bottomNavigationBar: startApp==false?null:Container(
-            //   width: MediaQuery.of(context).size.width,
-            //   child: Consumer<LinesProvider>(
-            //     builder: (context, linesProv, _) => Row(
-            //       children: [
-            //         Expanded(
-            //           child: ElevatedButton(
-            //             style: ElevatedButton.styleFrom(
-            //               padding: EdgeInsets.all(ScreenUtil().setWidth(13)),
-            //               backgroundColor: Colors.red,
-            //             ),
-            //             child: Text(
-            //               'Reject',
-            //               style: TextStyle(
-            //                 color: Colors.white,
-            //                 fontSize: ScreenUtil().setSp(25),
-            //                 fontWeight: FontWeight.bold,
-            //               ),
-            //             ),
-            //             onPressed: () {
-            //               print("valueSelectAll :$valueSelectAll");
-            //               // print("promosi.status :${promosi.status}");
-            //               List checkBox = _listHistorySO.map((element) => element.status).toList();
-            //               log("valcheck :${jsonEncode(_listHistorySO)}");
-            //               log("check0 :${checkBox}");
-            //               if(checkBox.contains(false)){
-            //                 // GetSnackBar();
-            //                 Get.snackbar("Error", "Checklist all for reject!!",backgroundColor: Colors.red,icon: Icon(Icons.error));
-            //               }else{
-            //                 approveNew("Reject");
-            //               }
-            //             },
-            //           ),
-            //         ),
-            //         Expanded(
-            //           child: ElevatedButton(
-            //             style: ElevatedButton.styleFrom(
-            //               padding: EdgeInsets.all(ScreenUtil().setWidth(13)),
-            //               backgroundColor: Theme.of(context).primaryColorDark,
-            //             ),
-            //             child: Text(
-            //               'Approve',
-            //               style: TextStyle(
-            //                 color: Theme.of(context).accentColor,
-            //                 fontSize: ScreenUtil().setSp(25),
-            //                 fontWeight: FontWeight.bold,
-            //               ),
-            //             ),
-            //             onPressed: () {
-            //               // valueSelectAll?valueSelectAll:promosi.status;
-            //               print("valueSelectAll :$valueSelectAll");
-            //               // print("promosi.status :${promosi.status}");
-            //               List checkBox = _listHistorySO.map((element) => element.status).toList();
-            //               log("valcheck :${jsonEncode(_listHistorySO)}");
-            //               log("check0 :${checkBox}");
-            //               if(checkBox.contains(false)){
-            //                 // GetSnackBar();
-            //                 Get.snackbar("Error", "Checklist all for approve!!",backgroundColor: Colors.red,icon: Icon(Icons.error));
-            //               }else{
-            //                 approveNew("Approve");
-            //               }
-            //             },
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
           ),
         ),
       ),
@@ -651,9 +630,12 @@ class _HistoryLinesState extends State<HistoryLines> {
   TextEditingController fromDateHeaderController = TextEditingController();
   TextEditingController toDateHeaderController = TextEditingController();
   List suppItemController = [];
+  List unitController = [];
   List suppUnitController = [];
   List warehouseController = [];
   List<TextEditingController> suppQtyController = [];
+  List<TextEditingController> qtyToController = [];
+  List<TextEditingController> qtyFromController = [];
 
   Container CardLinesAdapter(String namePP, Promosi promosi, int index) {
     List<Promosi> data = _listHistorySO;
@@ -670,11 +652,6 @@ class _HistoryLinesState extends State<HistoryLines> {
         price - (price * ((disc1 + disc2 + disc3 + disc4) / 100));
     double totalPriceDiscValue = price - (discValue1 + discValue2);
 
-    List qtyFrom = data.map((element) => element.qty).toList();
-    List fromDate = data.map((element) => element.toDate).toList();
-    print("qty fromCard :$qtyFrom");
-    List qtyTo = data.map((element) => element.qtyTo).toList();
-    print("qty toCard :$qtyTo");
     return Container(
         margin: EdgeInsets.all(ScreenUtil().setWidth(10)),
         padding: EdgeInsets.all(ScreenUtil().setWidth(5)),
@@ -694,14 +671,91 @@ class _HistoryLinesState extends State<HistoryLines> {
                           value:
                               valueSelectAll ? valueSelectAll : promosi.status,
                           onChanged: (bool value) {
+                            List idLines = data.map((element) => element.id).toList();
+                            List disc1lines = data.map((element) => element.disc1).toList();
+                            List disc2lines = data.map((element) => element.disc2).toList();
+                            List disc3lines = data.map((element) => element.disc3).toList();
+                            List disc4lines = data.map((element) => element.disc4).toList();
+                            List value1lines = data.map((element) => element.value1).toList();
+                            List value2lines = data.map((element) => element.value2).toList();
+                            List suppQtylines = data.map((element) => element.suppQty).toList();
+                            List qtyFromLines = data.map((element) => element.qty).toList();
+                            List qtyToLines = data.map((element) => element.qtyTo).toList();
+                            List suppItemlines = data.map((element) => element.suppItem.toString().split(" ").first).toList();
+                            List suppUnitlines = data.map((element) => element.suppUnit).toList();
+                            List unitlines = data.map((element) => element.unitId).toList();
+                            List warehouselines = data.map((element) => element.warehouse).toList();
+                            List fromDatelines = data.map((element) => element.fromDate).toList();
+                            List toDatelines = data.map((element) => element.toDate).toList();
+                            var suppItemLinesAlt = suppItemlines[index];
+                            final dataAddToLines = jsonEncode(<String, dynamic>{
+                              "id": idLines[index],
+                              "qtyFrom": qtyFromController[index].text == null || qtyFromController[index].text == ""? qtyFromLines[index]: double.parse(qtyFromController[index].text),
+                              "qtyTo": qtyToController[index].text == null || qtyToController[index].text == ""? qtyToLines[index]: double.parse(qtyToController[index].text),
+                              "unit": unitController[index] == null ? unitlines[index] : unitController[index],
+                              "disc1":
+                              disc1Controller[index].text == null || disc1Controller[index].text == ""
+                                  ? disc1lines[index]
+                                  : double.parse(disc1Controller[index].text),
+                              "disc2":
+                              disc2Controller[index].text == null || disc2Controller[index].text == ""
+                                  ? disc2lines[index]
+                                  : double.parse(disc2Controller[index].text),
+                              "disc3":
+                              disc3Controller[index].text == null || disc3Controller[index].text == ""
+                                  ? disc3lines[index]
+                                  : double.parse(disc3Controller[index].text),
+                              "disc4":
+                              disc4Controller[index].text == null || disc4Controller[index].text == ""
+                                  ? disc4lines[index]
+                                  : double.parse(disc4Controller[index].text),
+                              "value1":
+                              value1Controller[index].text == null || value1Controller[index].text == ""
+                                  ? value1lines[index]
+                                  : double.parse(value1Controller[index]
+                                  .text
+                                  .replaceAll(",", "")
+                                  .replaceAll(".", "")
+                                  .toString()),
+                              "value2":
+                              value2Controller[index].text == null || value2Controller[index].text == ""
+                                  ? value2lines[index]
+                                  : double.parse(value2Controller[index]
+                                  .text
+                                  .replaceAll(",", "")
+                                  .replaceAll(".", "")
+                                  .toString()),
+                              "suppQty": suppQtyController[index].text == null
+                                  ? suppQtylines[index]
+                                  : double.parse(suppQtyController[index].text),
+                              "suppItem": suppItemController[index] == null
+                                  ? suppItemLinesAlt
+                                  : suppItemController[index].split(" ").first,
+                              "suppUnit": suppUnitController[index] == null
+                                  ? suppUnitlines[index]
+                                  : suppUnitController[index],
+                              "warehouse": warehouseController[index] == null
+                                  ? warehouselines[index]
+                                  : warehouseController[index],
+                              'fromDate': fromDateHeaderController.text == null
+                                  ? dataHeader[0]['fromDate'].split(" ").first
+                                  : fromDateHeaderController.text,
+                              'toDate': fromDateHeaderController.text == null
+                                  ? dataHeader[0]['toDate'].split(" ").first
+                                  : toDateHeaderController.text,
+                            });
                             setState(() {
                               promosi.status = value;
-                              // _statusDisable = value;
-                              value == true
-                                  ? _statusDisable =
-                                      false //_listid.add(promosi.id)
-                                  : _statusDisable =
-                                      true; //_listid.remove(promosi.id);
+                              value == true ? _statusDisable = false : _statusDisable = true;
+                              if(value==true){
+                                addToLines.add(dataAddToLines);
+                                print("addToLInes : ${addToLines}");
+                                print("addToLInes : ${addToLines.length}");
+                              }else{
+                                addToLines.remove(dataAddToLines);
+                                print("addToLInes : ${addToLines}");
+                                print("addToLInes : ${addToLines.length}");
+                              }
                             });
                           },
                           controlAffinity: ListTileControlAffinity.leading,
@@ -720,26 +774,90 @@ class _HistoryLinesState extends State<HistoryLines> {
               children: [
                 Container(
                   width: 150,
-                  child: TextResultCard(
-                    context: context,
-                    title: "Qty From",
-                    value: qtyFrom[index].toString(),
+                  child: InkWell(
+                    onTap: (){
+                      Get.defaultDialog(
+                        barrierDismissible: false,
+                        content: TextFormField(
+                          controller: qtyFromController[index],
+                        ),
+                        onConfirm: (){
+                          Get.back();
+                        }
+                      );
+                    },
+                    child: TextResultCard(
+                      context: context,
+                      title: "Qty From",
+                      value: qtyFromController[index].text,
+                    ),
                   ),
                 ),
                 Container(
                   width: 150,
-                  child: TextResultCard(
-                    context: context,
-                    title: "Qty To",
-                    value: qtyTo[index].toString(),
+                  child: InkWell(
+                    onTap: (){
+                      Get.defaultDialog(
+                        barrierDismissible: false,
+                          content: TextFormField(
+                            controller: qtyToController[index],
+                          ),
+                        onConfirm: (){
+                          Get.back();
+                        }
+                      );
+                    },
+                    child: TextResultCard(
+                      context: context,
+                      title: "Qty To",
+                      value: qtyToController[index].text,
+                    ),
                   ),
                 ),
               ],
             ),
-            TextResultCard(
-              context: context,
-              title: 'Unit',
-              value: promosi.unitId,
+            InkWell(
+              onTap: (){
+                //xx
+                String itemId = promosi.idProduct
+                    .split("-")
+                    .first
+                    .toString()
+                    .split(" ")
+                    .first;
+                print("tol $itemId");
+                setState(() {
+                  getUnit(itemId);
+                });
+                Future.delayed(Duration(seconds: 1), () {
+                  Get.defaultDialog(
+                      title: "",
+                      barrierDismissible: false,
+                      content: SearchChoices.single(
+                        isExpanded: true,
+                        value: unitController[index],
+                        items: dataUnit.map((item) {
+                          return DropdownMenuItem(
+                            child: Text(item),
+                            value: item,
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            unitController[index] = value;
+                          });
+                        },
+                      ),
+                      onConfirm: () {
+                        Get.back();
+                      });
+                });
+              },
+              child: TextResultCard(
+                context: context,
+                title: 'Unit',
+                value: unitController[index] ?? "Empty",
+              ),
             ),
             TextResultCard(
               context: context,
@@ -768,6 +886,7 @@ class _HistoryLinesState extends State<HistoryLines> {
                           builder: (context, linesProv, _) {
                             return TextFormField(
                               keyboardType: TextInputType.number,
+                              readOnly: promosi.value1=="0.00"?false:true,
                               controller: disc1Controller.isEmpty
                                   ? TextEditingController()
                                   : disc1Controller[index],
@@ -818,6 +937,7 @@ class _HistoryLinesState extends State<HistoryLines> {
                         child: Consumer<LinesProvider>(
                           builder: (context, linesProv, _) => TextFormField(
                             keyboardType: TextInputType.number,
+                            readOnly: promosi.value1=="0.00"?false:true,
                             controller: disc2Controller.isEmpty
                                 ? TextEditingController()
                                 : disc2Controller[index],
@@ -873,6 +993,7 @@ class _HistoryLinesState extends State<HistoryLines> {
                         child: Consumer<LinesProvider>(
                           builder: (context, linesProv, _) => TextFormField(
                             // readOnly: _statusDisable,
+                            readOnly: promosi.value1=="0.00"?false:true,
                             keyboardType: TextInputType.number,
                             controller: disc3Controller.isEmpty
                                 ? TextEditingController()
@@ -922,6 +1043,7 @@ class _HistoryLinesState extends State<HistoryLines> {
                         flex: 3,
                         child: Consumer<LinesProvider>(
                           builder: (context, linesProv, _) => TextFormField(
+                            readOnly: promosi.value1=="0.00"?false:true,
                             keyboardType: TextInputType.number,
                             controller: disc4Controller.isEmpty
                                 ? TextEditingController()
@@ -978,6 +1100,7 @@ class _HistoryLinesState extends State<HistoryLines> {
                         child: Consumer<LinesProvider>(
                           builder: (context, linesProv, _) => TextFormField(
                             keyboardType: TextInputType.number,
+                            readOnly: promosi.disc1!="0.00"?true:false,
                             inputFormatters: [
                               MoneyInputFormatter(
                                   thousandSeparator: ".", decimalSeparator: ",")
@@ -1015,7 +1138,7 @@ class _HistoryLinesState extends State<HistoryLines> {
                         margin: EdgeInsets.all(ScreenUtil().setWidth(5)),
                         width: MediaQuery.of(context).size.width / 5,
                         child: Text(
-                          "Value2 ",
+                          "Disc Value2",
                           style: TextStyle(
                             color: Theme.of(context).primaryColorDark,
                             fontSize: ScreenUtil().setSp(15),
@@ -1026,6 +1149,7 @@ class _HistoryLinesState extends State<HistoryLines> {
                         flex: 3,
                         child: Consumer<LinesProvider>(
                           builder: (context, linesProv, _) => TextFormField(
+                            readOnly: promosi.disc1!="0.00"?true:false,
                             keyboardType: TextInputType.number,
                             controller: value2Controller.isEmpty
                                 ? TextEditingController()
@@ -1228,6 +1352,7 @@ class _HistoryLinesState extends State<HistoryLines> {
                       value: suppUnitController[index] ?? "Empty",
                     ),
                   ),
+            SizedBox(height: 8,),
             InkWell(
               onTap: () {
                 setState(() {
@@ -1263,11 +1388,13 @@ class _HistoryLinesState extends State<HistoryLines> {
                 value: warehouseController[index] ?? "Empty",
               ),
             ),
+            SizedBox(height: 8,),
             TextResultCard(
                 context: context,
-                title: "Total",
+                title: "Net Price",
                 value:
                     "Rp${MoneyFormatter(amount: promosi.disc1 == "0.00" && promosi.disc2 == "0.00" && promosi.disc3 == "0.00" && promosi.disc4 == "0.00" ? totalPriceDiscValue : totalPriceDiscOnly).output.withoutFractionDigits.replaceAll(",", ".")}"),
+            SizedBox(height: 8,),
             TextButton(
               child: Container(
                 width: MediaQuery.of(context).size.width,
@@ -1336,11 +1463,13 @@ class _HistoryLinesState extends State<HistoryLines> {
     preferences.setString("result", result);
   }
 
+  List addToLines = [];
+
+
   approveNew(String apprroveOrReject) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     dynamic id = prefs.getInt("userid");
-    String url = ApiConstant(code).urlApi +
-        "api/Approve/$id?userId=${prefs.getInt("userid")}";
+    String url = ApiConstant(code).urlApi + "api/Approve/$id";
     print("url Approve:$url");
     List<Promosi> data = _listHistorySO;
     print(_listHistorySO);
@@ -1351,20 +1480,25 @@ class _HistoryLinesState extends State<HistoryLines> {
     List disc4lines = data.map((element) => element.disc4).toList();
     List value1lines = data.map((element) => element.value1).toList();
     List value2lines = data.map((element) => element.value2).toList();
-    List suppQtylines = data.map((element) => element.qty).toList();
+    List suppQtylines = data.map((element) => element.suppQty).toList();
+    List qtyFromLines = data.map((element) => element.qty).toList();
+    List qtyToLines = data.map((element) => element.qtyTo).toList();
     List suppItemlines = data
         .map((element) => element.suppItem.toString().split(" ").first)
         .toList();
     List suppUnitlines = data.map((element) => element.suppUnit).toList();
+    List unitlines = data.map((element) => element.unitId).toList();
     List warehouselines = data.map((element) => element.warehouse).toList();
     List fromDatelines = data.map((element) => element.fromDate).toList();
     List toDatelines = data.map((element) => element.toDate).toList();
     List lines = [];
     for (int i = 0; i < idLines.length; i++) {
-      print("pleee :${suppItemlines[i]} ${suppItemController[i]}");
       var suppItemLinesAlt = suppItemlines[i];
       lines.add({
         "id": idLines[i],
+        "qtyFrom": qtyFromController[i].text == null || qtyFromController[i].text == ""? qtyFromLines[i]: double.parse(qtyFromController[i].text),
+        "qtyTo": qtyToController[i].text == null || qtyToController[i].text == ""? qtyToLines[i]: double.parse(qtyToController[i].text),
+        "unit": unitController[i] == null ? unitlines[i] : unitController[i],
         "disc1":
             disc1Controller[i].text == null || disc1Controller[i].text == ""
                 ? disc1lines[i]
@@ -1417,11 +1551,13 @@ class _HistoryLinesState extends State<HistoryLines> {
             : toDateHeaderController.text,
       });
     }
+    print("addToLInes :${jsonDecode(jsonEncode(addToLines))}");
+
     dynamic isiBody = jsonEncode(<String, dynamic>{
       "status": apprroveOrReject == "Approve" ? 1 : 2,
-      'lines': lines
+      'lines': jsonDecode(addToLines.toString()),//lines
     });
-    print("isi BodyApprove: $isiBody");
+    log("isi BodyApprove: $isiBody");
     print("idLines: ${idLines}");
     print("url: ${url}");
     final response = await put(

@@ -7,6 +7,7 @@ import 'package:hive/hive.dart';
 import 'package:http/http.dart';
 import 'package:mobile_sms/models/ApiConstant.dart';
 import 'package:mobile_sms/view/HistoryLinesAll.dart';
+import 'package:mobile_sms/view/HistoryLinesAllEdit.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../assets/global.dart';
@@ -71,6 +72,12 @@ class _HistoryAllState extends State<HistoryAll> {
               title: "Type",
               value: promosi.customer,
             ),
+            TextResultCard(
+              context: context,
+              title: "AXStatus",
+              value: promosi.axStatus==""?"-":promosi.axStatus,
+            ),
+            SizedBox(height: 4,),
             Row(
               children: [
                 Expanded(
@@ -82,6 +89,7 @@ class _HistoryAllState extends State<HistoryAll> {
                       child: Center(
                         child: Text(
                           "VIEW LINES",
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                               color: Theme.of(context).primaryColorDark,
                               fontSize: ScreenUtil().setSp(13),
@@ -111,7 +119,7 @@ class _HistoryAllState extends State<HistoryAll> {
                     ),
                   ),
                 ),
-                SizedBox(width: 5.w,),
+                SizedBox(width: 2.w,),
                 Expanded(
                   child: TextButton(
                     child: Container(
@@ -121,6 +129,7 @@ class _HistoryAllState extends State<HistoryAll> {
                       child: Center(
                         child: Text(
                           "VIEW STATUS",
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                               color: Theme.of(context).primaryColorDark,
                               fontSize: ScreenUtil().setSp(13),
@@ -140,7 +149,7 @@ class _HistoryAllState extends State<HistoryAll> {
                       final listData = jsonDecode(response.body);
                       if(listData!=null&&response.statusCode==200){
                         Get.defaultDialog(
-                          title: "Status",
+                          title: "Approval Status",
                           content: SingleChildScrollView(
                             child: Container(
                               width: Get.width,
@@ -159,7 +168,7 @@ class _HistoryAllState extends State<HistoryAll> {
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text("User :"),
+                                              Text("Approval ${index+1} :"),
                                               Text("${listData[index]['User']}")
                                             ],
                                           ),
@@ -167,7 +176,7 @@ class _HistoryAllState extends State<HistoryAll> {
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text("Status :"),
-                                              Text("${listData[index]['Status']}")
+                                              Text("${listData[index]['Status'].toString().replaceAll("Approve", "Approved")}")
                                             ],
                                           ),
                                           SizedBox(height: 10,),
@@ -180,6 +189,46 @@ class _HistoryAllState extends State<HistoryAll> {
                           )
                         );
                       }
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: Theme.of(context).accentColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                            style: BorderStyle.solid,
+                            width: 2),
+                      ),
+                      padding: EdgeInsets.all(ScreenUtil().setWidth(7)),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 2.w,),
+                Expanded(
+                  child: TextButton(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      margin: EdgeInsets.all(ScreenUtil().setWidth(7)),
+                      padding: EdgeInsets.all(ScreenUtil().setWidth(5)),
+                      child: Center(
+                        child: Text(
+                          "EDIT\nLINES",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Theme.of(context).primaryColorDark,
+                              fontSize: ScreenUtil().setSp(13),
+                              fontWeight: FontWeight.w900),
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) {
+                            return HistoryLinesAllEdit(
+                              numberPP: promosi?.namePP,
+                              idEmp: _user.id,
+                            );
+                          }));
                     },
                     style: TextButton.styleFrom(
                       backgroundColor: Theme.of(context).accentColor,

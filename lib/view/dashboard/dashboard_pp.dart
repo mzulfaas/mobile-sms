@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_sms/view/HistoryNomorPP_All.dart';
 import 'package:mobile_sms/view/input-page/input-page-new.dart';
+import 'package:mobile_sms/view/input-page/input-page-presenter-new.dart';
+import 'package:mobile_sms/view/input-page/input-page-presenter.dart';
 import 'package:mobile_sms/view/input-page/input-page.dart';
 
 class DashboardPP extends StatefulWidget {
@@ -35,6 +37,7 @@ class _DashboardPPState extends State<DashboardPP> {
     checkInitialIndexTabbar();
   }
   final tabController = Get.put(DashboardPPTabController());
+  final inputPagePresenter = Get.put(InputPagePresenterNew());
 
   @override
   Widget build(BuildContext context) {

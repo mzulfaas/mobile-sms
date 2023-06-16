@@ -19,7 +19,7 @@ class LoginProvider with ChangeNotifier {
   String _message = "";
   int _status;
 
-  void setMessage(
+  Future<void> setMessage(
       String username, String password, BuildContext context, int code) async {
     _userBox = await Hive.openBox('users');
     preferences = await SharedPreferences.getInstance();
@@ -35,23 +35,8 @@ class LoginProvider with ChangeNotifier {
       } else {
         setBoxLogin(value, code);
         Get.offAll(DashboardPage());
-        // Navigator.pushReplacement(context,
-        //     MaterialPageRoute(
-        //       maintainState: true,
-        //         builder: (context) {
-        //   return HistoryNomorPP();
-        // }));
       }
     }).catchError((onError) {
-      // Navigator.pop(context);
-      // Fluttertoast.showToast(
-      //     msg: 'Error : $onError',
-      //     toastLength: Toast.LENGTH_SHORT,
-      //     gravity: ToastGravity.CENTER,
-      //     timeInSecForIosWeb: 5,
-      //     backgroundColor: colorError,
-      //     textColor: colorBlack,
-      //     fontSize: ScreenUtil().setSp(16));
       _message = onError.toString();
     });
     notifyListeners();

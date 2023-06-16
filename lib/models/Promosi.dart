@@ -46,6 +46,7 @@ class Promosi {
   dynamic listLines;
   dynamic listPromosi;
   dynamic detailpromosi;
+  String axStatus;
 
   Promosi(
       {this.id,
@@ -85,7 +86,8 @@ class Promosi {
         this.listId,
         this.listLines,
         this.listPromosi,
-        this.detailpromosi});
+        this.detailpromosi,
+        this.axStatus});
 
   Promosi.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -126,6 +128,7 @@ class Promosi {
     listLines = json['listLines'];
     listPromosi = json['listPromosi'];
     detailpromosi = json['detailpromosi'];
+    axStatus = json['AXStatus'];
   }
 
   Map<String, dynamic> toJson() {
@@ -168,6 +171,7 @@ class Promosi {
     data['listLines'] = this.listLines;
     data['listPromosi'] = this.listPromosi;
     data['detailpromosi'] = this.detailpromosi;
+    data['AXStatus'] = this.axStatus;
     return data;
   }
 
@@ -240,6 +244,48 @@ class Promosi {
   var promosiLength;
 
   static Future<List<Promosi>> getListLines(String nomorPP, int code, String token, String username) async {
+    final url = '${ApiConstant(code).urlApi}api/PromosiLines/$nomorPP?username=$username';
+    print('Token: $token');
+    print('URL listLines: $url');
+
+    final dio = Dio()
+      ..options.headers['Authorization'] = token;
+    final response = await dio.get(url);
+
+    // Check for errors in the response
+    if (response.statusCode != 200) {
+      throw Exception('Failed to get list of lines');
+    }
+
+    // Extract the JSON data from the response
+    final jsonObject = response.data;
+    final promosiList = List<Promosi>.from(jsonObject.map((model) => Promosi.fromJson(model)));
+
+    return promosiList;
+  }
+
+  static Future<List<Promosi>> getListLinesPending(String nomorPP, int code, String token, String username) async {
+    final url = '${ApiConstant(code).urlApi}api/PromosiLines/$nomorPP?username=$username&type=1';
+    print('Token: $token');
+    print('URL listLines: $url');
+
+    final dio = Dio()
+      ..options.headers['Authorization'] = token;
+    final response = await dio.get(url);
+
+    // Check for errors in the response
+    if (response.statusCode != 200) {
+      throw Exception('Failed to get list of lines');
+    }
+
+    // Extract the JSON data from the response
+    final jsonObject = response.data;
+    final promosiList = List<Promosi>.from(jsonObject.map((model) => Promosi.fromJson(model)));
+
+    return promosiList;
+  }
+
+  static Future<List<Promosi>> getListActivity(String nomorPP, int code, String token, String username) async {
     final url = '${ApiConstant(code).urlApi}api/PromosiLines/$nomorPP?username=$username';
     print('Token: $token');
     print('URL listLines: $url');

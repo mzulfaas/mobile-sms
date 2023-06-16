@@ -575,6 +575,7 @@ class _HistoryLinesApprovedState extends State<HistoryLinesApproved> {
     List<Promosi> data = _listHistorySO;
     print(_listHistorySO);
     List idLines = data.map((element) => element.id).toList();
+
     dynamic isiBody = jsonEncode(<String, dynamic>{
       "status": apprroveOrReject=="Approve"?1:2,
       "id": idLines,

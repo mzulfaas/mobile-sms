@@ -15,7 +15,7 @@ class LoginView extends StatefulWidget {
   _LoginViewState createState() => _LoginViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
   List<String> _dropdownUrl = List();
   User models = new User();
   TextEditingController _username = new TextEditingController();
@@ -38,31 +38,59 @@ class _LoginViewState extends State<LoginView> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    deleteHistorySharedPrefs();
+    // deleteHistorySharedPrefs();
     _selectedUrl = _listUrl[1];
     code = 1;
+    autoLogin();
   }
+
+  Future<Map<String, String>> getCredentials() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String username = prefs.getString('username');
+    String password = prefs.getString('password');
+    return {'username': username, 'password': password};
+  }
+
+  Future<void> autoLogin() async {
+    Map<String, String> credentials = await getCredentials();
+    if (credentials['username'] != null && credentials['password'] != null) {
+      _username.text = credentials['username'];
+      _password.text = credentials['password'];
+      login(_username.text, _password.text, context);
+    }
+  }
+
+  void login(String username, String password, BuildContext context) {
+    if (code == null) {
+      Fluttertoast.showToast(
+          msg: 'Tolong pilih server terlebih dahulu.',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 5,
+          backgroundColor: colorWarning,
+          textColor: colorPrimary,
+          fontSize: ScreenUtil().setSp(16));
+    } else {
+      Text("Loading");
+      Provider.of<LoginProvider>(context, listen: false).setMessage(username, password, context, code).then((_) {
+        int statusCode = Provider.of<LoginProvider>(context, listen: false).getStatus;
+        if (statusCode == 200 && _rememberMe) {
+          saveCredentials(username, password);
+        }
+      });
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
-    // ScreenUtil.init(
-    //     BoxConstraints(
-    //       maxHeight: MediaQuery.of(context).size.height,
-    //       maxWidth: MediaQuery.of(context).size.width,
-    //     ));
-    //
-    // SystemChrome.setPreferredOrientations([
-    //   DeviceOrientation.portraitUp,
-    //   DeviceOrientation.portraitDown,
-    // ]);
 
     return MultiProvider(
       providers: [
         StreamProvider<int>(
           initialData: 0,
           create: (ctx)=> Stream.periodic(Duration(milliseconds: 1000), (i) => i),
-          // builder: (BuildContext context) =>
-          //     Stream.periodic(Duration(milliseconds: 1000), (i) => i),
         ),
         ChangeNotifierProvider<LoginProvider>.value(value: LoginProvider())
       ],
@@ -104,6 +132,15 @@ class _LoginViewState extends State<LoginView> {
       ),
     );
   }
+
+  bool _rememberMe = false; // Add this line
+
+  Future<void> saveCredentials(String username, String password) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('username', username);
+    await prefs.setString('password', password);
+  }
+
 
   Container _buildLoginForm(BuildContext context) {
     _fieldFocusChange(
@@ -254,6 +291,16 @@ class _LoginViewState extends State<LoginView> {
                   SizedBox(
                     height: ScreenUtil().setHeight(5),
                   ),
+                  CheckboxListTile(
+                    title: Text("Remember me"),
+                    value: _rememberMe,
+                    onChanged: (newValue) async{
+                      setState(() {
+                        _rememberMe = newValue;
+                      });
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
+                  ),
                   Container(
                     child: Text(
                         'Pilih Server Main. Jika lemot atau no connection silahkan pindah ke server 1 / server 2.'),
@@ -294,26 +341,12 @@ class _LoginViewState extends State<LoginView> {
               child: Container(
                 child: Consumer<LoginProvider>(
                   builder: (context, objectLogin, _) => ElevatedButton(
-
                     onPressed: () {
                       if (_formKey.currentState.validate()) {
-                        // _alertLoading(context);
-                        if (code == null) {
-                          Fluttertoast.showToast(
-                              msg: 'Tolong pilih server terlebih dahulu.',
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.CENTER,
-                              timeInSecForIosWeb: 5,
-                              backgroundColor: colorWarning,
-                              textColor: colorPrimary,
-                              fontSize: ScreenUtil().setSp(16));
-                        } else {
-                          Text("Loading");
-                          // AlertLoading().alertLoading(context);
-                          objectLogin.setMessage(
-                              _username.text, _password.text, context, code);
-
+                        if (_rememberMe) {
+                          saveCredentials(_username.text, _password.text);
                         }
+                        login(_username.text, _password.text, context);
                       }
                     },
                     style: ElevatedButton.styleFrom(

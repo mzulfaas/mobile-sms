@@ -12,7 +12,7 @@ class TextResultCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Container(
-          margin: EdgeInsets.all(ScreenUtil().setWidth(5)),
+          margin: EdgeInsets.all(ScreenUtil().setWidth(3)),
           width: MediaQuery.of(context).size.width / 4,
           child: Text(
             title??"",
@@ -24,13 +24,13 @@ class TextResultCard extends StatelessWidget {
         ),
         Expanded(
           child: Container(
-            margin: EdgeInsets.only(right: ScreenUtil().setWidth(5)),
+            margin: EdgeInsets.only(right: ScreenUtil().setWidth(4)),
             child: Text(
               "$value",
               style: TextStyle(
-                  color: Theme.of(context).primaryColorDark,
+                  color: Colors.black,
                   // fontWeight: FontWeight.bold,
-                  fontSize: ScreenUtil().setSp(17)),
+                  fontSize: ScreenUtil().setSp(15)),
             ),
           ),
         )

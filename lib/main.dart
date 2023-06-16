@@ -26,6 +26,15 @@ class _MyAppState extends State<MyApp> {
   String value;
   int flag;
 
+  Future<void> checkAutoLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('userToken');
+    if (token != null) {
+      Get.offAll(DashboardPage()); // Navigate to DashboardPage without the ability to go back
+    }
+  }
+
+
   String onesignalUserID;
 
   getOneSignal() async {
@@ -57,10 +66,11 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     WidgetsFlutterBinding.ensureInitialized();
     registeredAdapter();
-    resetSharedPrefs();
+    // resetSharedPrefs();
     Future.delayed(Duration(seconds: 1),(){
       getOneSignal();
     });
+    checkAutoLogin();
   }
 
   resetSharedPrefs()async{
@@ -77,7 +87,7 @@ class _MyAppState extends State<MyApp> {
       builder:(context,widget)=> GetMaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
-        home: flag == 0 ? LoginView() : DashboardPage()/*HistoryNomorPP()*/,
+        home: LoginView()/*DashboardPage()*//*HistoryNomorPP()*/,
         // HistoryNomorPP(),
         theme: ThemeData(
           fontFamily: 'Poppins',

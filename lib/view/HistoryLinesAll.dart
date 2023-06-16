@@ -99,9 +99,6 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
                   Icons.arrow_back,
                   color: Theme.of(context).accentColor,
                 ),
-                // onPressed: (){
-                //   Get.offAll(page);
-                // },
                 onPressed: onBackPressLines,
               ),
               title: Text(
@@ -287,20 +284,25 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
             ),
             Row(
               children: [
-                Container(
-                  width: 150,
-                  child: TextResultCard(
-                    context: context,
-                    title: "Qty From",
-                    value: qtyFrom[index].toString(),
+                Expanded(
+                  child: Container(
+                    width: 150,
+                    child: TextResultCard(
+                      context: context,
+                      title: "Qty From",
+                      value: qtyFrom[index].toString(),
+                    ),
                   ),
                 ),
-                Container(
-                  width: 150,
-                  child: TextResultCard(
-                    context: context,
-                    title: "Qty To",
-                    value: qtyTo[index].toString(),
+
+                Expanded(
+                  child: Container(
+                    width: 150,
+                    child: TextResultCard(
+                      context: context,
+                      title: "Qty To",
+                      value: qtyTo[index].toString(),
+                    ),
                   ),
                 ),
               ],

@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:get/get.dart';
 import 'ApiConstant.dart';
-
 part 'User.g.dart';
 
 @HiveType()
@@ -115,7 +115,12 @@ class User {
       print("ini userid : ${_user.id}");
       return _user;
     }else{
-      Exception('Failed to login');
+      GetSnackBar(
+        title: "Error",
+        message: apiResult.body,
+        backgroundColor: Colors.red,
+      );
+      // Exception('Failed to login');
     }
   }
 

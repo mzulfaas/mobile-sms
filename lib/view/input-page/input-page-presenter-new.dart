@@ -92,16 +92,16 @@ class InputPagePresenterNew extends GetxController {
       choiceList: <IdAndValue<String>>[
         IdAndValue<String>(id: "1", value: "Discount"),
         IdAndValue<String>(id: "2", value: "Bonus"),
-        IdAndValue<String>(id: "3", value: "Sample"),
-        IdAndValue<String>(id: "4", value: "Listing"),
-        IdAndValue<String>(id: "5", value: "Rebate"),
-        IdAndValue<String>(id: "6", value: "Rafraksi"),
-        IdAndValue<String>(id: "7", value: "Gimmick"),
-        IdAndValue<String>(id: "8", value: "Trading Term"),
         IdAndValue<String>(id: "9", value: "Discount & Bonus"),
       ],
       loadingState: 2
     ));
+    // IdAndValue<String>(id: "3", value: "Sample"),
+    // IdAndValue<String>(id: "4", value: "Listing"),
+    // IdAndValue<String>(id: "5", value: "Rebate"),
+    // IdAndValue<String>(id: "6", value: "Rafraksi"),
+    // IdAndValue<String>(id: "7", value: "Gimmick"),
+    // IdAndValue<String>(id: "8", value: "Trading Term"),
     statusTestingInputPageDropdownStateRx.valueFromLast((value) => value.copy(
       choiceList: <String>[
         "Live",
@@ -114,6 +114,7 @@ class InputPagePresenterNew extends GetxController {
     _loadLocation();
     _loadVendor();
     _loadWarehouse();
+    _loadPrincipal();
   }
 
   void _loadLocation() async {
@@ -161,64 +162,17 @@ class InputPagePresenterNew extends GetxController {
     _updateState();
   }
 
-  // void _loadCustomerOrGroup(int index) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   PromotionProgramInputState promotionProgramInputState = promotionProgramInputStateRx.value.promotionProgramInputState[index];
-  //   InputPageDropdownState<IdAndValue<String>> locationGroupInputPageDropdownState = locationInputPageDropdownStateRx.value;
-  //   InputPageDropdownState<String> customerGroupInputPageDropdownState = promotionProgramInputState.customerGroupInputPageDropdownState;
-  //   InputPageDropdownState<IdAndValue<String>> customerNameOrDiscountGroupInputPageDropdownState = promotionProgramInputState.customerNameOrDiscountGroupInputPageDropdownState;
-  //   String selectedChoice = customerGroupInputPageDropdownState.selectedChoice;
-  //   if (selectedChoice == customerGroupInputPageDropdownState.choiceList[0]) {
-  //     var urlGetCustomerChoice = "http://119.18.157.236:8869/api/custtables?userId=${prefs.getInt("userid")}";
-  //     print("urlGetCustomerChoice :$urlGetCustomerChoice}");
-  //     final response = await get(Uri.parse(urlGetCustomerChoice));
-  //     var listData = jsonDecode(response.body);
-  //     print("value urlGetCustomerChoice : $listData");
-  //     customerNameOrDiscountGroupInputPageDropdownState.loadingState = 2;
-  //     customerNameOrDiscountGroupInputPageDropdownState.choiceList = listData.map<IdAndValue<String>>(
-  //       (element) => IdAndValue<String>(id: element["ACCOUNTNUM"], value: "${element["ACCOUNTNUM"]}-${element["CUSTNAME"]}-${element["CUSTNAME_ALIAS"]}")
-  //     ).toList();
-  //     _updateState();
-  //   } else if (selectedChoice == customerGroupInputPageDropdownState.choiceList[1]) {
-  //     var urlGetDiscGroup = "http://119.18.157.236:8869/api/CustPriceDiscGroup";
-  //     print("urlDiscGroup :$urlGetDiscGroup");
-  //     final response = await get(Uri.parse(urlGetDiscGroup));
-  //     var listData = jsonDecode(response.body);
-  //     customerNameOrDiscountGroupInputPageDropdownState.loadingState = 2;
-  //     customerNameOrDiscountGroupInputPageDropdownState.choiceList = listData.map<IdAndValue<String>>(
-  //       (element) => IdAndValue<String>(id: element["GROUPID"].toString(), value: element["NAME"])
-  //     ).toList();
-  //     _updateState();
-  //   }
-  // }
-
-  void _loadCustomerOrGroupHeader() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    InputPageDropdownState<IdAndValue<String>> locationGroupInputPageDropdownState = locationInputPageDropdownStateRx.value;
-    print(customerGroupInputPageDropdownState.value.selectedChoice);
-    String selectedChoice = customerGroupInputPageDropdownState.value.selectedChoice;
-    if (selectedChoice == customerGroupInputPageDropdownState.value.choiceList[0]) {
-      // var urlGetCustomerChoice = "http://119.18.157.236:8869/api/custtables?salesOffice=${prefs.getString("so")/*locationGroupInputPageDropdownState.selectedChoice.id*/}";
-      var urlGetCustomerChoice = "http://119.18.157.236:8869/api/custtables?userId=${prefs.getInt("userid")}";
-      print("urlGetCustomerChoice :$urlGetCustomerChoice");
-      final response = await get(Uri.parse(urlGetCustomerChoice));
-      var listData = jsonDecode(response.body);
-      custNameHeaderValueDropdownStateRx.value.loadingState = 2;
-      custNameHeaderValueDropdownStateRx.value.choiceList = listData.map<IdAndValue<String>>(
-              (element) => IdAndValue<String>(id: element["ACCOUNTNUM"], value: "${element["ACCOUNTNUM"]}-${element["CUSTNAME"]}-${element["CUSTNAME_ALIAS"]}")
-      ).toList();
-      _updateState();
-    } else if (selectedChoice == customerGroupInputPageDropdownState.value.choiceList[1]) {
-      print("object");
-      var urlGetDiscGroup = "http://119.18.157.236:8869/api/CustPriceDiscGroup";
-      final response = await get(Uri.parse(urlGetDiscGroup));
-      var listData = jsonDecode(response.body);
-      custNameHeaderValueDropdownStateRx.value.loadingState = 2;
-      custNameHeaderValueDropdownStateRx.value.choiceList = listData.map<IdAndValue<String>>(
-              (element) => IdAndValue<String>(id: element["GROUPID"].toString(), value: element["NAME"])
-      ).toList();
-      _updateState();
-    }
+  RxList listDataPrincipal = [].obs;
+  RxList<int> selectedDataPrincipal = <int>[].obs;
+  RxString valPrincipal = "".obs;
+  void _loadPrincipal() async {
+    var urlPrincipal = "http://119.18.157.236:8869/api/Principals";
+    final response = await get(Uri.parse(urlPrincipal));
+    final listData = jsonDecode(response.body);
+    listData.removeWhere((item) => item == null);
+    listDataPrincipal.value = listData;
+    update();
+    print("principal : $listDataPrincipal");
   }
 
   void _loadWarehouse() async {
@@ -231,6 +185,7 @@ class InputPagePresenterNew extends GetxController {
     _warehouseInputPageDropdownState.choiceListWrapper.value = listData.map<IdAndValue<String>>(
       (element) => IdAndValue<String>(id: element["INVENTLOCATIONID"].toString(), value: element["NAME"])
     ).toList();
+    print("loadWarehouse : ${_warehouseInputPageDropdownState.choiceListWrapper.value[0]}");
     _updateState();
   }
 
@@ -247,6 +202,7 @@ class InputPagePresenterNew extends GetxController {
     unitPageDropdownState.choiceList = listData.map<String>((element) {
       return element.toString();
     }).toList();
+    promotionProgramInputStateRx.value.promotionProgramInputState[index].unitPageDropdownState.selectedChoice = promotionProgramInputStateRx.value.promotionProgramInputState[index].unitPageDropdownState.choiceList[0];
     _updateState();
   }
 
@@ -256,12 +212,19 @@ class InputPagePresenterNew extends GetxController {
     InputPageDropdownState<String> itemGroupInputPageDropdownState = promotionProgramInputState.itemGroupInputPageDropdownState;
     InputPageDropdownState<IdAndValue<String>> selectProductPageDropdownState = promotionProgramInputState.selectProductPageDropdownState;
     String selectedChoice = itemGroupInputPageDropdownState.selectedChoice;
+    final selectedItems = selectedDataPrincipal.map((index) => listDataPrincipal[index]).toList();
+    print("selectedItems ${selectedItems}");
+    String selectedItemsJson = jsonEncode(selectedItems); // Convert selectedItems to a JSON string
+    print("selectedItemsJson ${selectedItemsJson}");
+
     if (selectedChoice == itemGroupInputPageDropdownState.choiceList[0]) {
       var urlGetProduct = "http://119.18.157.236:8869/api/PrbItemTables";
-      // var urlGetProduct = "http://119.18.157.236:8878/api/product?idSales=rp004&idCustomer=${customerNameOrDiscountGroupInputPageDropdownState.selectedChoice.id}&condition=1";
       print("urlGetProduct : $urlGetProduct");
-      final response = await get(Uri.parse(urlGetProduct));
+      final response = await post(Uri.parse(urlGetProduct),headers: {
+        'Content-Type': 'application/json',
+      }, body: selectedItemsJson);
       var listData = jsonDecode(response.body);
+      print("respon : $listData");
       selectProductPageDropdownState.loadingState = 2;
       selectProductPageDropdownState.choiceList = listData.map<IdAndValue<String>>(
               (element) => IdAndValue<String>(id: element["ITEMID"], value: "${element["ITEMID"]}-${element["PK_BRAND"]}-${element["ITEMNAME"]}-${element["PK_PACKING"]}")
@@ -280,13 +243,18 @@ class InputPagePresenterNew extends GetxController {
   }
 
   void _loadSupplyItem(int index) async {
+    // xx
+    final selectedItems = selectedDataPrincipal.map((index) => listDataPrincipal[index]).toList();
+    print("selectedItems ${selectedItems}");
+    String selectedItemsJson = jsonEncode(selectedItems);
     PromotionProgramInputState promotionProgramInputState = promotionProgramInputStateRx.value.promotionProgramInputState[index];
     InputPageDropdownState<IdAndValue<String>> customerNameOrDiscountGroupInputPageDropdownState = promotionProgramInputState.customerNameOrDiscountGroupInputPageDropdownState;
     InputPageDropdownState<IdAndValue<String>> supplyItemPageDropdownState = promotionProgramInputState.supplyItem;
-    // var urlGetSupplyItem = "http://119.18.157.236:8878/api/product?idSales=rp004&idCustomer=${custNameHeaderValueDropdownStateRx.value.selectedChoice.id}&condition=1";
     var urlGetSupplyItem = "http://119.18.157.236:8869/api/PrbItemTables";
     print("url supply item : ${urlGetSupplyItem}");
-    final response = await get(Uri.parse(urlGetSupplyItem));
+    final response = await post(Uri.parse(urlGetSupplyItem),headers: {
+      'Content-Type': 'application/json',
+    }, body: selectedItemsJson);
     var listData = jsonDecode(response.body);
     print(response.body);
     supplyItemPageDropdownState.loadingState = 2;
@@ -313,6 +281,7 @@ class InputPagePresenterNew extends GetxController {
   }
 
   void changePromotionType(IdAndValue<String> selectedChoice) {
+    print("promotionType :${selectedChoice}");
     print("promotionType :${selectedChoice.id}");
     promotionTypeInputPageDropdownStateRx.value.selectedChoice = selectedChoice;
     checkAddItemStatus();
@@ -397,11 +366,40 @@ class InputPagePresenterNew extends GetxController {
   }
 
   void changeCustomerGroupHeader(String selectedChoice) {
-    print("selectedChoice : $selectedChoice");
+    print("selectedChoice cust header : $selectedChoice");
     customerGroupInputPageDropdownState.value.selectedChoice = selectedChoice;
     _loadCustomerOrGroupHeader();
     _updateState();
   }
+
+  void _loadCustomerOrGroupHeader() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    InputPageDropdownState<IdAndValue<String>> locationGroupInputPageDropdownState = locationInputPageDropdownStateRx.value;
+    print(customerGroupInputPageDropdownState.value.selectedChoice);
+    String selectedChoice = customerGroupInputPageDropdownState.value.selectedChoice;
+    if (selectedChoice == customerGroupInputPageDropdownState.value.choiceList[0]) {
+      var urlGetCustomerChoice = "http://119.18.157.236:8869/api/custtables?userId=${prefs.getInt("userid")}";
+      print("urlGetCustomerChoice :$urlGetCustomerChoice");
+      final response = await get(Uri.parse(urlGetCustomerChoice));
+      var listData = jsonDecode(response.body);
+      custNameHeaderValueDropdownStateRx.value.loadingState = 2;
+      custNameHeaderValueDropdownStateRx.value.choiceList = listData.map<IdAndValue<String>>(
+              (element) => IdAndValue<String>(id: element["ACCOUNTNUM"], value: "${element["ACCOUNTNUM"]}-${element["CUSTNAME"]}-${element["CUSTNAME_ALIAS"]}")
+      ).toList();
+      _updateState();
+    } else if (selectedChoice == customerGroupInputPageDropdownState.value.choiceList[1]) {
+      print("object");
+      var urlGetDiscGroup = "http://119.18.157.236:8869/api/CustPriceDiscGroup";
+      final response = await get(Uri.parse(urlGetDiscGroup));
+      var listData = jsonDecode(response.body);
+      custNameHeaderValueDropdownStateRx.value.loadingState = 2;
+      custNameHeaderValueDropdownStateRx.value.choiceList = listData.map<IdAndValue<String>>(
+              (element) => IdAndValue<String>(id: element["GROUPID"].toString(), value: element["NAME"])
+      ).toList();
+      _updateState();
+    }
+  }
+
 
   void changeCustomerNameOrDiscountGroup(int index, IdAndValue<String> selectedChoice) {
     PromotionProgramInputState promotionProgramInputState = promotionProgramInputStateRx.value.promotionProgramInputState[index];
@@ -412,6 +410,7 @@ class InputPagePresenterNew extends GetxController {
   }
 
   void changeCustomerNameOrDiscountGroupHeader(IdAndValue<String> selectedChoice) {
+    print("customerHeader : $selectedChoice");
     // PromotionProgramInputState promotionProgramInputState = promotionProgramInputStateRx.value.promotionProgramInputState[index];
     // custNameHeaderValueDropdownStateRx.value.selectedChoice = selectedChoice;
     custNameHeaderValueDropdownStateRx.value.selectedChoice = selectedChoice;
@@ -428,20 +427,24 @@ class InputPagePresenterNew extends GetxController {
   void changeProduct(int index, IdAndValue<String> selectedChoice) {
     promotionProgramInputStateRx.value.promotionProgramInputState[index]
       .selectProductPageDropdownState.selectedChoice = selectedChoice;
+    promotionProgramInputStateRx.value.promotionProgramInputState[index].qtyFrom.text = "1";
     _loadUnit(index);
     _loadSupplyItem(index);
+    getSalesPriceValue(index);
     _updateState();
   }
 
   void changeWarehouse(int index, IdAndValue<String> selectedChoice) {
     promotionProgramInputStateRx.value.promotionProgramInputState[index]
       .wareHousePageDropdownState.selectedChoiceWrapper.value = selectedChoice;
+    print("warehouse : ${selectedChoice.id}");
     _updateState();
   }
 
   void changeUnit(int index, String selectedChoice) {
     promotionProgramInputStateRx.value.promotionProgramInputState[index]
       .unitPageDropdownState.selectedChoice = selectedChoice;
+    getSalesPriceValue(index);
     _updateState();
   }
 
@@ -460,6 +463,19 @@ class InputPagePresenterNew extends GetxController {
   void changePercentValue(int index, IdAndValue<String> selectedChoice) {
     promotionProgramInputStateRx.value.promotionProgramInputState[index]
       .percentValueInputPageDropdownState.selectedChoice = selectedChoice;
+    print("percent/value ${selectedChoice}");
+    if(selectedChoice.value=="Value"){
+      print("totot");
+      promotionProgramInputStateRx.value.promotionProgramInputState[index].percent1.clear();
+      promotionProgramInputStateRx.value.promotionProgramInputState[index].percent2.clear();
+      promotionProgramInputStateRx.value.promotionProgramInputState[index].percent3.clear();
+      promotionProgramInputStateRx.value.promotionProgramInputState[index].percent4.clear();
+    }else{
+      promotionProgramInputStateRx.value.promotionProgramInputState[index].value1.clear();
+      promotionProgramInputStateRx.value.promotionProgramInputState[index].value2.clear();
+      promotionProgramInputStateRx.value.promotionProgramInputState[index].salesPrice.clear();
+      promotionProgramInputStateRx.value.promotionProgramInputState[index].priceToCustomer.clear();
+    }
     getSalesPriceValue(index);
     _updateState();
   }
@@ -480,25 +496,61 @@ class InputPagePresenterNew extends GetxController {
       String valueConvert = MoneyFormatter(amount: double.parse(response.body)).output.withoutFractionDigits;
       promotionProgramInputStateRx.value.promotionProgramInputState[index].salesPrice.text = valueConvert;
     }else{
-
+      print("error getSalesPrice :${response.body}");
+      promotionProgramInputStateRx.value.promotionProgramInputState[index].salesPrice.text = "0";
     }
   }
 
-  getPriceToCustomer(int index){
-    String salesPrice = promotionProgramInputStateRx.value.promotionProgramInputState[index].salesPrice.text.replaceAll(",", "");
+  double _parseAndSanitizeNumber(String input, {String replaceChar = ".", String defaultValue = "0.0"}) {
+    return double.parse(input.isEmpty ? defaultValue : input.replaceAll(replaceChar, "").replaceAll(",", ""));
+  }
+
+
+  void getPriceToCustomer(int index) {
+    var promotionProgramInputState = promotionProgramInputStateRx.value.promotionProgramInputState[index];
+
+    double salesPrice = _parseAndSanitizeNumber(promotionProgramInputState.salesPrice.text, replaceChar: ".");
     print("salesPrice : ${salesPrice}");
-    String value1 = promotionProgramInputStateRx.value.promotionProgramInputState[index].value1.text.isEmpty?"0.0":promotionProgramInputStateRx.value.promotionProgramInputState[index].value1.text.replaceAll(".", "");
+    double value1 = _parseAndSanitizeNumber(promotionProgramInputState.value1.text, replaceChar: ".");
     print("value1 : ${value1}");
-    String value2 = promotionProgramInputStateRx.value.promotionProgramInputState[index].value2.text.isEmpty?"0.0":promotionProgramInputStateRx.value.promotionProgramInputState[index].value2.text.replaceAll(".", "");
+    double value2 = _parseAndSanitizeNumber(promotionProgramInputState.value2.text, replaceChar: ".");
     print("value2 : ${value2}");
-    double salesPriceToDouble = double.parse(salesPrice);
-    double value1ToDouble = double.parse(value1);
-    double value2ToDouble = double.parse(value2);
-    print("cokob : ${salesPriceToDouble-(value1ToDouble+value2ToDouble)}");
-    var countPriceToCustomer = salesPriceToDouble-(value1ToDouble+value2ToDouble);
-    promotionProgramInputStateRx.value.promotionProgramInputState[index].priceToCustomer.text = MoneyFormatter(amount: countPriceToCustomer).output.withoutFractionDigits;
+
+    int percent1 = 0;
+    int percent2 = 0;
+    int percent3 = 0;
+    int percent4 = 0;
+
+    try {
+      percent1 = promotionProgramInputState.percent1.text != null && RegExp(r'^\d+$').hasMatch(promotionProgramInputState.percent1.text)
+          ? int.parse(promotionProgramInputState.percent1.text) : 0;
+
+      percent2 = promotionProgramInputState.percent2.text != null && RegExp(r'^\d+$').hasMatch(promotionProgramInputState.percent2.text)
+          ? int.parse(promotionProgramInputState.percent2.text) : 0;
+
+      percent3 = promotionProgramInputState.percent3.text != null && RegExp(r'^\d+$').hasMatch(promotionProgramInputState.percent3.text)
+          ? int.parse(promotionProgramInputState.percent3.text) : 0;
+
+      percent4 = promotionProgramInputState.percent4.text != null && RegExp(r'^\d+$').hasMatch(promotionProgramInputState.percent4.text)
+          ? int.parse(promotionProgramInputState.percent4.text) : 0;
+
+    } catch (e) {
+      print('Error parsing percentage: $e');
+    }
+
+    double countPriceToCustomerValue = salesPrice - (value1 + value2);
+    print("percent4After : $percent4");
+    dynamic totalDiscount = ((salesPrice * percent1/100) + (salesPrice * percent2/100) + (salesPrice * percent3/100) + (salesPrice * percent4/100));
+    print("totalDiscount : $totalDiscount");
+    double countPriceToCustomerPercent = salesPrice - totalDiscount;
+
+    print("countPriceToCustomerValue : $countPriceToCustomerValue");
+    print("countPriceToCustomerPercent : $countPriceToCustomerPercent");
+
+    promotionProgramInputState.priceToCustomer.text = MoneyFormatter(amount: value1!=0.0?countPriceToCustomerValue:countPriceToCustomerPercent).output.withoutFractionDigits;
     update();
   }
+
 
   void changeFromDateValue(int index, var value) {
     promotionProgramInputStateRx.value.promotionProgramInputState[index].fromDate.text = value;
@@ -540,6 +592,7 @@ class InputPagePresenterNew extends GetxController {
     int ppTypeConvert = int.parse(promotionTypeInputPageDropdownStateRx.value.selectedChoice.id);
     // int multiplyConvert = int.parse(element.multiplyInputPageDropdownState.selectedChoice.id);
     int typeConvert = int.parse(promotionTypeInputPageDropdownStateRx.value.selectedChoice.id);
+    final selectedItemsPrincipal = selectedDataPrincipal.map((index) => listDataPrincipal[index]).toList().toString().replaceAll(RegExp(r'[\[\]]'), '');
     final isiBody = jsonEncode(<String, dynamic>{
       "PPtype": ppTypeConvert,
       "PPname": programNameTextEditingControllerRx.value.text,
@@ -547,7 +600,7 @@ class InputPagePresenterNew extends GetxController {
       "FromDateHeader": programFromDateTextEditingControllerRx.value.text.replaceAll(programFromDateTextEditingControllerRx.value.text, "${programFromDateTextEditingControllerRx.value.text.split('-')[2]}-${programFromDateTextEditingControllerRx.value.text.split('-')[1]}-${programFromDateTextEditingControllerRx.value.text.split('-')[0]}"),
       "ToDateHeader": programToDateTextEditingControllerRx.value.text.replaceAll(programToDateTextEditingControllerRx.value.text, "${programToDateTextEditingControllerRx.value.text.split('-')[2]}-${programToDateTextEditingControllerRx.value.text.split('-')[1]}-${programToDateTextEditingControllerRx.value.text.split('-')[0]}"),
       "Location": preferences.getString("so"),
-      // "Vendor": vendorInputPageDropdownStateRx.value.selectedChoice.id,
+      "Vendor": selectedItemsPrincipal,
       "customerId": custNameHeaderValueDropdownStateRx.value.selectedChoice.id,
       "Lines": promotionProgramInputStateRx.value.promotionProgramInputState.map<Map<String, dynamic>>((element) => <String, dynamic>{
         "Customer": custNameHeaderValueDropdownStateRx.value.selectedChoice.id,
@@ -572,10 +625,11 @@ class InputPagePresenterNew extends GetxController {
         "UnitSupply": element.unitSupplyItem.selectedChoice,
         "SalesPrice": element.salesPrice.text.replaceAll(RegExp(r"[.,]"), ""),
         // element.supplyItem.selectedChoice.isNull ? "" : element.supplyItem.selectedChoice.id
-        "Warehouse": element.wareHousePageDropdownState.selectedChoiceWrapper.value==null?"":element.wareHousePageDropdownState.selectedChoiceWrapper.value.id,
+        "Warehouse": element.wareHousePageDropdownState.selectedChoiceWrapper.value==null?"DC01K-B":element.wareHousePageDropdownState.selectedChoiceWrapper.value.id,
         "PriceTo": element.priceToCustomer.text.replaceAll(RegExp(r"[.,]"), "")
       }).toList()
     });
+    print("isiBody :$isiBody");
     print("token :$token");
     print("url :${'http://119.18.157.236:8869/api/activity?username=$username'}");
     final response = await post(
@@ -625,6 +679,113 @@ class InputPagePresenterNew extends GetxController {
             ),
           ],
         ),barrierDismissible: false);
+        print(response.body);
+      }
+    }
+    );
+  }
+
+  void submitEditPromotionProgram(int idHeader,List idLines,String ppnum) async {
+    if (!promotionProgramInputValidation()) {
+      return;
+    }
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String username = preferences.getString("username");
+    String token = preferences.getString("token");
+    int ppTypeConvert = int.parse(promotionTypeInputPageDropdownStateRx.value.selectedChoice.id);
+    final isiBody = jsonEncode(<String, dynamic>{
+      //baru
+      "id": idHeader,
+      "PPtype": ppTypeConvert,
+      "PPname": programNameTextEditingControllerRx.value.text,
+      "PPnum": ppnum,
+      "Note": programNoteTextEditingControllerRx.value.text,
+      "CustomerId": custNameHeaderValueDropdownStateRx.value.selectedChoice.id,
+      "FromDateHeader" : programFromDateTextEditingControllerRx.value.text==""?"${DateTime.now()}":programFromDateTextEditingControllerRx.value.text.replaceAll(programFromDateTextEditingControllerRx.value.text, "${programFromDateTextEditingControllerRx.value.text.split('-')[2]}-${programFromDateTextEditingControllerRx.value.text.split('-')[1]}-${programFromDateTextEditingControllerRx.value.text.split('-')[0]}"),
+      "ToDateHeader" : programToDateTextEditingControllerRx.value.text==""?"${DateTime.now()}":programToDateTextEditingControllerRx.value.text.replaceAll(programToDateTextEditingControllerRx.value.text, "${programToDateTextEditingControllerRx.value.text.split('-')[2]}-${programToDateTextEditingControllerRx.value.text.split('-')[1]}-${programToDateTextEditingControllerRx.value.text.split('-')[0]}"),
+      "Lines": promotionProgramInputStateRx.value.promotionProgramInputState.asMap().entries.map<Map<String, dynamic>>((entry) {
+        int index = entry.key;
+        var element = entry.value;
+        print("inndex :${index}");
+        print("ellement :${element}");
+        print("idLines :${idLines}");
+        return <String, dynamic>{
+          //baru
+          "Id": idLines[index], // use the index to get the corresponding id from idLines
+          "ItemId": element.selectProductPageDropdownState.selectedChoice.id,
+          "QtyFrom": element.qtyFrom.text.isEmpty ? 0 : element.qtyFrom.text,
+          "QtyTo": element.qtyTo.text.isEmpty ? 0 : element.qtyTo.text,
+          "Unit": element.unitPageDropdownState.selectedChoice,
+          "Multiply": element.multiplyInputPageDropdownState.selectedChoice.id,
+          "Currency": element.currencyInputPageDropdownState.selectedChoice,
+          "type": element.percentValueInputPageDropdownState.selectedChoice.isNull? 0 : element.percentValueInputPageDropdownState.selectedChoice.id,
+          "Pct1": element.percent1.text.isEmpty ? 0.0 : element.percent1.text,
+          "Pct2": element.percent2.text.isEmpty ? 0.0 : element.percent2.text,
+          "Pct3": element.percent3.text.isEmpty ? 0.0 : element.percent3.text,
+          "Pct4": element.percent4.text.isEmpty ? 0.0 : element.percent4.text,
+          "Value1": element.value1.text.isEmpty ? 0.0 : element.value1.text.replaceAll('.', ''),
+          "Value2": element.value2.text.isEmpty ? 0.0 : element.value2.text.replaceAll('.', ''),
+          // "SupplyItemOnlyOnce":"",
+          "SupplyItem": element.supplyItem.selectedChoice.isNull ? "" : element.supplyItem.selectedChoice.id,
+          "QtySupply": element.qtyItem.text.isEmpty ? 0 : element.qtyItem.text,
+          "UnitSupply": element.unitSupplyItem.selectedChoice,
+          "SalesPrice": element.salesPrice.text.replaceAll(RegExp(r"[.,]"), ""),
+          "PriceTo": element.priceToCustomer.text.replaceAll(RegExp(r"[.,]"), ""),
+        };
+      }).toList(),
+    });
+    print("isiBody edit :$isiBody");
+    print("token :$token");
+    print("url edit:${'http://119.18.157.236:8869/api/activity?username=$username'}");
+    final response = await put(
+        Uri.parse('http://119.18.157.236:8869/api/activity?username=$username'),
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': '$token',
+        },
+        body: isiBody
+    );
+    print("status submit : ${response.statusCode}");
+    print("status body : ${response.body}");
+    final tabController = Get.put(DashboardPPTabController());
+    Future.delayed(Duration(seconds: 2),(){
+      if (response.statusCode == 201) {
+        onTap.value = true;
+        Future.delayed(Duration(seconds: 2),(){
+          tabController.initialIndex = 1;
+          Get.delete<InputPagePresenterNew>();
+          Get.offAll(
+            DashboardPage(),
+          );
+          Get.to(DashboardPP(initialIndexs: 1,));
+          onTap.value = false;
+          update();
+          // Get.offAll(HistoryNomorPP());
+        });
+        Get.dialog(
+            SimpleDialog(
+              title: Text("Success"),
+              children: [
+                Center(
+                  child: CircularProgressIndicator(),
+                )
+              ],
+            ),barrierDismissible: false);
+      } else {
+        onTap.value = false;
+        print("token : $token");
+        Get.dialog(
+            SimpleDialog(
+              title: Text("Error"),
+              children: [
+                Center(
+                  child: Text("${response.statusCode}\n${response.body.replaceAll(r"\'", "'")}",style: TextStyle(color: Colors.red),textAlign: TextAlign.center),
+                ),
+                Center(
+                  child: Icon(Icons.error),
+                ),
+              ],
+            ),barrierDismissible: false);
         print(response.body);
       }
     }
