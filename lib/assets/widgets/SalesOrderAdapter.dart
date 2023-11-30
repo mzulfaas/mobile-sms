@@ -7,7 +7,7 @@ import 'TextResultCard.dart';
 
 class SalesOrderAdapter extends StatelessWidget {
   Promosi models = new Promosi();
-  SalesOrderAdapter({this.models});
+  SalesOrderAdapter({required this.models});
 
   @override
   Widget build(BuildContext context) {

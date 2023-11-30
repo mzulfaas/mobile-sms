@@ -23,7 +23,7 @@ class LoaderTwo extends StatefulWidget {
   final Duration duration;
 
   LoaderTwo(
-      {Key key,
+      {Key? key,
       this.centralDotColor = Colors.black26,
       this.dotOneColor = Colors.red,
       this.dotTwoColor = Colors.lightBlue,
@@ -44,10 +44,10 @@ class LoaderTwo extends StatefulWidget {
 
 class _LoaderTwoState extends State<LoaderTwo>
     with SingleTickerProviderStateMixin {
-  AnimationController controller;
-  Animation<double> animationRotation;
-  Animation<double> animationRadiusIn;
-  Animation<double> animationRadiusOut;
+  AnimationController? controller;
+  Animation<double>? animationRotation;
+  Animation<double>? animationRadiusIn;
+  Animation<double>? animationRadiusOut;
 
   final double initialRadius;
   double radius = 0.0;
@@ -61,38 +61,38 @@ class _LoaderTwoState extends State<LoaderTwo>
 
     animationRadiusIn =
         Tween<double>(begin: 1.0, end: 0.0).animate(CurvedAnimation(
-      parent: controller,
+      parent: controller!,
       curve: Interval(0.75, 1.0, curve: Curves.elasticIn),
     ));
     animationRadiusOut =
         Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-      parent: controller,
+      parent: controller!,
       curve: Interval(0.0, 0.25, curve: Curves.elasticOut),
     ));
     animationRotation = Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(
-            parent: controller,
+            parent: controller!,
             curve: Interval(0.0, 1.0, curve: Curves.linear)));
 
-    controller.addListener(() {
-      if (controller.value >= 0.75 && controller.value <= 1.0) {
+    controller!.addListener(() {
+      if (controller!.value >= 0.75 && controller!.value <= 1.0) {
         setState(() {
-          radius = animationRadiusIn.value * initialRadius;
+          radius = animationRadiusIn!.value * initialRadius;
         });
-      } else if (controller.value >= 0.0 && controller.value <= 0.25) {
+      } else if (controller!.value >= 0.0 && controller!.value <= 0.25) {
         setState(() {
-          radius = animationRadiusOut.value * initialRadius;
+          radius = animationRadiusOut!.value * initialRadius;
         });
       }
     });
 
-    controller.repeat();
+    controller!.repeat();
   }
 
   @override
   void dispose() {
     super.dispose();
-    controller.dispose();
+    controller!.dispose();
   }
 
   @override
@@ -102,7 +102,7 @@ class _LoaderTwoState extends State<LoaderTwo>
       width: 100.0,
       child: Center(
         child: RotationTransition(
-          turns: animationRotation,
+          turns: animationRotation!,
           child: Stack(
             children: <Widget>[
               Dot(
@@ -175,7 +175,7 @@ class Dot extends StatelessWidget {
   final double radius;
   final Color color;
 
-  const Dot({Key key, this.radius, this.color}) : super(key: key);
+  const Dot({Key? key, required this.radius, required this.color}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

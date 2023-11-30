@@ -16,7 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../Login.dart';
 
 class DashboardPage extends StatefulWidget {
-  const DashboardPage({Key key}) : super(key: key);
+  const DashboardPage({Key? key}) : super(key: key);
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
@@ -38,12 +38,10 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Future<bool> onBackPress() {
     deleteBoxUser();
-    return Get.offAll(LoginView());
-    // return Navigator.pushReplacement(context,
-    //     MaterialPageRoute(builder: (context) {
-    //   return LoginView();
-    // }));
+    Get.offAll(LoginView());
+    return Future.value(true); // Return a Future<bool>
   }
+
 
   void LogOut() {
     showDialog(
@@ -81,6 +79,7 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.green,
         leading: IconButton(
@@ -98,37 +97,34 @@ class _DashboardPageState extends State<DashboardPage> {
           children: [
             Container(
               alignment: Alignment.center,
-              height: 120,
+              height: 180,
               width: Get.width,
               child: ListView.builder(
                   itemCount: dataMenu.length,
                   shrinkWrap: true,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index){
-                    return Container(
-                      width: 110,
-                      margin: EdgeInsets.only(right: 5,left: 5),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green),
-                          onPressed: () {
-                            Get.to(dataMenu[index]['naviGateTo']);
-                          },
-                          child: Container(
-                              child: Stack(
-                                children: [
-                                  Align(
-                                      alignment: Alignment.center,
-                                      child: Icon(dataMenu[index]['icon'],color: Colors.black54,size: 45,)
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 3),
-                                    child: Align(
-                                        alignment: Alignment.bottomCenter,
-                                        child: Text(dataMenu[index]['title'],style: TextStyle(fontSize: 16), textAlign: TextAlign.center,)),
-                                  ),
-                                ],
-                              ))),
+                    return Stack(
+                      alignment: Alignment.center,
+                      // mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 110,
+                          height: 90,
+                          margin: EdgeInsets.only(right: 5,left: 5),
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green),
+                              onPressed: () {
+                                Get.to(dataMenu[index]['naviGateTo']);
+                              },
+                              child: Icon(dataMenu[index]['icon'],color: Colors.black54,size: 45,)),
+                        ),
+                        Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Text(dataMenu[index]['title'],style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold), textAlign: TextAlign.center,)
+                        ),
+                      ],
                     );
                   }
               ),

@@ -1,6 +1,6 @@
 class IdAndValue<T> {
-  String id;
-  T value;
+  String? id;
+  T? value;
 
   IdAndValue({
     this.id,

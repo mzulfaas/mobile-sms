@@ -24,20 +24,20 @@ import '../models/User.dart';
 import 'input-page/input-page-presenter-new.dart';
 
 class HistoryLinesAllEdit extends StatefulWidget {
-  String numberPP;
-  int idEmp;
+  String? numberPP;
+  int? idEmp;
 
-  HistoryLinesAllEdit({Key key, this.numberPP, this.idEmp}) : super(key: key);
+  HistoryLinesAllEdit({Key? key, this.numberPP, this.idEmp}) : super(key: key);
 
   @override
   State<HistoryLinesAllEdit> createState() => _HistoryLinesAllEditState();
 }
 
 class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
-  User _user;
-  int code;
+  User? _user;
+  int? code;
   var listLines;
-  List _listHistorySO;
+  List? _listHistorySO;
   dynamic _listHistorySOEncode;
   var dataHeader;
   bool startApp = false;
@@ -45,7 +45,7 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
   Future<Null> listHistorySO() async {
     await Future.delayed(Duration(seconds: 1));
     var value = await Promosi.getListLines(
-        widget.numberPP, code, _user.token, _user.username);
+        widget.numberPP!, code!, _user!.token!, _user!.username!);
     setState(() {
       listLines = value;
       _listHistorySO = value;
@@ -73,7 +73,7 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
   ActivityEdit activityEditModel = ActivityEdit();
 
   getDataActivity() async {
-    final url = '${ApiConstant(code).urlApi}api/activity/${widget.numberPP}';
+    final url = '${ApiConstant(code!).urlApi}api/activity/${widget.numberPP}';
     print("activityes $url");
     final response = await get(Uri.parse(url));
 
@@ -98,12 +98,12 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
     Future.delayed(Duration(seconds: 2),(){
       log("ngawur : ${jsonEncode(activityEditModel)}");
       startApp = true;
-      inputPagePresenter.programNoteTextEditingControllerRx.value.text = activityEditModel.note;
-      inputPagePresenter.programNameTextEditingControllerRx.value.text = activityEditModel.number;
+      inputPagePresenter.programNoteTextEditingControllerRx.value.text = activityEditModel.note!;
+      inputPagePresenter.programNameTextEditingControllerRx.value.text = activityEditModel.number!;
       IdAndValue<String> type = IdAndValue<String>(id: activityEditModel.type, value: activityEditModel.type == "1" ? "Discount" : activityEditModel.type == "2" ? "Bonus" : "Discount & Bonus",);
       inputPagePresenter.promotionTypeInputPageDropdownStateRx.value.selectedChoice = type;
       inputPagePresenter.customerGroupInputPageDropdownState.value.selectedChoice = "Customer";
-      inputPagePresenter.changeCustomerGroupHeader(inputPagePresenter.customerGroupInputPageDropdownState.value.selectedChoice);
+      inputPagePresenter.changeCustomerGroupHeader(inputPagePresenter.customerGroupInputPageDropdownState.value.selectedChoice!);
       IdAndValue<String> custHeader = IdAndValue<String>(id: activityEditModel.customerId, value: activityEditModel.customerId);
       inputPagePresenter.custNameHeaderValueDropdownStateRx.value.selectedChoice = custHeader;
       print("se fromDate :${DateFormat('dd-MM-yyyy').format(DateTime.parse(activityEditModel.fromDate))}");
@@ -118,49 +118,49 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
       }
 
       // inputPagePresenter.listDataPrincipal[inputPagePresenter.selectedDataPrincipal[0]] = inputPagePresenter.listDataPrincipal[activityEditModel.vendor];
-      for (int i = 0; i < activityEditModel.activityLinesEdit.length; i++) {
+      for (int i = 0; i < activityEditModel.activityLinesEdit!.length; i++) {
         inputPagePresenter.addItem();
         Future.delayed(Duration(seconds: 2),(){
           setState(() {
           });
         });
         IdAndValue<String> percent = IdAndValue<String>(id: "1", value: "Percent");
-        PromotionProgramInputState promotionProgramInputState = inputPagePresenter.promotionProgramInputStateRx.value.promotionProgramInputState[i];
-        IdAndValue<String> itemProduct = IdAndValue<String>(id: activityEditModel.activityLinesEdit[i].item, value: activityEditModel.activityLinesEdit[i].item);
-        IdAndValue<String> suppItemProduct = IdAndValue<String>(id: activityEditModel.activityLinesEdit[i].suppItemId, value: activityEditModel.activityLinesEdit[i].suppItemId);
-        promotionProgramInputState.itemGroupInputPageDropdownState.selectedChoice = 'Item';
-        inputPagePresenter.changeItemGroup(i, promotionProgramInputState.itemGroupInputPageDropdownState.selectedChoice);
-        promotionProgramInputState.selectProductPageDropdownState.selectedChoice = itemProduct;
-        promotionProgramInputState.supplyItem.selectedChoice = suppItemProduct;
-        inputPagePresenter.changeProduct(i, promotionProgramInputState.selectProductPageDropdownState.selectedChoice);
-        inputPagePresenter.changeSupplyItem(i, promotionProgramInputState.supplyItem.selectedChoice);
-        promotionProgramInputState.qtyFrom.text = activityEditModel.activityLinesEdit[i].qtyFrom.toString().split(".")[0];
-        promotionProgramInputState.qtyTo.text = activityEditModel.activityLinesEdit[i].qtyTo.toString().split(".")[0];
-        promotionProgramInputState.unitPageDropdownState.selectedChoice = activityEditModel.activityLinesEdit[i].unitID;
-        promotionProgramInputState.unitSupplyItem.selectedChoice = activityEditModel.activityLinesEdit[i].supplementaryUnitId;
-        promotionProgramInputState.salesPrice.text = activityEditModel.activityLinesEdit[i].salesPrice.toString().replaceAll("Rp", "");
-        promotionProgramInputState.percentValueInputPageDropdownState.selectedChoice = percent;
-        promotionProgramInputState.qtyItem.text = activityEditModel.activityLinesEdit[i].suppItemQty.toString().split(".")[0];
-        promotionProgramInputState.percent1.text = activityEditModel.activityLinesEdit[i].percent1.toString().split(".")[0];
+        PromotionProgramInputState promotionProgramInputState = inputPagePresenter.promotionProgramInputStateRx.value.promotionProgramInputState![i];
+        IdAndValue<String> itemProduct = IdAndValue<String>(id: activityEditModel.activityLinesEdit![i].item, value: activityEditModel.activityLinesEdit![i].item);
+        IdAndValue<String> suppItemProduct = IdAndValue<String>(id: activityEditModel.activityLinesEdit![i].suppItemId, value: activityEditModel.activityLinesEdit![i].suppItemId);
+        promotionProgramInputState.itemGroupInputPageDropdownState!.selectedChoice = 'Item';
+        inputPagePresenter.changeItemGroup(i, promotionProgramInputState.itemGroupInputPageDropdownState!.selectedChoice!);
+        promotionProgramInputState.selectProductPageDropdownState!.selectedChoice = itemProduct;
+        promotionProgramInputState.supplyItem!.selectedChoice = suppItemProduct;
+        inputPagePresenter.changeProduct(i, promotionProgramInputState.selectProductPageDropdownState!.selectedChoice!);
+        inputPagePresenter.changeSupplyItem(i, promotionProgramInputState.supplyItem!.selectedChoice!);
+        promotionProgramInputState.qtyFrom!.text = activityEditModel.activityLinesEdit![i].qtyFrom.toString().split(".")[0];
+        promotionProgramInputState.qtyTo!.text = activityEditModel.activityLinesEdit![i].qtyTo.toString().split(".")[0];
+        promotionProgramInputState.unitPageDropdownState!.selectedChoice = activityEditModel.activityLinesEdit![i].unitID!;
+        promotionProgramInputState.unitSupplyItem!.selectedChoice = activityEditModel.activityLinesEdit![i].supplementaryUnitId!;
+        promotionProgramInputState.salesPrice!.text = activityEditModel.activityLinesEdit![i].salesPrice.toString().replaceAll("Rp", "");
+        promotionProgramInputState.percentValueInputPageDropdownState!.selectedChoice = percent;
+        promotionProgramInputState.qtyItem!.text = activityEditModel.activityLinesEdit![i].suppItemQty.toString().split(".")[0];
+        promotionProgramInputState.percent1!.text = activityEditModel.activityLinesEdit![i].percent1.toString().split(".")[0];
         inputPagePresenter.getPriceToCustomer(i);
-        promotionProgramInputState.percent2.text = activityEditModel.activityLinesEdit[i].percent2.toString().split(".")[0];
+        promotionProgramInputState.percent2!.text = activityEditModel.activityLinesEdit![i].percent2.toString().split(".")[0];
         inputPagePresenter.getPriceToCustomer(i);
-        promotionProgramInputState.percent3.text = activityEditModel.activityLinesEdit[i].percent3.toString().split(".")[0];
+        promotionProgramInputState.percent3!.text = activityEditModel.activityLinesEdit![i].percent3.toString().split(".")[0];
         inputPagePresenter.getPriceToCustomer(i);
-        promotionProgramInputState.percent4.text = activityEditModel.activityLinesEdit[i].percent4.toString().split(".")[0];
+        promotionProgramInputState.percent4!.text = activityEditModel.activityLinesEdit![i].percent4.toString().split(".")[0];
         inputPagePresenter.getPriceToCustomer(i);
-        promotionProgramInputState.value1.text = activityEditModel.activityLinesEdit[i].value1.toString().split(".")[0];
+        promotionProgramInputState.value1!.text = activityEditModel.activityLinesEdit![i].value1.toString().split(".")[0];
         inputPagePresenter.getPriceToCustomer(i);
-        promotionProgramInputState.value2.text = activityEditModel.activityLinesEdit[i].value2.toString().split(".")[0];
+        promotionProgramInputState.value2!.text = activityEditModel.activityLinesEdit![i].value2.toString().split(".")[0];
         inputPagePresenter.getPriceToCustomer(i);
       }
-      idLines = activityEditModel.activityLinesEdit.map((e) => e.id).toList();
+      idLines = activityEditModel.activityLinesEdit!.map((e) => e.id).toList();
     });
   }
 
   Widget customCard(int index, InputPagePresenterNew inputPagePresenter) {
     PromotionProgramInputState promotionProgramInputState = inputPagePresenter
-        .promotionProgramInputStateRx.value.promotionProgramInputState[index];
+        .promotionProgramInputStateRx.value.promotionProgramInputState![index];
     return Container(
       margin: EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 0),
       child: Card(
@@ -189,7 +189,7 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
                       icon: Icon(Icons.add)),
                   IconButton(
                       onPressed: () {
-                        List idLines = activityEditModel.activityLinesEdit.map((e) => e.id).toList();
+                        List idLines = activityEditModel.activityLinesEdit!.map((e) => e.id).toList();
                         inputPagePresenter.removeItem(index);
                         inputPagePresenter.onTap.value = false;
                       },
@@ -261,14 +261,14 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
                   SearchChoices.single(
                     isExpanded: true,
                     value: promotionProgramInputState
-                        .itemGroupInputPageDropdownState.selectedChoice,
+                        .itemGroupInputPageDropdownState!.selectedChoice,
                     hint: Text(
                       "Item/Item Group",
                       style: TextStyle(fontSize: 12),
                     ),
                     items: promotionProgramInputState
-                        .itemGroupInputPageDropdownState.choiceList
-                        .map((item) {
+                        .itemGroupInputPageDropdownState!.choiceList
+                        !.map((item) {
                       return DropdownMenuItem<String>(
                         value: item,
                         child: Text(
@@ -297,7 +297,7 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
                     margin: EdgeInsets.only(
                       top: promotionProgramInputState
                                   .selectProductPageDropdownState
-                                  .selectedChoice !=
+                                  !.selectedChoice !=
                               null
                           ? 10
                           : 0,
@@ -305,20 +305,20 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
                     child: SearchChoices.single(
                         isExpanded: true,
                         value: promotionProgramInputState
-                            .selectProductPageDropdownState.selectedChoice,
+                            .selectProductPageDropdownState!.selectedChoice,
                         items: promotionProgramInputState
-                            .selectProductPageDropdownState.choiceList
-                            .map((item) {
+                            .selectProductPageDropdownState!.choiceList
+                            !.map((item) {
                           return DropdownMenuItem(
-                              child: Text(item.value), value: item);
+                              child: Text(item.value!), value: item);
                         }).toList(),
                         hint: Text(
                           promotionProgramInputState
                                       .itemGroupInputPageDropdownState
-                                      .selectedChoice ==
+                                      !.selectedChoice ==
                                   "Item"
                               ? "${promotionProgramInputState
-                              .selectProductPageDropdownState.selectedChoice}"
+                              .selectProductPageDropdownState!.selectedChoice}"
                               : "Select Product",
                           style: TextStyle(fontSize: 12),
                         ),
@@ -345,8 +345,8 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
                       isExpanded: true,
                       value: promotionProgramInputState
                               .wareHousePageDropdownState
-                              .selectedChoiceWrapper
-                              .value ??
+                              !.selectedChoiceWrapper
+                              !.value ??
                           "WHS - Tunas - Buffer",
                       hint: Text(
                         "WHS - Tunas - Buffer",
@@ -354,11 +354,11 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
                             fontSize: 12, fontWeight: FontWeight.w500),
                       ),
                       items: promotionProgramInputState
-                          .wareHousePageDropdownState.choiceListWrapper.value
-                          .map((item) {
+                          .wareHousePageDropdownState!.choiceListWrapper!.value
+                          !.map((item) {
                         return DropdownMenuItem(
                           child: Text(
-                            item.value,
+                            item.value!,
                             style: TextStyle(fontSize: 12),
                             overflow: TextOverflow.fade,
                           ),
@@ -372,37 +372,6 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
                 ],
               ),
 
-              //unit multiply
-              // Stack(
-              //   children: [
-              //     Padding(
-              //       padding: const EdgeInsets.only(left: 10),
-              //       child: Text("Unit",style: TextStyle(fontSize: 10,color: Colors.black54)),
-              //     ),
-              //     Row(
-              //       children: [
-              //         //unit
-              //         Expanded(
-              //           child: SearchChoices.single(
-              //             isExpanded: true,
-              //             value: promotionProgramInputState.unitPageDropdownState.selectedChoice,
-              //             hint: Text(
-              //               "Unit",
-              //               style: TextStyle(fontSize: 12),
-              //             ),
-              //             items: promotionProgramInputState.unitPageDropdownState.choiceList.map((item) {
-              //               return DropdownMenuItem(
-              //                 child: Text(item),
-              //                 value: item,
-              //               );
-              //             }).toList(),
-              //             onChanged: (value) => inputPagePresenter.changeUnit(index, value),
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //   ],
-              // ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -470,14 +439,14 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
                     child: SearchChoices.single(
                       isExpanded: true,
                       value: promotionProgramInputState
-                          .unitPageDropdownState.selectedChoice,
+                          .unitPageDropdownState!.selectedChoice,
                       hint: Text(
-                        "${promotionProgramInputState.unitPageDropdownState.selectedChoice??"Unit"}",
+                        "${promotionProgramInputState.unitPageDropdownState!.selectedChoice??"Unit"}",
                         style: TextStyle(fontSize: 12),
                       ),
                       items: promotionProgramInputState
-                          .unitPageDropdownState.choiceList
-                          .map((item) {
+                          .unitPageDropdownState!.choiceList
+                          !.map((item) {
                         return DropdownMenuItem(
                           child: Text(item),
                           value: item,
@@ -492,7 +461,7 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
 
               //curency percent
               inputPagePresenter.promotionTypeInputPageDropdownStateRx.value
-                          .selectedChoice.value ==
+                          .selectedChoice!.value ==
                       "Bonus"
                   ? SizedBox()
                   : Row(
@@ -501,25 +470,25 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
                           child: DropdownButtonFormField(
                             value: promotionProgramInputState
                                 .percentValueInputPageDropdownState
-                                .selectedChoice,
+                                !.selectedChoice,
                             hint: Text(
                               "Disc Type (percent/value)",
                               style: TextStyle(fontSize: 12),
                             ),
                             items: promotionProgramInputState
-                                .percentValueInputPageDropdownState.choiceList
-                                .map((item) {
+                                .percentValueInputPageDropdownState!.choiceList
+                                ?.map((item) {
                               return DropdownMenuItem(
                                 child: Text(
-                                  item.value,
+                                  item.value!,
                                   style: TextStyle(fontSize: 12),
                                 ),
                                 value: item,
                               );
                             }).toList(),
-                            onChanged: (value) {
+                            onChanged: (IdAndValue<String>? value) {
                               inputPagePresenter.changePercentValue(
-                                  index, value);
+                                  index, value!);
                             },
                           ),
                         ),
@@ -528,14 +497,14 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
 
               //percent
               inputPagePresenter.promotionTypeInputPageDropdownStateRx.value
-                          .selectedChoice.value ==
+                          .selectedChoice?.value ==
                       "Bonus"
                   ? SizedBox()
                   : promotionProgramInputState
                               .percentValueInputPageDropdownState
-                              .selectedChoice ==
+                              ?.selectedChoice ==
                           promotionProgramInputState
-                              .percentValueInputPageDropdownState.choiceList[1]
+                              .percentValueInputPageDropdownState!.choiceList?[1]
                       ? Column(
                           children: [
                             Row(
@@ -927,23 +896,23 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
                         ),
 
               inputPagePresenter.promotionTypeInputPageDropdownStateRx.value
-                          .selectedChoice.value ==
+                          .selectedChoice?.value ==
                       "Discount"
                   ? SizedBox()
                   : SearchChoices.single(
                       isExpanded: true,
                       value:
-                          promotionProgramInputState.supplyItem.selectedChoice,
+                          promotionProgramInputState.supplyItem?.selectedChoice,
                       hint: Text(
                         "${promotionProgramInputState
-                            .supplyItem.selectedChoice??"Bonus Item"}",
+                            .supplyItem?.selectedChoice??"Bonus Item"}",
                         style: TextStyle(fontSize: 12),
                       ),
-                      items: promotionProgramInputState.supplyItem.choiceList
-                          .map((item) {
+                      items: promotionProgramInputState.supplyItem?.choiceList
+                          ?.map((item) {
                         return DropdownMenuItem(
                           child: Text(
-                            item.value,
+                            item.value!,
                             style: TextStyle(fontSize: 12),
                             overflow: TextOverflow.fade,
                           ),
@@ -955,7 +924,7 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
 
               //unit multiply
               inputPagePresenter.promotionTypeInputPageDropdownStateRx.value
-                          .selectedChoice.value ==
+                          .selectedChoice?.value ==
                       "Discount"
                   ? SizedBox()
                   : Row(
@@ -993,14 +962,14 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
                           child: SearchChoices.single(
                             isExpanded: true,
                             value: promotionProgramInputState
-                                .unitSupplyItem.selectedChoice,
+                                .unitSupplyItem?.selectedChoice,
                             hint: Text(
                               "Unit Bonus Item",
                               style: TextStyle(fontSize: 12),
                             ),
                             items: promotionProgramInputState
-                                .unitSupplyItem.choiceList
-                                .map((item) {
+                                .unitSupplyItem?.choiceList
+                                ?.map((item) {
                               return DropdownMenuItem(
                                 child: Text(item),
                                 value: item,
@@ -1037,11 +1006,12 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
     );
   }
 
-  Future<bool> onBackPressLines() {
+  Future<bool> onBackPressLines()async {
     Get.off(DashboardPP(
       initialIndexs: 1,
     ));
     Get.delete<InputPagePresenterNew>();
+    return true;
   }
 
   @override
@@ -1148,15 +1118,15 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
                                               .promotionTypeInputPageDropdownStateRx
                                               .value
                                               .choiceList
-                                              .map((item) {
+                                              ?.map((item) {
                                             return DropdownMenuItem(
-                                              child: Text(item.value),
+                                              child: Text(item.value!),
                                               value: item,
                                             );
                                           }).toList(),
-                                          onChanged: (value) =>
+                                          onChanged: (IdAndValue<String>? value)=>
                                               inputPagePresenter
-                                                  .changePromotionType(value),
+                                                  .changePromotionType(value!),
                                         )),
                                   ),
                                 ],
@@ -1179,7 +1149,7 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
                                             .customerGroupInputPageDropdownState
                                             .value
                                             .choiceList
-                                            .map((item) {
+                                            ?.map((item) {
                                           return DropdownMenuItem(
                                             child: Text(
                                               item,
@@ -1193,7 +1163,7 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
                                           setState(() {
                                             inputPagePresenter
                                                 .changeCustomerGroupHeader(
-                                                    value);
+                                                    value!);
                                             Future.delayed(Duration(seconds: 1),
                                                 () {
                                               setState(() {});
@@ -1209,9 +1179,9 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
                                         .custNameHeaderValueDropdownStateRx
                                         .value
                                         .choiceList
-                                        .map((item) {
+                                        ?.map((item) {
                                       return DropdownMenuItem(
-                                        child: Text(item.value,
+                                        child: Text(item.value!,
                                             style: TextStyle(fontSize: 12)),
                                         value: item,
                                       );
@@ -1253,17 +1223,14 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
                                         "Select Principal",
                                         style: TextStyle(fontSize: 12),
                                       ),
-                                      items: inputPagePresenter.listDataPrincipal.map((item) {
-                                        if (item != null) {
-                                          return DropdownMenuItem(
-                                            child: Text(item),
-                                            value: item,
-                                          );
-                                        } else {
-                                          return null;
-                                        }
-                                      }).toList().where((item) => item != null).toList(),
-                                      onChanged: (String value) {
+                                      items: inputPagePresenter.listDataPrincipal.where((item) => item != null).map((item) {
+                                        // item is now guaranteed to be non-null
+                                        return DropdownMenuItem<String>(
+                                          child: Text(item!),
+                                          value: item,
+                                        );
+                                      }).toList(),
+                                      onChanged: (String? value) {
                                         print("value: $value");
                                         final index = inputPagePresenter.listDataPrincipal.indexOf(value);
                                         inputPagePresenter.selectedDataPrincipal.clear();
@@ -1311,11 +1278,10 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
                                                 initialDate: DateTime.now(),
                                                 lastDate: DateTime.now()
                                                     .add(Duration(days: 180)),
-                                                builder: (BuildContext context,
-                                                    Widget child) {
+                                                builder: (context, child) {
                                                   return Theme(
                                                     data: ThemeData.light(),
-                                                    child: child,
+                                                    child: child!,
                                                   );
                                                 },
                                               );
@@ -1370,11 +1336,10 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
                                                 initialDate: DateTime.now(),
                                                 lastDate: fromDate
                                                     .add(Duration(days: 180)),
-                                                builder: (BuildContext context,
-                                                    Widget child) {
+                                                builder: (context, child) {
                                                   return Theme(
                                                     data: ThemeData.light(),
-                                                    child: child,
+                                                    child: child!,
                                                   );
                                                 },
                                               );
@@ -1386,41 +1351,6 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
                                   ),
                                 ],
                               ),
-                              // Row(
-                              //   children: [
-                              //     Expanded(
-                              //       child: Obx(() => TextFormField(
-                              //             maxLines: 1,
-                              //             controller: inputPagePresenter
-                              //                 .programNoteTextEditingControllerRx
-                              //                 .value,
-                              //             onTapOutside: (_) {
-                              //               FocusScope.of(context).unfocus();
-                              //             },
-                              //             decoration: InputDecoration(
-                              //               labelText: 'Note',
-                              //               labelStyle: TextStyle(
-                              //                   color: Colors.black87,
-                              //                   fontSize: 12,
-                              //                   fontFamily: 'AvenirLight'),
-                              //               focusedBorder: UnderlineInputBorder(
-                              //                 borderSide: BorderSide(
-                              //                     color: Colors.purple),
-                              //               ),
-                              //               enabledBorder:
-                              //                   new UnderlineInputBorder(
-                              //                       borderSide: BorderSide(
-                              //                           color: Colors.grey,
-                              //                           width: 1.0)),
-                              //             ),
-                              //             style: TextStyle(
-                              //                 color: Colors.black87,
-                              //                 fontSize: 17,
-                              //                 fontFamily: 'AvenirLight'),
-                              //           )),
-                              //     ),
-                              //   ],
-                              // ),
                             ],
                           ),
                         ),
@@ -1432,11 +1362,11 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
                     Obx(() {
                       InputPageWrapper inputPageWrapper =
                           inputPagePresenter.promotionProgramInputStateRx.value;
-                      List<PromotionProgramInputState>
+                      List<PromotionProgramInputState>?
                           promotionProgramInputStateList =
                           inputPageWrapper.promotionProgramInputState;
-                      bool isAddItem = inputPageWrapper.isAddItem;
-                      return promotionProgramInputStateList.length == 0
+                      bool? isAddItem = inputPageWrapper.isAddItem;
+                      return promotionProgramInputStateList?.length == 0
                           ? Container(
                               margin: EdgeInsets.only(bottom: 100),
                               child: ElevatedButton(
@@ -1444,7 +1374,7 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
                                     backgroundColor: Colors.green,
                                   ),
                                   child: Text("Add Lines"),
-                                  onPressed: isAddItem
+                                  onPressed: isAddItem!
                                       ? () {
                                           inputPagePresenter.addItem();
                                         }
@@ -1453,7 +1383,7 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
                           : ListView.builder(
                               physics: NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
-                              itemCount: promotionProgramInputStateList.length,
+                              itemCount: promotionProgramInputStateList!.length,
                               itemBuilder: (context, index) => GestureDetector(
                                     behavior: HitTestBehavior.translucent,
                                     onTap: () {
@@ -1475,11 +1405,11 @@ class _HistoryLinesAllEditState extends State<HistoryLinesAllEdit> {
                                                     ),
                                                     child: Text("Submit"),
                                                     onPressed: () {
-                                                      String ppnum = activityEditModel.number;
+                                                      String? ppnum = activityEditModel.number;
                                                       setState(() {
                                                         inputPagePresenter.onTap.value = true;
                                                       });
-                                                      inputPagePresenter.submitEditPromotionProgram(int.parse(widget.numberPP), idLines, ppnum);
+                                                      inputPagePresenter.submitEditPromotionProgram(int.parse(widget.numberPP!), idLines, ppnum!);
                                                     }):Center(child: CircularProgressIndicator()),
                                               )
                                             : SizedBox()

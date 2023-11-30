@@ -15,19 +15,19 @@ import 'HistoryLines.dart';
 class HistorySO extends StatefulWidget {
   @override
   _HistorySOState createState() => _HistorySOState();
-  int idEmp;
-  String namePP;
-  String idProduct;
-  String idCustomer;
+  int? idEmp;
+  String? namePP;
+  String? idProduct;
+  String? idCustomer;
   HistorySO(
       {this.idEmp, this.namePP, this.idProduct, this.idCustomer});
 }
 
 class _HistorySOState extends State<HistorySO> {
   var _listHistory;
-  GlobalKey<RefreshIndicatorState> refreshKey;
-  User _user;
-  int code;
+  late GlobalKey<RefreshIndicatorState> refreshKey;
+  late User _user;
+  late int code;
 
   void initState() {
     super.initState();
@@ -37,7 +37,7 @@ class _HistorySOState extends State<HistorySO> {
 
   Future<Null> listHistory() async {
     await Future.delayed(Duration(seconds: 5));
-    Promosi.getListSalesOrder(widget.idProduct, widget.idCustomer, code, _user.token, _user.username)
+    Promosi.getListSalesOrder(widget.idProduct!, widget.idCustomer!, code, _user.token!, _user.username!)
         .then((value) {
       setState(() {
         _listHistory = value;
@@ -64,7 +64,7 @@ class _HistorySOState extends State<HistorySO> {
             leading: IconButton(
               icon: Icon(
                 Icons.arrow_back,
-                color: Theme.of(context).accentColor,
+                color: Theme.of(context).colorScheme.secondary,
               ),
               onPressed: onBackPressSalesOrder,
             ),
@@ -72,7 +72,7 @@ class _HistorySOState extends State<HistorySO> {
               "List Sales Order",
               style: TextStyle(
                   fontSize: ScreenUtil().setSp(20),
-                  color: Theme.of(context).accentColor),
+                  color: Theme.of(context).colorScheme.secondary),
             ),
           ),
           body: Scaffold(
@@ -80,7 +80,7 @@ class _HistorySOState extends State<HistorySO> {
               onRefresh: listHistory,
               child: FutureBuilder(
                 future: Promosi.getListSalesOrder(
-                    widget.idProduct, widget.idCustomer, code, _user.token, _user.username),
+                    widget.idProduct!, widget.idCustomer!, code, _user.token!, _user.username!),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   _listHistory == null
                       ? _listHistory = snapshot.data
@@ -126,17 +126,19 @@ class _HistorySOState extends State<HistorySO> {
     Future.delayed(Duration(milliseconds: 10));
     setState(() {
       _user = listUser[0];
-      code = pref.getInt("code");
+      code = pref.getInt("code")!;
     });
   }
 
-  Future<bool> onBackPressSalesOrder() {
-    return Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (context) {
-      return HistoryLines(
-        idEmp: widget.idEmp,
-        numberPP: widget.namePP
-      );
-    }));
+  Future<bool> onBackPressSalesOrder() async {
+    await Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => HistoryLines(
+          idEmp: widget.idEmp,
+          numberPP: widget.namePP
+      )),
+    );
+    return true; // Explicitly return true after navigation
   }
+
 }

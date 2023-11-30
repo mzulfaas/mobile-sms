@@ -1,9 +1,9 @@
 import 'package:mobile_sms/models/promotion-program-input-state.dart';
 
 class InputPageWrapper {
-  List<PromotionProgramInputState> promotionProgramInputState;
+  List<PromotionProgramInputState>? promotionProgramInputState;
   List<String> originalPrice = [];
-  bool isAddItem;
+  bool? isAddItem;
 
   InputPageWrapper({
     this.promotionProgramInputState,
@@ -11,8 +11,8 @@ class InputPageWrapper {
   });
 
   InputPageWrapper copy({
-    List<PromotionProgramInputState> promotionProgramInputState,
-    bool isAddItem
+    List<PromotionProgramInputState>? promotionProgramInputState,
+    bool? isAddItem
   }) {
     return InputPageWrapper(
       promotionProgramInputState: promotionProgramInputState ?? this.promotionProgramInputState,

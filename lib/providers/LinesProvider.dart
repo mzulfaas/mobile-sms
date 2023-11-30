@@ -8,9 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LinesProvider with ChangeNotifier {
   LinesProvider();
 //  List<String> listResult = new List<String>();
-  String result;
-  List<Map> listResult;
-  SharedPreferences preferences;
+  String? result;
+  List<Map>? listResult;
+  SharedPreferences? preferences;
 
   Future<void> setBundleLines(
       int id, double disc, DateTime fromDate, DateTime toDate) async {
@@ -38,10 +38,10 @@ class LinesProvider with ChangeNotifier {
     result = jsonEncode(listResult);
 //    listResult.add(result);
 //    result = listResult.toString();
-    preferences.setString("result", result);
+    preferences.setString("result", result!);
     notifyListeners();
   }
 
-  String get getBundleLines => result;
+  String get getBundleLines => result!;
 //  List<Lines> get getBundleLines => listDisc;
 }

@@ -1,52 +1,50 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'ApiConstant.dart';
 import 'Lines.dart';
 
 class Promosi {
   dynamic id;
-  String nomorPP;
-  String ppType;
+  String? nomorPP;
+  String? ppType;
   dynamic namePP;
   dynamic date;
-  String fromDate;
-  String toDate;
+  String? fromDate;
+  String? toDate;
   dynamic group;
-  String idProduct;
-  String product;
-  String idCustomer;
-  String customer;
+  String? idProduct;
+  String? product;
+  String? idCustomer;
+  String? customer;
   dynamic salesman;
   dynamic qty;
   dynamic qtyTo;
-  String unitId;
-  String note;
-  String disc1;
-  String disc2;
-  String disc3;
-  String disc4;
-  String value1;
-  String value2;
-  String suppItem;
-  String suppUnit;
-  String warehouse;
-  String suppQty;
-  String salesOffice;
+  String? unitId;
+  String? note;
+  String? disc1;
+  String? disc2;
+  String? disc3;
+  String? disc4;
+  String? value1;
+  String? value2;
+  String? suppItem;
+  String? suppUnit;
+  String? warehouse;
+  String? suppQty;
+  String? salesOffice;
   dynamic businessUnit;
-  String price;
-  String totalAmount;
-  bool status;
+  String? price;
+  String? totalAmount;
+  bool? status;
   dynamic codeError;
   dynamic message;
   dynamic listId;
   dynamic listLines;
   dynamic listPromosi;
   dynamic detailpromosi;
-  String axStatus;
+  String? axStatus;
 
   Promosi(
       {this.id,

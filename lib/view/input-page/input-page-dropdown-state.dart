@@ -1,9 +1,9 @@
 import '../../models/Wrapper.dart';
 
 class InputPageDropdownState<T> {
-  List<T> choiceList;
-  T selectedChoice;
-  int loadingState;
+  List<T>? choiceList;
+  T? selectedChoice;
+  int? loadingState;
 
   InputPageDropdownState({
     this.choiceList = const [],
@@ -12,9 +12,9 @@ class InputPageDropdownState<T> {
   });
 
   InputPageDropdownState<T> copy({
-    List<T> choiceList,
-    String selectedChoice,
-    int loadingState
+    List<T>? choiceList,
+    T? selectedChoice,
+    int? loadingState
   }) {
     return InputPageDropdownState(
       choiceList: choiceList ?? this.choiceList,
@@ -25,9 +25,9 @@ class InputPageDropdownState<T> {
 }
 
 class WrappedInputPageDropdownState<T> {
-  Wrapper<List<T>> choiceListWrapper;
-  Wrapper<T> selectedChoiceWrapper;
-  Wrapper<int> loadingStateWrapper;
+  Wrapper<List<T>>? choiceListWrapper;
+  Wrapper<T>? selectedChoiceWrapper;
+  Wrapper<int>? loadingStateWrapper;
 
   WrappedInputPageDropdownState({
     this.choiceListWrapper,
@@ -36,9 +36,9 @@ class WrappedInputPageDropdownState<T> {
   });
 
   WrappedInputPageDropdownState<T> copy({
-    Wrapper<List<T>> choiceListWrapper,
-    Wrapper<T> selectedChoiceWrapper,
-    Wrapper<int> loadingStateWrapper
+    Wrapper<List<T>>? choiceListWrapper,
+    Wrapper<T>? selectedChoiceWrapper,
+    Wrapper<int>? loadingStateWrapper
   }) {
     return WrappedInputPageDropdownState(
       choiceListWrapper: choiceListWrapper ?? this.choiceListWrapper,

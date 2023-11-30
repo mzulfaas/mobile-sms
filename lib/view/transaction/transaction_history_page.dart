@@ -6,7 +6,7 @@ import 'package:mobile_sms/view/transaction/transaction_presenter.dart';
 import 'package:money_formatter/money_formatter.dart';
 
 class TransactionHistoryPage extends StatelessWidget {
-  TransactionHistoryPage({Key key}) : super(key: key);
+  TransactionHistoryPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -39,9 +39,9 @@ class TransactionHistoryPage extends StatelessWidget {
                             ListView.builder(
                                 shrinkWrap: true,
                                 // physics: NeverScrollableScrollPhysics(),
-                                itemCount: transactionHistoryPresenter.transactionHistory[index].transactionLines.length,
+                                itemCount: transactionHistoryPresenter.transactionHistory[index].transactionLines!.length,
                                 itemBuilder: (context, index) {
-                                  print("total ${transactionHistoryPresenter.transactionHistory[index].transactionLines[index].totalPrice}");
+                                  print("total ${transactionHistoryPresenter.transactionHistory[index].transactionLines![index].totalPrice}");
                                   return Card(
                                     child: Padding(
                                       padding: const EdgeInsets.all(14.0),
@@ -51,43 +51,43 @@ class TransactionHistoryPage extends StatelessWidget {
                                           Row(children: [
                                             Text("Product Id"),
                                             Spacer(),
-                                            Text("${transactionHistoryPresenter.transactionHistory[indexes].transactionLines[index].productId}"),
+                                            Text("${transactionHistoryPresenter.transactionHistory[indexes].transactionLines![index].productId}"),
                                           ]),
                                           SizedBox(height: 12,),
                                           Row(children: [
                                             Text("Product Name"),
                                             Spacer(),
-                                            Expanded(child: Text("${transactionHistoryPresenter.transactionHistory[indexes].transactionLines[index].productName}")),
+                                            Expanded(child: Text("${transactionHistoryPresenter.transactionHistory[indexes].transactionLines![index].productName}")),
                                           ]),
                                           SizedBox(height: 12,),
                                           Row(children: [
                                             Text("Unit"),
                                             Spacer(),
-                                            Text("${transactionHistoryPresenter.transactionHistory[indexes].transactionLines[index].unit}"),
+                                            Text("${transactionHistoryPresenter.transactionHistory[indexes].transactionLines?[index].unit}"),
                                           ]),
                                           SizedBox(height: 12,),
                                           Row(children: [
                                             Text("Qty"),
                                             Spacer(),
-                                            Text("${transactionHistoryPresenter.transactionHistory[indexes].transactionLines[index].qty}"),
+                                            Text("${transactionHistoryPresenter.transactionHistory[indexes].transactionLines?[index].qty}"),
                                           ]),
                                           SizedBox(height: 12,),
                                           Row(children: [
                                             Text("Disc"),
                                             Spacer(),
-                                            Text("${transactionHistoryPresenter.transactionHistory[indexes].transactionLines[index].disc??0} %"),
+                                            Text("${transactionHistoryPresenter.transactionHistory[indexes].transactionLines?[index].disc??0} %"),
                                           ]),
                                           SizedBox(height: 12,),
                                           Row(children: [
                                             Text("Price"),
                                             Spacer(),
-                                            Text("Rp ${MoneyFormatter(amount: double.parse(transactionHistoryPresenter.transactionHistory[indexes].transactionLines[index].price.toString())).output.withoutFractionDigits}"),
+                                            Text("Rp ${MoneyFormatter(amount: double.parse(transactionHistoryPresenter.transactionHistory[indexes].transactionLines![index].price.toString())).output.withoutFractionDigits}"),
                                           ]),
                                           SizedBox(height: 12,),
                                           Row(children: [
                                             Text("Total Price"),
                                             Spacer(),
-                                            Text("Rp ${MoneyFormatter(amount: double.parse(transactionHistoryPresenter.transactionHistory[indexes].transactionLines[index].totalPrice.toString().replaceAll(RegExp(r"[.,]"), ""))).output.withoutFractionDigits}"),
+                                            Text("Rp ${MoneyFormatter(amount: double.parse(transactionHistoryPresenter.transactionHistory[indexes].transactionLines![index].totalPrice.toString().replaceAll(RegExp(r"[.,]"), ""))).output.withoutFractionDigits}"),
                                             // Text("Rp ${MoneyFormatter(amount: double.parse(transactionHistoryPresenter.transactionHistory[indexes].transactionLines[index].totalPrice.toString().replaceAll(RegExp(r"[.,]"), ""))).output.withoutFractionDigits}"),
                                           ]),
                                           // SizedBox(height: 12,),
@@ -118,7 +118,7 @@ class TransactionHistoryPage extends StatelessWidget {
                               Row(children: [
                                 Text("Date"),
                                 Spacer(),
-                                Text("${DateFormat("dd-MM-yyyy hh:mm").format(DateTime.parse(transactionHistoryPresenter.transactionHistory[index].date))}"),
+                                Text("${DateFormat("dd-MM-yyyy hh:mm").format(DateTime.parse(transactionHistoryPresenter.transactionHistory[index].date!))}"),
                               ]),
                             ],
                           ),

@@ -7,9 +7,9 @@ import 'package:mobile_sms/view/input-page/input-page-new.dart';
 import 'package:mobile_sms/view/input-page/input-page.dart';
 
 class DashboardApprovalPP extends StatefulWidget {
-  int initialIndexs;
+  int? initialIndexs;
 
-  DashboardApprovalPP({Key key, this.initialIndexs}) : super(key: key);
+  DashboardApprovalPP({Key? key, this.initialIndexs}) : super(key: key);
 
   @override
   State<DashboardApprovalPP> createState() => _DashboardApprovalPPState();
@@ -25,7 +25,7 @@ class _DashboardApprovalPPState extends State<DashboardApprovalPP> {
     }else if(widget.initialIndexs==1){
       tabController.initialIndex = 1;
       Future.delayed(Duration(seconds: 1),(){
-        tabController.controller.animateTo(tabController.initialIndex);
+        tabController.controller!.animateTo(tabController.initialIndex!);
       });
     }
   }
@@ -49,7 +49,7 @@ class _DashboardApprovalPPState extends State<DashboardApprovalPP> {
       body: SingleChildScrollView(
         physics: NeverScrollableScrollPhysics(),
         child: DefaultTabController(
-            initialIndex: tabController.initialIndex,
+            initialIndex: tabController.initialIndex!,
             length: 2,
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -90,22 +90,21 @@ class _DashboardApprovalPPState extends State<DashboardApprovalPP> {
 
 class DashboardApprovalPPTabController extends GetxController with GetSingleTickerProviderStateMixin {
   // dynamic myTab;
-  int initialIndex = 0;
-  DashboardApprovalPPTabController({this.initialIndex});
-
-  TabController controller;
+  int? initialIndex = 0;
+  TabController? controller;
+  DashboardApprovalPPTabController({Key? key,this.initialIndex});
 
   @override
   void onInit() {
     super.onInit();
     Future.delayed(Duration(seconds: 1),(){
-      controller = TabController(vsync: this, length: 2, initialIndex: initialIndex);
+      controller = TabController(vsync: this, length: 2, initialIndex: initialIndex!);
     });
   }
 
   @override
   void onClose() {
-    controller.dispose();
+    controller!.dispose();
     super.onClose();
   }
 }

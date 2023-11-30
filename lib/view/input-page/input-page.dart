@@ -5,11 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
-import 'package:mobile_sms/view/input-page/input-page-presenter.dart';
 import 'package:search_choices/search_choices.dart';
 
 class InputPage extends StatefulWidget {
-  const InputPage({Key key}) : super(key: key);
+  const InputPage({Key? key}) : super(key: key);
 
   @override
   _InputPageState createState() => _InputPageState();
@@ -32,7 +31,7 @@ class _InputPageState extends State<InputPage> {
   TextEditingController value1Controller = TextEditingController();
   TextEditingController value2Controller = TextEditingController();
 
-  String valType;
+  String? valType;
   List<dynamic> dataType = [
     {
       "id": "1",
@@ -62,7 +61,7 @@ class _InputPageState extends State<InputPage> {
     dataType = listData;
     setState(() {
       if (!typeContains(valType)) {
-        valType = null;
+        valType = null!;
       }
     });
   }
@@ -74,7 +73,7 @@ class _InputPageState extends State<InputPage> {
     return false;
   }
 
-  String valVendor;
+  String? valVendor;
   List dataVendor = [].obs;
 
   void getVendor() async {
@@ -98,7 +97,7 @@ class _InputPageState extends State<InputPage> {
     return false;
   }
 
-  String valLocation;
+  String? valLocation;
   List dataLocation = [].obs;
 
   void getLocation() async {
@@ -122,7 +121,7 @@ class _InputPageState extends State<InputPage> {
     return false;
   }
 
-  String valCustomerOrGroup;
+  String? valCustomerOrGroup;
   List<dynamic> dataCustomerOrGroup = [
     {
       "id": "1",
@@ -150,7 +149,7 @@ class _InputPageState extends State<InputPage> {
 
   // int counter = 0;
 
-  String valStatusTesting;
+  String? valStatusTesting;
   List<dynamic> dataStatusTesting = [
     {
       "id": "1",
@@ -196,7 +195,7 @@ class _InputPageState extends State<InputPage> {
       }
 
       if (!choiceContains(valCustomer)) {
-        valCustomer = null;
+        valCustomer = null!;
       }
       print("Data CustomerChoice : $listData");
     } else if (selected == "Disc Group") {
@@ -216,7 +215,7 @@ class _InputPageState extends State<InputPage> {
       }
 
       if (!discGroupContains(valCustomer)) {
-        valCustomer = null;
+        valCustomer = null!;
       }
       print("Data DiscGroup : $listData");
     }
@@ -284,7 +283,7 @@ class _InputPageState extends State<InputPage> {
                   ).toList(),
                   onChanged: (value) {
                     setState(() {
-                      valCustomerOrGroup = value;
+                      valCustomerOrGroup = value as String?;
                       // getCustomer(value);
                     });
                   },
@@ -399,7 +398,7 @@ class _InputPageState extends State<InputPage> {
                                 }).toList(),
                                 onChanged: (value) {
                                   setState(() {
-                                    valType = value;
+                                    valType = value as String?;
                                   });
                                 },
                                 // value: ,
@@ -474,7 +473,7 @@ class _InputPageState extends State<InputPage> {
                                 }).toList(),
                                 onChanged: (value) {
                                   setState(() {
-                                    valStatusTesting = value;
+                                    valStatusTesting = value as String?;
                                   });
                                 },
                                 // value: ,

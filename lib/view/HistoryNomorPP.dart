@@ -32,9 +32,9 @@ class _HistoryNomorPPState extends State<HistoryNomorPP> {
   final _debouncer = Debounce(miliseconds: 5);
   TextEditingController filterController = new TextEditingController();
   var _listHistory, listHistoryReal;
-  GlobalKey<RefreshIndicatorState> refreshKey;
-  User _user;
-  int code;
+  late GlobalKey<RefreshIndicatorState> refreshKey;
+  User? _user;
+  int? code;
 
   void initState() {
     super.initState();
@@ -44,8 +44,8 @@ class _HistoryNomorPPState extends State<HistoryNomorPP> {
 
   Future<Null> listHistory() async {
     await Future.delayed(Duration(seconds: 5));
-    Promosi.getListPromosi(0, code, _user.token??"token kosong", _user.username).then((value) {
-      print("userToken: ${_user.token}");
+    Promosi.getListPromosi(0, code!, _user?.token??"token kosong", _user!.username!).then((value) {
+      print("userToken: ${_user!.token}");
       setState(() {
         listHistoryReal = value;
         _listHistory = listHistoryReal;
@@ -56,8 +56,8 @@ class _HistoryNomorPPState extends State<HistoryNomorPP> {
 
   Future<Null> listHistoryAll() async {
     await Future.delayed(Duration(seconds: 5));
-    Promosi.getAllListPromosi(0, code, _user.token??"token kosong", _user.username).then((value) {
-      print("userToken: ${_user.token}");
+    Promosi.getAllListPromosi(0, code!, _user?.token??"token kosong", _user!.username!).then((value) {
+      print("userToken: ${_user!.token}");
       setState(() {
         listHistoryReal = value;
         _listHistory = listHistoryReal;
@@ -81,23 +81,13 @@ class _HistoryNomorPPState extends State<HistoryNomorPP> {
 
   final ScrollController listController  = ScrollController();
 
-  Future<bool> onBackPressLines() {
-
+  Future<bool> onBackPressLines() async{
     Get.back();
-    // return Navigator.pushReplacement(context,
-    //     MaterialPageRoute(builder: (context) {
-    //   return HistoryNomorPP();
-    // }));
+    return true;
   }
 
   @override
   Widget build(BuildContext context) {
-    // ScreenUtil.init(
-    //   BoxConstraints(
-    //     maxHeight: MediaQuery.of(context).size.height,
-    //     maxWidth: MediaQuery.of(context).size.width,
-    //   )
-    // );
     return WillPopScope(
       onWillPop: onBackPressLines,
       child: MaterialApp(
@@ -140,7 +130,7 @@ class _HistoryNomorPPState extends State<HistoryNomorPP> {
             leading: IconButton(
               icon: Icon(
                 Icons.home,
-                color: Theme.of(context).accentColor,
+                color: Theme.of(context).colorScheme.secondary,
               ),
               onPressed: LogOut,
             ),
@@ -158,7 +148,7 @@ class _HistoryNomorPPState extends State<HistoryNomorPP> {
               "List PP",
               style: TextStyle(
                   fontSize: ScreenUtil().setSp(20),
-                  color: Theme.of(context).accentColor),
+                  color: Theme.of(context).colorScheme.secondary),
             ),
           ),
           body: ListView(
@@ -185,7 +175,7 @@ class _HistoryNomorPPState extends State<HistoryNomorPP> {
             TextResultCard(
               context: context,
               title: "No. PP",
-              value: promosi.nomorPP,
+              value: promosi.nomorPP!,
             ),
             TextResultCard(
               context: context,
@@ -195,7 +185,7 @@ class _HistoryNomorPPState extends State<HistoryNomorPP> {
             TextResultCard(
               context: context,
               title: "Customer",
-              value: promosi.customer,
+              value: promosi.customer!,
             ),
             TextButton(
               child: Container(
@@ -217,12 +207,12 @@ class _HistoryNomorPPState extends State<HistoryNomorPP> {
                     MaterialPageRoute(builder: (context) {
                   return HistoryLines(
                     numberPP: promosi?.namePP,
-                    idEmp: _user.id,
+                    idEmp: _user?.id,
                   );
                 }));
               },
               style: TextButton.styleFrom(
-                backgroundColor: Theme.of(context).accentColor,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                   side: BorderSide(
@@ -250,13 +240,9 @@ class _HistoryNomorPPState extends State<HistoryNomorPP> {
     });
   }
 
-  Future<bool> onBackPress() {
+  Future? onBackPress() {
     deleteBoxUser();
     return Get.offAll(LoginView());
-    // return Navigator.pushReplacement(context,
-    //     MaterialPageRoute(builder: (context) {
-    //   return LoginView();
-    // }));
   }
 
   void deleteBoxUser() async {

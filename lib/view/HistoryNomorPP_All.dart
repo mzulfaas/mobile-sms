@@ -19,7 +19,7 @@ import 'HistoryLines.dart';
 import 'Login.dart';
 
 class HistoryAll extends StatefulWidget {
-  const HistoryAll({Key key}) : super(key: key);
+  const HistoryAll({Key? key}) : super(key: key);
 
   @override
   _HistoryAllState createState() => _HistoryAllState();
@@ -30,14 +30,14 @@ class _HistoryAllState extends State<HistoryAll> {
   final _debouncer = Debounce(miliseconds: 5);
   TextEditingController filterController = new TextEditingController();
   var _listHistory, listHistoryReal;
-  GlobalKey<RefreshIndicatorState> refreshKey;
-  User _user;
-  int code;
+  late GlobalKey<RefreshIndicatorState> refreshKey;
+  User? _user;
+  int? code;
 
   Future<Null> listHistory() async {
     await Future.delayed(Duration(seconds: 5));
-    Promosi.getAllListPromosi(0, code, _user.token??"token kosong", _user.username).then((value) {
-      print("userToken: ${_user.token}");
+    Promosi.getAllListPromosi(0, code!, _user?.token??"token kosong", _user!.username!).then((value) {
+      print("userToken: ${_user?.token}");
       setState(() {
         listHistoryReal = value;
         _listHistory = listHistoryReal;
@@ -60,7 +60,7 @@ class _HistoryAllState extends State<HistoryAll> {
             TextResultCard(
               context: context,
               title: "No. PP",
-              value: promosi.nomorPP,
+              value: promosi.nomorPP!,
             ),
             TextResultCard(
               context: context,
@@ -70,12 +70,12 @@ class _HistoryAllState extends State<HistoryAll> {
             TextResultCard(
               context: context,
               title: "Type",
-              value: promosi.customer,
+              value: promosi.customer!,
             ),
             TextResultCard(
               context: context,
               title: "AXStatus",
-              value: promosi.axStatus==""?"-":promosi.axStatus,
+              value: promosi.axStatus==""?"-":promosi.axStatus!,
             ),
             SizedBox(height: 4,),
             Row(
@@ -102,12 +102,12 @@ class _HistoryAllState extends State<HistoryAll> {
                           MaterialPageRoute(builder: (context) {
                             return HistoryLinesAll(
                               numberPP: promosi?.namePP,
-                              idEmp: _user.id,
+                              idEmp: _user!.id,
                             );
                           }));
                     },
                     style: TextButton.styleFrom(
-                      backgroundColor: Theme.of(context).accentColor,
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                         side: BorderSide(
@@ -144,7 +144,7 @@ class _HistoryAllState extends State<HistoryAll> {
                       print("promo :${jsonEncode(promosi)}");
                       final response = await get(
                           Uri.parse(url),
-                          headers: <String, String>{'authorization': _user.token}
+                          headers: <String, String>{'authorization': _user!.token!}
                       );
                       final listData = jsonDecode(response.body);
                       if(listData!=null&&response.statusCode==200){
@@ -191,7 +191,7 @@ class _HistoryAllState extends State<HistoryAll> {
                       }
                     },
                     style: TextButton.styleFrom(
-                      backgroundColor: Theme.of(context).accentColor,
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                         side: BorderSide(
@@ -226,12 +226,12 @@ class _HistoryAllState extends State<HistoryAll> {
                           MaterialPageRoute(builder: (context) {
                             return HistoryLinesAllEdit(
                               numberPP: promosi?.namePP,
-                              idEmp: _user.id,
+                              idEmp: _user?.id,
                             );
                           }));
                     },
                     style: TextButton.styleFrom(
-                      backgroundColor: Theme.of(context).accentColor,
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                         side: BorderSide(
@@ -262,7 +262,7 @@ class _HistoryAllState extends State<HistoryAll> {
     });
   }
 
-  Future<bool> onBackPress() {
+  Future onBackPress() {
     deleteBoxUser();
     return Navigator.pushReplacement(context,
         MaterialPageRoute(builder: (context) {
@@ -363,7 +363,7 @@ class _HistoryAllState extends State<HistoryAll> {
               onRefresh: listHistory,
               child: FutureBuilder(
                 future: Promosi.getAllListPromosi(
-                    0, code, _user?.token??"", _user?.username??""),
+                    0, code!, _user?.token??"", _user?.username??""),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     if (snapshot.hasError != true) {

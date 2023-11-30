@@ -16,7 +16,7 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
-  List<String> _dropdownUrl = List();
+  List<String> _dropdownUrl = [];
   User models = new User();
   TextEditingController _username = new TextEditingController();
   TextEditingController _password = new TextEditingController();
@@ -25,8 +25,8 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   GlobalKey keyCategory = GlobalKey();
   bool _obscureText = true;
-  String _selectedUrl;
-  int code;
+  late String _selectedUrl;
+  late int code;
   List _listUrl = ["Server Main", "Server 1", "Server 2"];
 
   deleteHistorySharedPrefs()async{
@@ -46,16 +46,16 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
 
   Future<Map<String, String>> getCredentials() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String username = prefs.getString('username');
-    String password = prefs.getString('password');
-    return {'username': username, 'password': password};
+    String? username = prefs.getString('username');
+    String? password = prefs.getString('password');
+    return {'username': username!, 'password': password!};
   }
 
   Future<void> autoLogin() async {
     Map<String, String> credentials = await getCredentials();
     if (credentials['username'] != null && credentials['password'] != null) {
-      _username.text = credentials['username'];
-      _password.text = credentials['password'];
+      _username.text = credentials['username']!;
+      _password.text = credentials['password']!;
       login(_username.text, _password.text, context);
     }
   }
@@ -174,7 +174,7 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
                           horizontal: ScreenUtil().setWidth(20)),
                       child: TextFormField(
                         validator: (value) {
-                          if (value.isEmpty) {
+                          if (value!.isEmpty) {
                             return 'Please, insert your Username';
                           }
                           return null;
@@ -221,7 +221,7 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
                         horizontal: ScreenUtil().setWidth(20)),
                     child: TextFormField(
                         validator: (value) {
-                          if (value.isEmpty) {
+                          if (value!.isEmpty) {
                             return 'Please, insert your Password';
                           }
                           return null;
@@ -243,7 +243,7 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
                               color: colorError,
                               fontSize: ScreenUtil().setSp(13)),
                           hintStyle: TextStyle(
-                              color: Theme.of(context).accentColor,
+                              color: Theme.of(context).colorScheme.secondary,
                               fontSize: ScreenUtil().setSp(15)),
                           labelStyle: TextStyle(
                               color: Theme.of(context).primaryColorDark,
@@ -296,7 +296,7 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
                     value: _rememberMe,
                     onChanged: (newValue) async{
                       setState(() {
-                        _rememberMe = newValue;
+                        _rememberMe = newValue!;
                       });
                     },
                     controlAffinity: ListTileControlAffinity.leading,
@@ -324,7 +324,7 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
                         setState(() {
                           List _list = Set.from(_listUrl).toList();
                           int idx = _list.indexOf(value);
-                          _selectedUrl = value;
+                          _selectedUrl = value as String;
                           code = idx;
                         });
                       },
@@ -342,7 +342,7 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
                 child: Consumer<LoginProvider>(
                   builder: (context, objectLogin, _) => ElevatedButton(
                     onPressed: () {
-                      if (_formKey.currentState.validate()) {
+                      if (_formKey.currentState!.validate()) {
                         if (_rememberMe) {
                           saveCredentials(_username.text, _password.text);
                         }

@@ -35,25 +35,25 @@ import 'dashboard/DashboardPage.dart';
 class HistoryLines extends StatefulWidget {
   @override
   _HistoryLinesState createState() => _HistoryLinesState();
-  String numberPP;
-  int idEmp;
+  String? numberPP;
+  int? idEmp;
 
   HistoryLines({this.numberPP, this.idEmp});
 }
 
 class _HistoryLinesState extends State<HistoryLines> {
-  List _listHistorySO;
+  List<Promosi> _listHistorySO = [];
   dynamic _listHistorySOEncode;
   bool _statusDisable = true;
-  GlobalKey<RefreshIndicatorState> refreshKey;
-  List<int> _listid = new List<int>();
-  List<Lines> listDisc = new List<Lines>();
+  GlobalKey<RefreshIndicatorState>? refreshKey;
+  List<int> _listid = <int>[];
+  List<Lines> listDisc = <Lines>[];
   DateTime selectedDate = DateTime.now();
-  DateTime fromDate, toDate = null;
-  DateTime dateFrom, dateTo;
-  double discount = null;
-  User _user;
-  int code;
+  DateTime? fromDate, toDate;
+  DateTime? dateFrom, dateTo;
+  double? discount;
+  User? _user;
+  int? code;
 
   bool valueSelectAll = false;
   bool startApp = false;
@@ -62,7 +62,7 @@ class _HistoryLinesState extends State<HistoryLines> {
 
   Future<Null> listHistorySO() async {
     await Future.delayed(Duration(seconds: 1));
-    Promosi.getListLinesPending(widget.numberPP, code, _user.token, _user.username)
+    Promosi.getListLinesPending(widget.numberPP!, code!, _user!.token!, _user!.username!)
         .then((value) {
       setState(() {
         _listHistorySO = value;
@@ -145,20 +145,20 @@ class _HistoryLinesState extends State<HistoryLines> {
       List<Promosi> data = _listHistorySO;
       print(_listHistorySO);
       List disc1 =
-          data.map((element) => element.disc1.split(".").first).toList();
+          data.map((element) => element.disc1!.split(".").first).toList();
       List disc2 =
-          data.map((element) => element.disc2.split(".").first).toList();
+          data.map((element) => element.disc2!.split(".").first).toList();
       List disc3 =
-          data.map((element) => element.disc3.split(".").first).toList();
+          data.map((element) => element.disc3!.split(".").first).toList();
       List disc4 =
-          data.map((element) => element.disc4.split(".").first).toList();
+          data.map((element) => element.disc4!.split(".").first).toList();
       List value1 = data
-          .map((element) => MoneyFormatter(amount: double.parse(element.value1))
+          .map((element) => MoneyFormatter(amount: double.parse(element.value1!))
               .output
               .withoutFractionDigits)
           .toList();
       List value2 = data
-          .map((element) => MoneyFormatter(amount: double.parse(element.value2))
+          .map((element) => MoneyFormatter(amount: double.parse(element.value2!))
               .output
               .withoutFractionDigits)
           .toList();
@@ -168,9 +168,9 @@ class _HistoryLinesState extends State<HistoryLines> {
       List suppUnit = data.map((element) => element.suppUnit).toList();
       List warehouse = data.map((element) => element.warehouse).toList();
       List fromDate =
-          data.map((element) => element.fromDate.split(" ").first).toList();
+          data.map((element) => element.fromDate!.split(" ").first).toList();
       List toDate =
-          data.map((element) => element.toDate.split(" ").first).toList();
+          data.map((element) => element.toDate!.split(" ").first).toList();
       List qtyFrom = data.map((element) => element.qty).toList();
       List qtyTo = data.map((element) => element.qtyTo).toList();
       for (int i = 0; i < disc1.length; i++) {
@@ -235,7 +235,7 @@ class _HistoryLinesState extends State<HistoryLines> {
     // });
   }
 
-  Promosi promosi;
+  Promosi? promosi;
 
   @override
   Widget build(BuildContext context) {
@@ -258,7 +258,6 @@ class _HistoryLinesState extends State<HistoryLines> {
                           setState(() {
                             valueSelectAll = !valueSelectAll;
                             List<Promosi> data = _listHistorySO;
-                            List<bool> status = data.map((element) => element.status).toList();
                             if (valueSelectAll == true) {
                               _listHistorySO.map((e) => e.status = true).toList();
                               for(int index = 0; index<data.length; index++){
@@ -318,7 +317,7 @@ class _HistoryLinesState extends State<HistoryLines> {
                         height: 30,
                       ),
                       startApp == false
-                          ? null
+                          ? SizedBox()
                           : Padding(
                               padding:
                                   const EdgeInsets.only(left: 60, right: 20),
@@ -370,7 +369,7 @@ class _HistoryLinesState extends State<HistoryLines> {
                                             'Approve',
                                             style: TextStyle(
                                               color:
-                                                  Theme.of(context).accentColor,
+                                                  Theme.of(context).colorScheme.secondary,
                                               fontSize: ScreenUtil().setSp(25),
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -401,7 +400,7 @@ class _HistoryLinesState extends State<HistoryLines> {
               leading: IconButton(
                 icon: Icon(
                   Icons.arrow_back,   
-                  color: Theme.of(context).accentColor,
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
                 onPressed: onBackPressLines,
               ),
@@ -409,7 +408,7 @@ class _HistoryLinesState extends State<HistoryLines> {
                 "List Lines",
                 style: TextStyle(
                     fontSize: ScreenUtil().setSp(20),
-                    color: Theme.of(context).accentColor),
+                    color: Theme.of(context).colorScheme.secondary),
               ),
             ),
             body: /*startApp==false?Center(child: CircularProgressIndicator()):*/
@@ -418,7 +417,7 @@ class _HistoryLinesState extends State<HistoryLines> {
                 onRefresh: listHistorySO,
                 child: FutureBuilder(
                   future: Promosi.getListLinesPending(
-                      widget.numberPP, code, _user?.token, _user?.username),
+                      widget.numberPP!, code!, _user!.token!, _user!.username!),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     _listHistorySO == null
                         ? _listHistorySO = snapshot.data
@@ -599,7 +598,7 @@ class _HistoryLinesState extends State<HistoryLines> {
                                       shrinkWrap: true,
                                       itemBuilder:
                                           (BuildContext context, int index) {
-                                        return CardLinesAdapter(widget.numberPP,
+                                        return CardLinesAdapter(widget.numberPP!,
                                             _listHistorySO[index], index);
                                       },
                                     ),
@@ -641,13 +640,13 @@ class _HistoryLinesState extends State<HistoryLines> {
     List<Promosi> data = _listHistorySO;
     print(_listHistorySO);
     double price = double.parse(
-        promosi.price.replaceAll(RegExp("Rp"), "").replaceAll(".", ""));
-    double disc1 = double.parse(promosi.disc1);
-    double disc2 = double.parse(promosi.disc2);
-    double disc3 = double.parse(promosi.disc3);
-    double disc4 = double.parse(promosi.disc4);
-    double discValue1 = double.parse(promosi.value1);
-    double discValue2 = double.parse(promosi.value2);
+        promosi.price!.replaceAll(RegExp("Rp"), "").replaceAll(".", ""));
+    double disc1 = double.parse(promosi.disc1!);
+    double disc2 = double.parse(promosi.disc2!);
+    double disc3 = double.parse(promosi.disc3!);
+    double disc4 = double.parse(promosi.disc4!);
+    double discValue1 = double.parse(promosi.value1!);
+    double discValue2 = double.parse(promosi.value2!);
     double totalPriceDiscOnly =
         price - (price * ((disc1 + disc2 + disc3 + disc4) / 100));
     double totalPriceDiscValue = price - (discValue1 + discValue2);
@@ -670,7 +669,7 @@ class _HistoryLinesState extends State<HistoryLines> {
                         child: CheckboxListTile(
                           value:
                               valueSelectAll ? valueSelectAll : promosi.status,
-                          onChanged: (bool value) {
+                          onChanged: (value) {
                             List idLines = data.map((element) => element.id).toList();
                             List disc1lines = data.map((element) => element.disc1).toList();
                             List disc2lines = data.map((element) => element.disc2).toList();
@@ -768,7 +767,7 @@ class _HistoryLinesState extends State<HistoryLines> {
             TextResultCard(
               context: context,
               title: "Product",
-              value: promosi.product,
+              value: promosi.product!,
             ),
             Row(
               children: [
@@ -820,7 +819,7 @@ class _HistoryLinesState extends State<HistoryLines> {
               onTap: (){
                 //xx
                 String itemId = promosi.idProduct
-                    .split("-")
+                    !.split("-")
                     .first
                     .toString()
                     .split(" ")
@@ -862,7 +861,7 @@ class _HistoryLinesState extends State<HistoryLines> {
             TextResultCard(
               context: context,
               title: "Price",
-              value: promosi.price,
+              value: promosi.price!,
             ),
             //Discount
             promosi.ppType == "Bonus"
@@ -893,10 +892,10 @@ class _HistoryLinesState extends State<HistoryLines> {
                               onChanged: (value) {
                                 if (value.isEmpty) {
                                   promosi.disc1 = "0.0";
-                                  double disc1 = double.parse(promosi.disc1);
-                                  double disc2 = double.parse(promosi.disc2);
-                                  double disc3 = double.parse(promosi.disc3);
-                                  double disc4 = double.parse(promosi.disc4);
+                                  double disc1 = double.parse(promosi.disc1!);
+                                  double disc2 = double.parse(promosi.disc2!);
+                                  double disc3 = double.parse(promosi.disc3!);
+                                  double disc4 = double.parse(promosi.disc4!);
                                   setState(() {
                                     totalPriceDiscOnly = price -
                                         (price *
@@ -905,10 +904,10 @@ class _HistoryLinesState extends State<HistoryLines> {
                                   });
                                 } else {
                                   promosi.disc1 = value.replaceAll(".", "");
-                                  double disc1 = double.parse(promosi.disc1);
-                                  double disc2 = double.parse(promosi.disc2);
-                                  double disc3 = double.parse(promosi.disc3);
-                                  double disc4 = double.parse(promosi.disc4);
+                                  double disc1 = double.parse(promosi.disc1!);
+                                  double disc2 = double.parse(promosi.disc2!);
+                                  double disc3 = double.parse(promosi.disc3!);
+                                  double disc4 = double.parse(promosi.disc4!);
                                   setState(() {
                                     totalPriceDiscOnly = price -
                                         (price *
@@ -944,10 +943,10 @@ class _HistoryLinesState extends State<HistoryLines> {
                             onChanged: (value) {
                               if (value.isEmpty) {
                                 promosi.disc2 = "0.0";
-                                double disc1 = double.parse(promosi.disc1);
-                                double disc2 = double.parse(promosi.disc2);
-                                double disc3 = double.parse(promosi.disc3);
-                                double disc4 = double.parse(promosi.disc4);
+                                double disc1 = double.parse(promosi.disc1!);
+                                double disc2 = double.parse(promosi.disc2!);
+                                double disc3 = double.parse(promosi.disc3!);
+                                double disc4 = double.parse(promosi.disc4!);
                                 setState(() {
                                   totalPriceDiscOnly = price -
                                       (price *
@@ -956,10 +955,10 @@ class _HistoryLinesState extends State<HistoryLines> {
                                 });
                               } else {
                                 promosi.disc2 = value.replaceAll(".", "");
-                                double disc1 = double.parse(promosi.disc1);
-                                double disc2 = double.parse(promosi.disc2);
-                                double disc3 = double.parse(promosi.disc3);
-                                double disc4 = double.parse(promosi.disc4);
+                                double disc1 = double.parse(promosi.disc1!);
+                                double disc2 = double.parse(promosi.disc2!);
+                                double disc3 = double.parse(promosi.disc3!);
+                                double disc4 = double.parse(promosi.disc4!);
                                 setState(() {
                                   totalPriceDiscOnly = price -
                                       (price *
@@ -1001,10 +1000,10 @@ class _HistoryLinesState extends State<HistoryLines> {
                             onChanged: (value) {
                               if (value.isEmpty) {
                                 promosi.disc3 = "0.0";
-                                double disc1 = double.parse(promosi.disc1);
-                                double disc2 = double.parse(promosi.disc2);
-                                double disc3 = double.parse(promosi.disc3);
-                                double disc4 = double.parse(promosi.disc4);
+                                double disc1 = double.parse(promosi.disc1!);
+                                double disc2 = double.parse(promosi.disc2!);
+                                double disc3 = double.parse(promosi.disc3!);
+                                double disc4 = double.parse(promosi.disc4!);
                                 setState(() {
                                   totalPriceDiscOnly = price -
                                       (price *
@@ -1013,10 +1012,10 @@ class _HistoryLinesState extends State<HistoryLines> {
                                 });
                               } else {
                                 promosi.disc3 = value.replaceAll(".", "");
-                                double disc1 = double.parse(promosi.disc1);
-                                double disc2 = double.parse(promosi.disc2);
-                                double disc3 = double.parse(promosi.disc3);
-                                double disc4 = double.parse(promosi.disc4);
+                                double disc1 = double.parse(promosi.disc1!);
+                                double disc2 = double.parse(promosi.disc2!);
+                                double disc3 = double.parse(promosi.disc3!);
+                                double disc4 = double.parse(promosi.disc4!);
                                 setState(() {
                                   totalPriceDiscOnly = price -
                                       (price *
@@ -1051,10 +1050,10 @@ class _HistoryLinesState extends State<HistoryLines> {
                             onChanged: (value) {
                               if (value.isEmpty) {
                                 promosi.disc4 = "0.0";
-                                double disc1 = double.parse(promosi.disc1);
-                                double disc2 = double.parse(promosi.disc2);
-                                double disc3 = double.parse(promosi.disc3);
-                                double disc4 = double.parse(promosi.disc4);
+                                double disc1 = double.parse(promosi.disc1!);
+                                double disc2 = double.parse(promosi.disc2!);
+                                double disc3 = double.parse(promosi.disc3!);
+                                double disc4 = double.parse(promosi.disc4!);
                                 setState(() {
                                   totalPriceDiscOnly = price -
                                       (price *
@@ -1063,10 +1062,10 @@ class _HistoryLinesState extends State<HistoryLines> {
                                 });
                               } else {
                                 promosi.disc4 = value.replaceAll(".", "");
-                                double disc1 = double.parse(promosi.disc1);
-                                double disc2 = double.parse(promosi.disc2);
-                                double disc3 = double.parse(promosi.disc3);
-                                double disc4 = double.parse(promosi.disc4);
+                                double disc1 = double.parse(promosi.disc1!);
+                                double disc2 = double.parse(promosi.disc2!);
+                                double disc3 = double.parse(promosi.disc3!);
+                                double disc4 = double.parse(promosi.disc4!);
                                 setState(() {
                                   totalPriceDiscOnly = price -
                                       (price *
@@ -1112,9 +1111,9 @@ class _HistoryLinesState extends State<HistoryLines> {
                               if (value.isEmpty) {
                                 promosi.value1 = "0.0";
                                 double discValue1 =
-                                    double.parse(promosi.value1);
+                                    double.parse(promosi.value1!);
                                 double discValue2 =
-                                    double.parse(promosi.value2);
+                                    double.parse(promosi.value2!);
                                 setState(() {
                                   totalPriceDiscValue =
                                       price - (discValue1 + discValue2);
@@ -1122,9 +1121,9 @@ class _HistoryLinesState extends State<HistoryLines> {
                               } else {
                                 promosi.value1 = value.replaceAll(".", "");
                                 double discValue1 =
-                                    double.parse(promosi.value1);
+                                    double.parse(promosi.value1!);
                                 double discValue2 =
-                                    double.parse(promosi.value2);
+                                    double.parse(promosi.value2!);
                                 setState(() {
                                   totalPriceDiscValue =
                                       price - (discValue1 + discValue2);
@@ -1162,9 +1161,9 @@ class _HistoryLinesState extends State<HistoryLines> {
                               if (value.isEmpty) {
                                 promosi.value2 = "0.0";
                                 double discValue1 =
-                                    double.parse(promosi.value1);
+                                    double.parse(promosi.value1!);
                                 double discValue2 =
-                                    double.parse(promosi.value2);
+                                    double.parse(promosi.value2!);
                                 setState(() {
                                   totalPriceDiscValue =
                                       price - (discValue1 + discValue2);
@@ -1172,9 +1171,9 @@ class _HistoryLinesState extends State<HistoryLines> {
                               } else {
                                 promosi.value2 = value.replaceAll(".", "");
                                 double discValue1 =
-                                    double.parse(promosi.value1);
+                                    double.parse(promosi.value1!);
                                 double discValue2 =
-                                    double.parse(promosi.value2);
+                                    double.parse(promosi.value2!);
                                 setState(() {
                                   totalPriceDiscValue =
                                       price - (discValue1 + discValue2);
@@ -1415,13 +1414,13 @@ class _HistoryLinesState extends State<HistoryLines> {
                     MaterialPageRoute(builder: (context) {
                   return HistorySO(
                       namePP: namePP,
-                      idCustomer: promosi.idCustomer,
-                      idProduct: promosi.idProduct,
-                      idEmp: widget.idEmp);
+                      idCustomer: promosi.idCustomer!,
+                      idProduct: promosi.idProduct!,
+                      idEmp: widget.idEmp!);
                 }));
               },
               style: TextButton.styleFrom(
-                backgroundColor: Theme.of(context).accentColor,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                   side: BorderSide(
@@ -1439,11 +1438,11 @@ class _HistoryLinesState extends State<HistoryLines> {
   void setBundleLines(
       int id, double disc, DateTime fromDate, DateTime toDate) async {
     Lines model = new Lines();
-    List<Lines> listDisc = new List<Lines>();
+    List<Lines> listDisc = <Lines>[];
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    String result = preferences.getString("result");
+    String? result = preferences.getString("result");
     if (result != "") {
-      var listStringResult = json.decode(result);
+      var listStringResult = json.decode(result!);
       for (var objectResult in listStringResult) {
         var objects = Lines.fromJson(objectResult as Map<String, dynamic>);
         listDisc.add(objects);
@@ -1469,7 +1468,7 @@ class _HistoryLinesState extends State<HistoryLines> {
   approveNew(String apprroveOrReject) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     dynamic id = prefs.getInt("userid");
-    String url = ApiConstant(code).urlApi + "api/Approve/$id";
+    String url = ApiConstant(code!).urlApi + "api/Approve/$id";
     print("url Approve:$url");
     List<Promosi> data = _listHistorySO;
     print(_listHistorySO);
@@ -1585,43 +1584,22 @@ class _HistoryLinesState extends State<HistoryLines> {
 
   void getUpdateData(
       BuildContext context, List<Lines> listDisc, int idEmp, int code) async {
-    List<Lines> listDisc = new List<Lines>();
+    List<Lines> listDisc = <Lines>[];
     SharedPreferences preferences = await SharedPreferences.getInstance();
     Future.delayed(Duration(seconds: 1));
-    String result = preferences.getString("result");
-    var listStringResult = json.decode(result);
+    String? result = preferences.getString("result");
+    var listStringResult = json.decode(result!);
     for (var objectResult in listStringResult) {
       var objects = Lines.fromJson(objectResult as Map<String, dynamic>);
       listDisc.add(objects);
     }
     preferences.setString("result", "");
-    _approvePP(context, listDisc, widget.idEmp, code);
+    _approvePP(context, listDisc, widget.idEmp!, code);
   }
 
   DateTime convertDate(String date) {
     final dateTime = DateTime.parse(date ?? "");
     return dateTime;
-  }
-
-  // Future<bool> _approvePP(
-  //     BuildContext context, String nomorPP, int idEmp, int code) {
-  Future<bool> _approvePP(
-      BuildContext context, List<Lines> listDisc, int idEmp, int code) {
-    Promosi.approveSalesOrder(listDisc, code).then((value) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-        return HistoryNomorPP();
-      }));
-    }).catchError((onError) {
-      Navigator.pop(context);
-      Fluttertoast.showToast(
-          msg: 'Error : ' + onError.toString(),
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 5,
-          backgroundColor: Colors.red[500],
-          textColor: Colors.black,
-          fontSize: ScreenUtil().setSp(16));
-    });
   }
 
   void getSharedPreference() async {
@@ -1637,13 +1615,29 @@ class _HistoryLinesState extends State<HistoryLines> {
     });
   }
 
-  Future<bool> onBackPressLines() {
-    Get.off(DashboardApprovalPP(
-      initialIndexs: 0,
-    ));
-    // return Navigator.pushReplacement(context,
-    //     MaterialPageRoute(builder: (context) {
-    //   return HistoryNomorPP();
-    // }));
+  Future<bool> _approvePP(BuildContext context, List<Lines> listDisc, int idEmp, int code) async {
+    try {
+      await Promosi.approveSalesOrder(listDisc, code);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HistoryNomorPP()));
+      return true; // return true on success
+    } catch (onError) {
+      Navigator.pop(context);
+      Fluttertoast.showToast(
+          msg: 'Error : ' + onError.toString(),
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 5,
+          backgroundColor: Colors.red[500],
+          textColor: Colors.black,
+          fontSize: ScreenUtil().setSp(16));
+      return false; // return false on error
+    }
   }
+
+
+  Future<bool> onBackPressLines() async {
+    Get.off(DashboardApprovalPP(initialIndexs: 0));
+    return Future.value(true); // Explicitly return true
+  }
+
 }

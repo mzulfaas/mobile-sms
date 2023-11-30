@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class TextResultCard extends StatelessWidget {
   String title, value;
   BuildContext context;
-  TextResultCard({this.title, this.value, this.context});
+  TextResultCard({required this.title, required this.value, required this.context});
 
   @override
   Widget build(BuildContext context2) {

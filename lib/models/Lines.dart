@@ -1,9 +1,9 @@
 class Lines {
-  int id;
-  double disc;
-  String fromDate;
-  String toDate;
-  Lines({Lines model});
+  int? id;
+  double? disc;
+  String? fromDate;
+  String? toDate;
+  Lines({Lines? model});
 
   Map<String, dynamic> toJsonDisc() {
     final Map<String, dynamic> data = new Map<String, dynamic>();

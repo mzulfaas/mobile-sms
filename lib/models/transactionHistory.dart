@@ -1,10 +1,10 @@
 class TransactionHistory {
-  List<TransactionLines> transactionLines;
-  int id;
-  String customerName;
-  String date;
-  String transactionId;
-  String customerId;
+  List<TransactionLines>? transactionLines;
+  int? id;
+  String? customerName;
+  String? date;
+  String? transactionId;
+  String? customerId;
 
   TransactionHistory(
       {this.transactionLines,
@@ -18,7 +18,7 @@ class TransactionHistory {
     if (json['transactionLines'] != null) {
       transactionLines = <TransactionLines>[];
       json['transactionLines'].forEach((v) {
-        transactionLines.add(new TransactionLines.fromJson(v));
+        transactionLines!.add(new TransactionLines.fromJson(v));
       });
     }
     id = json['id'];
@@ -32,7 +32,7 @@ class TransactionHistory {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.transactionLines != null) {
       data['transactionLines'] =
-          this.transactionLines.map((v) => v.toJson()).toList();
+          this.transactionLines!.map((v) => v.toJson()).toList();
     }
     data['id'] = this.id;
     data['customerName'] = this.customerName;
@@ -44,15 +44,15 @@ class TransactionHistory {
 }
 
 class TransactionLines {
-  int id;
-  String productId;
-  String unit;
-  int qty;
-  int disc;
-  int price;
-  int transactionId;
-  int totalPrice;
-  String productName;
+  int? id;
+  String? productId;
+  String? unit;
+  int? qty;
+  int? disc;
+  int? price;
+  int? transactionId;
+  int? totalPrice;
+  String? productName;
 
   TransactionLines(
       {this.id,

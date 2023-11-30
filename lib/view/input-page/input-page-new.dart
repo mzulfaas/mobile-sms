@@ -5,13 +5,14 @@ import 'package:intl/intl.dart';
 import 'package:money_input_formatter/money_input_formatter.dart';
 import 'package:search_choices/search_choices.dart';
 import 'package:signature/signature.dart';
+import '../../models/IdAndValue.dart';
 import '../../models/input-page-wrapper.dart';
 import '../../models/promotion-program-input-state.dart';
 import '../dashboard/dashboard_pp.dart';
 import 'input-page-presenter-new.dart';
 
 class InputPageNew extends StatefulWidget {
-  InputPageNew({Key key}) : super(key: key);
+  InputPageNew({Key? key}) : super(key: key);
 
   @override
   State<InputPageNew> createState() => _InputPageNewState();
@@ -19,12 +20,8 @@ class InputPageNew extends StatefulWidget {
 
 class _InputPageNewState extends State<InputPageNew> {
   Widget customCard(int index, InputPagePresenterNew inputPagePresenter) {
-    PromotionProgramInputState promotionProgramInputState = inputPagePresenter
-        .promotionProgramInputStateRx.value.promotionProgramInputState[index];
-    // promotionProgramInputState.qtyFrom.text = 1.toString();
-    // promotionProgramInputState.qtyTo.text = 1.toString();
-    // promotionProgramInputState.fromDate.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
-    // promotionProgramInputState.toDate.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    PromotionProgramInputState? promotionProgramInputState = inputPagePresenter
+        .promotionProgramInputStateRx.value.promotionProgramInputState?[index];
     return Container(
       margin: EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 0),
       child: Card(
@@ -61,56 +58,6 @@ class _InputPageNewState extends State<InputPageNew> {
               SizedBox(
                 height: 20,
               ),
-              // DropdownButtonFormField<String>(
-              //   isExpanded: true,
-              //   isDense: true,
-              //   value: promotionProgramInputState.customerGroupInputPageDropdownState.selectedChoice,
-              //   hint: Text(
-              //     "Customer/Cust Group",
-              //     style: TextStyle(fontSize: 12),
-              //   ),
-              //   items: promotionProgramInputState.customerGroupInputPageDropdownState.choiceList.map((item) {
-              //     return DropdownMenuItem(
-              //       child: Text(
-              //         item,
-              //         style: TextStyle(fontSize: 12),
-              //         overflow: TextOverflow.fade,
-              //       ),
-              //       value: item,
-              //     );
-              //   }).toList(),
-              //   onChanged: (value) => inputPagePresenter.changeCustomerGroup(index, value)
-              // ),
-              // SizedBox(
-              //   height: 20,
-              // ),
-              // SearchChoices.single(
-              //   items: promotionProgramInputState.customerNameOrDiscountGroupInputPageDropdownState.choiceList.map((item) {
-              //     return DropdownMenuItem(
-              //       child: Text(
-              //         item.value,
-              //         style: TextStyle(fontSize: 12),
-              //         overflow: TextOverflow.fade,
-              //       ),
-              //       value: item,
-              //     );
-              //   }).toList(),
-              //   value: promotionProgramInputState.customerNameOrDiscountGroupInputPageDropdownState.selectedChoice,
-              //   hint: Builder(
-              //     builder: (context) {
-              //       String text = (promotionProgramInputState.customerGroupInputPageDropdownState.selectedChoice ?? "").toLowerCase() == "Customer"
-              //           ? "Customer Name" : "Discount Group Name";
-              //       return Text(
-              //         promotionProgramInputState.customerGroupInputPageDropdownState.selectedChoice=="Customer"?"Select Customer": "Select Discount Group",
-              //         style: TextStyle(fontSize: 12),
-              //       );
-              //     }
-              //   ),
-              //   onChanged: (value) => inputPagePresenter.changeCustomerNameOrDiscountGroup(index, value),
-              //   isExpanded: true,
-              // ),
-              // SizedBox(height: 10,),
-              //ite, group
               Stack(
                 children: [
                   Padding(
@@ -121,14 +68,14 @@ class _InputPageNewState extends State<InputPageNew> {
                   SearchChoices.single(
                     isExpanded: true,
                     value: promotionProgramInputState
-                        .itemGroupInputPageDropdownState.selectedChoice,
+                        ?.itemGroupInputPageDropdownState?.selectedChoice,
                     hint: Text(
                       "Item/Item Group",
                       style: TextStyle(fontSize: 12),
                     ),
                     items: promotionProgramInputState
-                        .itemGroupInputPageDropdownState.choiceList
-                        .map((item) {
+                        ?.itemGroupInputPageDropdownState?.choiceList
+                        ?.map((item) {
                       return DropdownMenuItem<String>(
                         value: item,
                         child: Text(
@@ -156,8 +103,8 @@ class _InputPageNewState extends State<InputPageNew> {
                   Container(
                     margin: EdgeInsets.only(
                       top: promotionProgramInputState
-                                  .selectProductPageDropdownState
-                                  .selectedChoice !=
+                                  ?.selectProductPageDropdownState
+                                  ?.selectedChoice !=
                               null
                           ? 10
                           : 0,
@@ -165,17 +112,17 @@ class _InputPageNewState extends State<InputPageNew> {
                     child: SearchChoices.single(
                         isExpanded: true,
                         value: promotionProgramInputState
-                            .selectProductPageDropdownState.selectedChoice,
+                            ?.selectProductPageDropdownState?.selectedChoice,
                         items: promotionProgramInputState
-                            .selectProductPageDropdownState.choiceList
-                            .map((item) {
+                            ?.selectProductPageDropdownState?.choiceList
+                            ?.map((item) {
                           return DropdownMenuItem(
-                              child: Text(item.value), value: item);
+                              child: Text(item.value!), value: item);
                         }).toList(),
                         hint: Text(
                           promotionProgramInputState
-                                      .itemGroupInputPageDropdownState
-                                      .selectedChoice ==
+                                      ?.itemGroupInputPageDropdownState
+                                      ?.selectedChoice ==
                                   "Item"
                               ? "Select Product"
                               : "Select Product",
@@ -203,9 +150,9 @@ class _InputPageNewState extends State<InputPageNew> {
                     child: SearchChoices.single(
                       isExpanded: true,
                       value: promotionProgramInputState
-                              .wareHousePageDropdownState
-                              .selectedChoiceWrapper
-                              .value ??
+                              ?.wareHousePageDropdownState
+                              ?.selectedChoiceWrapper
+                              ?.value ??
                           "WHS - Tunas - Buffer",
                       hint: Text(
                         "WHS - Tunas - Buffer",
@@ -213,11 +160,11 @@ class _InputPageNewState extends State<InputPageNew> {
                             fontSize: 12, fontWeight: FontWeight.w500),
                       ),
                       items: promotionProgramInputState
-                          .wareHousePageDropdownState.choiceListWrapper.value
-                          .map((item) {
+                          ?.wareHousePageDropdownState?.choiceListWrapper?.value
+                          ?.map((item) {
                         return DropdownMenuItem(
                           child: Text(
-                            item.value,
+                            item.value!,
                             style: TextStyle(fontSize: 12),
                             overflow: TextOverflow.fade,
                           ),
@@ -230,38 +177,6 @@ class _InputPageNewState extends State<InputPageNew> {
                   ),
                 ],
               ),
-
-              //unit multiply
-              // Stack(
-              //   children: [
-              //     Padding(
-              //       padding: const EdgeInsets.only(left: 10),
-              //       child: Text("Unit",style: TextStyle(fontSize: 10,color: Colors.black54)),
-              //     ),
-              //     Row(
-              //       children: [
-              //         //unit
-              //         Expanded(
-              //           child: SearchChoices.single(
-              //             isExpanded: true,
-              //             value: promotionProgramInputState.unitPageDropdownState.selectedChoice,
-              //             hint: Text(
-              //               "Unit",
-              //               style: TextStyle(fontSize: 12),
-              //             ),
-              //             items: promotionProgramInputState.unitPageDropdownState.choiceList.map((item) {
-              //               return DropdownMenuItem(
-              //                 child: Text(item),
-              //                 value: item,
-              //               );
-              //             }).toList(),
-              //             onChanged: (value) => inputPagePresenter.changeUnit(index, value),
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //   ],
-              // ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -269,7 +184,7 @@ class _InputPageNewState extends State<InputPageNew> {
                     width: 50,
                     child: TextFormField(
                       keyboardType: TextInputType.number,
-                      controller: promotionProgramInputState.qtyFrom,
+                      controller: promotionProgramInputState?.qtyFrom,
                       decoration: InputDecoration(
                         labelText: 'Qty From',
                         labelStyle: TextStyle(
@@ -299,7 +214,7 @@ class _InputPageNewState extends State<InputPageNew> {
                     width: 50,
                     child: TextFormField(
                       keyboardType: TextInputType.number,
-                      controller: promotionProgramInputState.qtyTo,
+                      controller: promotionProgramInputState?.qtyTo,
                       decoration: InputDecoration(
                           labelText: 'Qty To',
                           labelStyle: TextStyle(
@@ -329,14 +244,14 @@ class _InputPageNewState extends State<InputPageNew> {
                     child: SearchChoices.single(
                       isExpanded: true,
                       value: promotionProgramInputState
-                          .unitPageDropdownState.selectedChoice,
+                          ?.unitPageDropdownState?.selectedChoice,
                       hint: Text(
                         "Unit",
                         style: TextStyle(fontSize: 12),
                       ),
                       items: promotionProgramInputState
-                          .unitPageDropdownState.choiceList
-                          .map((item) {
+                          ?.unitPageDropdownState?.choiceList
+                          ?.map((item) {
                         return DropdownMenuItem(
                           child: Text(item),
                           value: item,
@@ -351,7 +266,7 @@ class _InputPageNewState extends State<InputPageNew> {
 
               //curency percent
               inputPagePresenter.promotionTypeInputPageDropdownStateRx.value
-                          .selectedChoice.value ==
+                          .selectedChoice?.value ==
                       "Bonus"
                   ? SizedBox()
                   : Row(
@@ -359,26 +274,26 @@ class _InputPageNewState extends State<InputPageNew> {
                         Expanded(
                           child: DropdownButtonFormField(
                             value: promotionProgramInputState
-                                .percentValueInputPageDropdownState
-                                .selectedChoice,
+                                ?.percentValueInputPageDropdownState
+                                ?.selectedChoice,
                             hint: Text(
                               "Disc Type (percent/value)",
                               style: TextStyle(fontSize: 12),
                             ),
                             items: promotionProgramInputState
-                                .percentValueInputPageDropdownState.choiceList
-                                .map((item) {
+                                ?.percentValueInputPageDropdownState?.choiceList
+                                ?.map((item) {
                               return DropdownMenuItem(
                                 child: Text(
-                                  item.value,
+                                  item.value!,
                                   style: TextStyle(fontSize: 12),
                                 ),
                                 value: item,
                               );
                             }).toList(),
-                            onChanged: (value) {
+                            onChanged: (IdAndValue<String>? value) {
                               inputPagePresenter.changePercentValue(
-                                  index, value);
+                                  index, value!);
                             },
                           ),
                         ),
@@ -387,14 +302,14 @@ class _InputPageNewState extends State<InputPageNew> {
 
               //percent
               inputPagePresenter.promotionTypeInputPageDropdownStateRx.value
-                          .selectedChoice.value ==
+                          .selectedChoice?.value ==
                       "Bonus"
                   ? SizedBox()
                   : promotionProgramInputState
-                              .percentValueInputPageDropdownState
-                              .selectedChoice ==
+                              ?.percentValueInputPageDropdownState
+                              ?.selectedChoice ==
                           promotionProgramInputState
-                              .percentValueInputPageDropdownState.choiceList[1]
+                              ?.percentValueInputPageDropdownState!.choiceList?[1]
                       ? Column(
                           children: [
                             Row(
@@ -405,7 +320,7 @@ class _InputPageNewState extends State<InputPageNew> {
                                   child: TextFormField(
                                     keyboardType: TextInputType.number,
                                     controller:
-                                        promotionProgramInputState.salesPrice,
+                                        promotionProgramInputState?.salesPrice,
                                     inputFormatters: [
                                       MoneyInputFormatter(
                                           thousandSeparator: ".",
@@ -446,7 +361,7 @@ class _InputPageNewState extends State<InputPageNew> {
                                           decimalSeparator: ",")
                                     ],
                                     controller: promotionProgramInputState
-                                        .priceToCustomer,
+                                        ?.priceToCustomer,
                                     readOnly: true,
                                     decoration: InputDecoration(
                                       labelText: 'Price to Customer',
@@ -484,7 +399,7 @@ class _InputPageNewState extends State<InputPageNew> {
                                           decimalSeparator: ",")
                                     ],
                                     controller:
-                                        promotionProgramInputState.value1,
+                                        promotionProgramInputState?.value1,
                                     onChanged: (value) {
                                       inputPagePresenter
                                           .getPriceToCustomer(index);
@@ -523,7 +438,7 @@ class _InputPageNewState extends State<InputPageNew> {
                                     ],
                                     keyboardType: TextInputType.number,
                                     controller:
-                                        promotionProgramInputState.value2,
+                                        promotionProgramInputState?.value2,
                                     onChanged: (value) {
                                       inputPagePresenter
                                           .getPriceToCustomer(index);
@@ -563,7 +478,7 @@ class _InputPageNewState extends State<InputPageNew> {
                                   child: TextFormField(
                                     keyboardType: TextInputType.number,
                                     controller:
-                                    promotionProgramInputState.salesPrice,
+                                    promotionProgramInputState?.salesPrice,
                                     inputFormatters: [
                                       MoneyInputFormatter(
                                           thousandSeparator: ".",
@@ -604,7 +519,7 @@ class _InputPageNewState extends State<InputPageNew> {
                                           decimalSeparator: ",")
                                     ],
                                     controller: promotionProgramInputState
-                                        .priceToCustomer,
+                                        ?.priceToCustomer,
                                     readOnly: true,
                                     decoration: InputDecoration(
                                       labelText: 'Price to Customer',
@@ -638,7 +553,7 @@ class _InputPageNewState extends State<InputPageNew> {
                                   child: TextFormField(
                                     keyboardType: TextInputType.number,
                                     controller:
-                                        promotionProgramInputState.percent1,
+                                        promotionProgramInputState?.percent1,
                                     onChanged: (value) {
                                       setState(() {
                                         inputPagePresenter
@@ -675,7 +590,7 @@ class _InputPageNewState extends State<InputPageNew> {
                                   child: TextFormField(
                                     keyboardType: TextInputType.number,
                                     controller:
-                                        promotionProgramInputState.percent2,
+                                        promotionProgramInputState?.percent2,
                                     onChanged: (value) {
                                       setState(() {
                                         inputPagePresenter
@@ -714,7 +629,7 @@ class _InputPageNewState extends State<InputPageNew> {
                                   child: TextFormField(
                                     keyboardType: TextInputType.number,
                                     controller:
-                                        promotionProgramInputState.percent3,
+                                        promotionProgramInputState?.percent3,
                                     onChanged: (value) {
                                       setState(() {
                                         inputPagePresenter
@@ -751,7 +666,7 @@ class _InputPageNewState extends State<InputPageNew> {
                                   child: TextFormField(
                                     keyboardType: TextInputType.number,
                                     controller:
-                                        promotionProgramInputState.percent4,
+                                        promotionProgramInputState?.percent4,
                                     onChanged: (value) {
                                       setState(() {
                                         inputPagePresenter
@@ -786,22 +701,22 @@ class _InputPageNewState extends State<InputPageNew> {
                         ),
 
               inputPagePresenter.promotionTypeInputPageDropdownStateRx.value
-                          .selectedChoice.value ==
+                          .selectedChoice?.value ==
                       "Discount"
                   ? SizedBox()
                   : SearchChoices.single(
                       isExpanded: true,
                       value:
-                          promotionProgramInputState.supplyItem.selectedChoice,
+                          promotionProgramInputState?.supplyItem?.selectedChoice,
                       hint: Text(
                         "Bonus Item",
                         style: TextStyle(fontSize: 12),
                       ),
-                      items: promotionProgramInputState.supplyItem.choiceList
-                          .map((item) {
+                      items: promotionProgramInputState?.supplyItem?.choiceList
+                          ?.map((item) {
                         return DropdownMenuItem(
                           child: Text(
-                            item.value,
+                            item.value!,
                             style: TextStyle(fontSize: 12),
                             overflow: TextOverflow.fade,
                           ),
@@ -813,7 +728,7 @@ class _InputPageNewState extends State<InputPageNew> {
 
               //unit multiply
               inputPagePresenter.promotionTypeInputPageDropdownStateRx.value
-                          .selectedChoice.value ==
+                          .selectedChoice?.value ==
                       "Discount"
                   ? SizedBox()
                   : Row(
@@ -823,7 +738,7 @@ class _InputPageNewState extends State<InputPageNew> {
                           width: 50,
                           child: TextFormField(
                             keyboardType: TextInputType.number,
-                            controller: promotionProgramInputState.qtyItem,
+                            controller: promotionProgramInputState?.qtyItem,
                             decoration: InputDecoration(
                               labelText: 'Qty Item',
                               labelStyle: TextStyle(
@@ -851,14 +766,14 @@ class _InputPageNewState extends State<InputPageNew> {
                           child: SearchChoices.single(
                             isExpanded: true,
                             value: promotionProgramInputState
-                                .unitSupplyItem.selectedChoice,
+                                ?.unitSupplyItem?.selectedChoice,
                             hint: Text(
                               "Unit Bonus Item",
                               style: TextStyle(fontSize: 12),
                             ),
                             items: promotionProgramInputState
-                                .unitSupplyItem.choiceList
-                                .map((item) {
+                                ?.unitSupplyItem?.choiceList
+                                ?.map((item) {
                               return DropdownMenuItem(
                                 child: Text(item),
                                 value: item,
@@ -980,14 +895,15 @@ class _InputPageNewState extends State<InputPageNew> {
                                       .promotionTypeInputPageDropdownStateRx
                                       .value
                                       .choiceList
-                                      .map((item) {
+                                      ?.map((item) {
                                     return DropdownMenuItem(
-                                      child: Text(item.value),
+                                      child: Text(item.value!),
                                       value: item,
                                     );
                                   }).toList(),
-                                  onChanged: (value) => inputPagePresenter
-                                      .changePromotionType(value),
+
+                                  onChanged: (IdAndValue<String>? value) => inputPagePresenter
+                                      .changePromotionType(value!),
                                 )),
                           ),
                         ],
@@ -1010,7 +926,7 @@ class _InputPageNewState extends State<InputPageNew> {
                                     .customerGroupInputPageDropdownState
                                     .value
                                     .choiceList
-                                    .map((item) {
+                                    ?.map((item) {
                                   return DropdownMenuItem(
                                     child: Text(
                                       item,
@@ -1023,7 +939,7 @@ class _InputPageNewState extends State<InputPageNew> {
                                 onChanged: (value) {
                                   setState(() {
                                     inputPagePresenter
-                                        .changeCustomerGroupHeader(value);
+                                        .changeCustomerGroupHeader(value!);
                                     Future.delayed(Duration(seconds: 1), () {
                                       setState(() {});
                                     });
@@ -1038,9 +954,9 @@ class _InputPageNewState extends State<InputPageNew> {
                                 .custNameHeaderValueDropdownStateRx
                                 .value
                                 .choiceList
-                                .map((item) {
+                                ?.map((item) {
                               return DropdownMenuItem(
-                                child: Text(item.value,
+                                child: Text(item.value!,
                                     style: TextStyle(fontSize: 12)),
                                 value: item,
                               );
@@ -1082,17 +998,13 @@ class _InputPageNewState extends State<InputPageNew> {
                                 "Select Principal",
                                 style: TextStyle(fontSize: 12),
                               ),
-                              items: inputPagePresenter.listDataPrincipal.map((item) {
-                                if (item != null) {
-                                  return DropdownMenuItem(
-                                    child: Text(item),
-                                    value: item,
-                                  );
-                                } else {
-                                  return null;
-                                }
-                              }).toList().where((item) => item != null).toList(),
-                              onChanged: (String value) {
+                              items: inputPagePresenter.listDataPrincipal.where((item) => item != null).map((item) {
+                                return DropdownMenuItem<String>(
+                                  child: Text(item),
+                                  value: item,
+                                );
+                              }).toList(),
+                              onChanged: (String? value) {
                                 print("value: $value");
                                 final index = inputPagePresenter.listDataPrincipal.indexOf(value);
                                 inputPagePresenter.selectedDataPrincipal.clear();
@@ -1136,11 +1048,10 @@ class _InputPageNewState extends State<InputPageNew> {
                                         initialDate: DateTime.now(),
                                         lastDate: DateTime.now()
                                             .add(Duration(days: 180)),
-                                        builder: (BuildContext context,
-                                            Widget child) {
+                                        builder: (context, child) {
                                           return Theme(
                                             data: ThemeData.light(),
-                                            child: child,
+                                            child: child!,
                                           );
                                         },
                                       );
@@ -1193,11 +1104,10 @@ class _InputPageNewState extends State<InputPageNew> {
                                         initialDate: DateTime.now(),
                                         lastDate:
                                             fromDate.add(Duration(days: 180)),
-                                        builder: (BuildContext context,
-                                            Widget child) {
+                                        builder: (context, child) {
                                           return Theme(
                                             data: ThemeData.light(),
-                                            child: child,
+                                            child: child!,
                                           );
                                         },
                                       );
@@ -1262,10 +1172,10 @@ class _InputPageNewState extends State<InputPageNew> {
             Obx(() {
               InputPageWrapper inputPageWrapper =
                   inputPagePresenter.promotionProgramInputStateRx.value;
-              List<PromotionProgramInputState> promotionProgramInputStateList =
+              List<PromotionProgramInputState>? promotionProgramInputStateList =
                   inputPageWrapper.promotionProgramInputState;
-              bool isAddItem = inputPageWrapper.isAddItem;
-              return promotionProgramInputStateList.length == 0
+              bool? isAddItem = inputPageWrapper.isAddItem;
+              return promotionProgramInputStateList?.length == 0
                   ? Container(
                     margin: EdgeInsets.only(bottom: 100),
                     child: ElevatedButton(
@@ -1273,7 +1183,7 @@ class _InputPageNewState extends State<InputPageNew> {
                           backgroundColor: Colors.green,
                         ),
                         child: Text("Add Lines"),
-                        onPressed: isAddItem
+                        onPressed: isAddItem!
                             ? () {
                                 inputPagePresenter.addItem();
                               }
@@ -1282,7 +1192,7 @@ class _InputPageNewState extends State<InputPageNew> {
                   : ListView.builder(
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
-                      itemCount: promotionProgramInputStateList.length,
+                      itemCount: promotionProgramInputStateList?.length,
                       itemBuilder: (context, index) => GestureDetector(
                             behavior: HitTestBehavior.translucent,
                             onTap: () {
@@ -1294,7 +1204,7 @@ class _InputPageNewState extends State<InputPageNew> {
                                 SizedBox(
                                   height: 10,
                                 ),
-                                index == promotionProgramInputStateList.length - 1
+                                index == promotionProgramInputStateList!.length - 1
                                     ? Padding(
                                         padding: EdgeInsets.only(bottom: 500),
                                         child: Column(
@@ -1322,22 +1232,17 @@ class _InputPageNewState extends State<InputPageNew> {
                                                             promotionProgramInputStateList[
                                                                 i];
                                                         if (element.selectProductPageDropdownState
-                                                                        .selectedChoice ==
+                                                                        ?.selectedChoice ==
                                                                     null ||
                                                                 element
                                                                     .qtyFrom
-                                                                    .text
+                                                                    !.text
                                                                     .isEmpty ||
                                                                 /*element.qtyTo.text.isEmpty ||*/
                                                                 element.unitPageDropdownState
-                                                                        .selectedChoice ==
+                                                                        ?.selectedChoice ==
                                                                     null
-                                                            // ||
-                                                            /*element.multiplyInputPageDropdownState.selectedChoice == null ||
-                                                element.currencyInputPageDropdownState.selectedChoice == null ||
-                                                element.wareHousePageDropdownState.selectedChoiceWrapper.value == null ||
-                                                element.salesPrice.text.isEmpty ||
-                                                element.priceToCustomer.text.isEmpty*/
+
                                                             ) {
                                                           isInvalid = true;
                                                           break;
@@ -1386,79 +1291,4 @@ class _InputPageNewState extends State<InputPageNew> {
       )),
     );
   }
-
-// @override
-// Widget build(BuildContext context) {
-//   final inputPagePresenter = Get.put(InputPagePresenterNew());
-//   return Scaffold(
-//     resizeToAvoidBottomInset: false,
-//     body: SafeArea(
-//         child: SingleChildScrollView(
-//           scrollDirection: Axis.vertical,
-//           child: Column(
-//             children: [
-//               Obx(() {
-//                 InputPageWrapper inputPageWrapper = inputPagePresenter.promotionProgramInputStateRx.value;
-//                 List<PromotionProgramInputState> promotionProgramInputStateList = inputPageWrapper.promotionProgramInputState;
-//                 bool isAddItem = inputPageWrapper.isAddItem;
-//                 return promotionProgramInputStateList.length == 0 ? ElevatedButton(
-//                     style: ElevatedButton.styleFrom(
-//                       backgroundColor: Colors.green,
-//                     ),
-//                     child: Text("Add Lines"),
-//                     onPressed: isAddItem ? () => inputPagePresenter.addItem() : null
-//                 ) : ListView.builder(
-//                     physics: NeverScrollableScrollPhysics(),
-//                     shrinkWrap: true,
-//                     // reverse: true,
-//                     itemCount: promotionProgramInputStateList.length,
-//                     itemBuilder: (context, index) => GestureDetector(
-//                       behavior: HitTestBehavior.translucent,
-//                       onTap: () {
-//                         FocusScope.of(context).unfocus();
-//                       },
-//                       child: Column(
-//                         children: [
-//                           customCard(index, inputPagePresenter),
-//                           SizedBox(
-//                             height: 10,
-//                           ),
-//                           index == promotionProgramInputStateList.length - 1 ?
-//                           Padding(
-//                             padding: EdgeInsets.only(bottom: 500),
-//                             child: Column(
-//                               children: [
-//                                 Visibility(
-//                                   visible: !inputPagePresenter.onTap.value,
-//                                   child: ElevatedButton(
-//                                       style: ElevatedButton.styleFrom(
-//                                         backgroundColor: Colors.green,
-//                                       ),
-//                                       child: Text("Submit"),
-//                                       onPressed: (){
-//                                         setState(() {
-//                                           inputPagePresenter.onTap.value = true;
-//                                           inputPagePresenter.submitPromotionProgram();
-//                                         });
-//                                       }
-//                                   ),
-//                                 ),
-//                                 Visibility(
-//                                   visible: inputPagePresenter.onTap.value,
-//                                   child: Center(child: CircularProgressIndicator()),
-//                                 ),
-//                               ],
-//                             ),
-//                           ) : SizedBox()
-//                         ],
-//                       ),
-//                     )
-//                 );
-//               })
-//             ],
-//           ),
-//         )
-//     ),
-//   );
-// }
 }

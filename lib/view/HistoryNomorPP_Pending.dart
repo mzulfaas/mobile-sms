@@ -12,7 +12,7 @@ import '../models/User.dart';
 import 'HistoryLines.dart';
 
 class HistoryPending extends StatefulWidget {
-  const HistoryPending({Key key}) : super(key: key);
+  const HistoryPending({Key? key}) : super(key: key);
 
   @override
   _HistoryPendingState createState() => _HistoryPendingState();
@@ -23,13 +23,13 @@ class _HistoryPendingState extends State<HistoryPending> {
   final _debouncer = Debounce(miliseconds: 5);
   TextEditingController filterController = new TextEditingController();
   var _listHistory, listHistoryReal;
-  GlobalKey<RefreshIndicatorState> refreshKey;
-  User _user;
-  int code;
+  late GlobalKey<RefreshIndicatorState> refreshKey;
+  late User _user;
+  late int code;
 
   Future<Null> listHistory() async {
     await Future.delayed(Duration(seconds: 5));
-    Promosi.getListPromosi(0, code, _user.token??"token kosong", _user.username).then((value) {
+    Promosi.getListPromosi(0, code, _user.token??"token kosong", _user.username!).then((value) {
       print("userToken: ${_user.token}");
       setState(() {
         listHistoryReal = value;
@@ -52,7 +52,7 @@ class _HistoryPendingState extends State<HistoryPending> {
             TextResultCard(
               context: context,
               title: "No. PP",
-              value: promosi.nomorPP,
+              value: promosi.nomorPP!,
             ),
             TextResultCard(
               context: context,
@@ -62,7 +62,7 @@ class _HistoryPendingState extends State<HistoryPending> {
             TextResultCard(
               context: context,
               title: "Type",
-              value: promosi.customer,
+              value: promosi.customer!,
             ),
             TextResultCard(
               context: context,
@@ -72,7 +72,7 @@ class _HistoryPendingState extends State<HistoryPending> {
             TextResultCard(
               context: context,
               title: "Sales Office",
-              value: promosi.salesOffice,
+              value: promosi.salesOffice!,
             ),
             TextButton(
               child: Container(
@@ -99,7 +99,7 @@ class _HistoryPendingState extends State<HistoryPending> {
                     }));
               },
               style: TextButton.styleFrom(
-                backgroundColor: Theme.of(context).accentColor,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                   side: BorderSide(
@@ -123,7 +123,7 @@ class _HistoryPendingState extends State<HistoryPending> {
     Future.delayed(Duration(milliseconds: 20));
     setState(() {
       _user = listUser[0];
-      code = pref.getInt("code");
+      code = pref.getInt("code")!;
     });
   }
 

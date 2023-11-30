@@ -22,31 +22,31 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Box _user;
-  String value;
-  int flag;
+  Box? _user;
+  String? value;
+  int? flag;
 
   Future<void> checkAutoLogin() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString('userToken');
+    String? token = prefs.getString('userToken');
     if (token != null) {
       Get.offAll(DashboardPage()); // Navigate to DashboardPage without the ability to go back
     }
   }
 
 
-  String onesignalUserID;
+  String? onesignalUserID;
 
   getOneSignal() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     OneSignal.shared.setAppId("ffad8398-fdf5-4aef-a16b-a33696f48630");
     OneSignal.shared.getDeviceState().then((deviceState) {
-      onesignalUserID = deviceState.userId;
+      onesignalUserID = deviceState!.userId;
       print("playerID ${onesignalUserID}");
       setState(() {
-        prefs.setString("getPlayerID", onesignalUserID);
+        prefs.setString("getPlayerID", onesignalUserID!);
       });
-      print("OneSignal: device state: ${deviceState.jsonRepresentation()}");
+      print("OneSignal: device state: ${deviceState!.jsonRepresentation()}");
     }
     );
     OneSignal.shared
@@ -96,22 +96,20 @@ class _MyAppState extends State<MyApp> {
           //biru agak terang
           primaryColor: colorSecondary,
           //emas
-          accentColor: colorAccent,
           //merah untuk pesan error
           errorColor: colorError,
-          buttonColor: Theme.of(context).primaryColorDark,
           dialogTheme: DialogTheme(
               backgroundColor: colorNetral,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
-                  side: BorderSide(color: colorAccent))),
+                  side: BorderSide(color: colorAccent))), colorScheme: ColorScheme.fromSwatch().copyWith(secondary: colorAccent),
         ),
         builder:  (context, widget) {
           ScreenUtil.init(context);
           return MediaQuery(
             //Setting font does not change with system font size
             data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-            child: widget,
+            child: widget!,
           );
         },
       ),

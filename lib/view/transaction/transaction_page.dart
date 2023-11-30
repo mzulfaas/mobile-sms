@@ -16,7 +16,7 @@ import '../../models/input-page-wrapper.dart';
 import '../../models/promotion-program-input-state.dart';
 
 class TransactionPage extends StatefulWidget {
-  TransactionPage({Key key}) : super(key: key);
+  TransactionPage({Key? key}) : super(key: key);
 
   @override
   State<TransactionPage> createState() => _TransactionPageState();
@@ -24,7 +24,7 @@ class TransactionPage extends StatefulWidget {
 
 class _TransactionPageState extends State<TransactionPage> {
   Widget customCard(int index, TransactionPresenter inputPagePresenter){
-    PromotionProgramInputState promotionProgramInputState = inputPagePresenter.promotionProgramInputStateRx.value.promotionProgramInputState[index];
+    PromotionProgramInputState promotionProgramInputState = inputPagePresenter.promotionProgramInputStateRx.value.promotionProgramInputState![index];
 
     return Container(
       margin: EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 0),
@@ -68,10 +68,10 @@ class _TransactionPageState extends State<TransactionPage> {
               SizedBox(height: 10,),
               SearchChoices.single(
                   isExpanded: true,
-                  value: promotionProgramInputState.productTransactionPageDropdownState.selectedChoiceWrapper.value,
-                  items: promotionProgramInputState.productTransactionPageDropdownState.choiceListWrapper.value.map((item) {
+                  value: promotionProgramInputState.productTransactionPageDropdownState!.selectedChoiceWrapper!.value,
+                  items: promotionProgramInputState.productTransactionPageDropdownState!.choiceListWrapper!.value!.map((item) {
                     return DropdownMenuItem(
-                        child: Text(item.value),
+                        child: Text(item.value!),
                         value: item
                     );
                   }).toList(),
@@ -90,8 +90,8 @@ class _TransactionPageState extends State<TransactionPage> {
               ),
               SearchChoices.single(
                   isExpanded: true,
-                  value: promotionProgramInputState.unitPageDropdownState.selectedChoice,
-                  items: promotionProgramInputState.unitPageDropdownState.choiceList.map((item) {
+                  value: promotionProgramInputState.unitPageDropdownState!.selectedChoice,
+                  items: promotionProgramInputState.unitPageDropdownState!.choiceList!.map((item) {
                     return DropdownMenuItem(
                         child: Text(item),
                         value: item
@@ -167,7 +167,7 @@ class _TransactionPageState extends State<TransactionPage> {
                               TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
                             ),
                             onPressed: () {
-                              inputPagePresenter.changeQty(index, promotionProgramInputState.qtyTransaction.text);
+                              inputPagePresenter.changeQty(index, promotionProgramInputState.qtyTransaction!.text);
                               Get.back();
                             }),
                     );
@@ -241,14 +241,7 @@ class _TransactionPageState extends State<TransactionPage> {
                               TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
                             ),
                             onPressed: () {
-                              // Future.delayed(Duration(milliseconds: 500),(){
-                                inputPagePresenter.changePrice(index, promotionProgramInputState.priceTransaction.text);
-                              // });
-                              // Future.delayed(Duration(milliseconds: 600),(){
-                              //   setState(() {
-                              //
-                              //   });
-                              // });
+                                inputPagePresenter.changePrice(index, promotionProgramInputState.priceTransaction!.text);
                               Get.back();
                             }),
                     );
@@ -316,7 +309,7 @@ class _TransactionPageState extends State<TransactionPage> {
                               TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
                             ),
                             onPressed: () {
-                              inputPagePresenter.changeDisc(index, promotionProgramInputState.discTransaction.text);
+                              inputPagePresenter.changeDisc(index, promotionProgramInputState.discTransaction!.text);
                               Get.back();
                             }),
                     );
@@ -326,7 +319,7 @@ class _TransactionPageState extends State<TransactionPage> {
               SizedBox(height: 8,),
               Text("Total",style: TextStyle(fontSize: 11),),
               SizedBox(height: 3,),
-              Text(promotionProgramInputState.totalTransaction.value.text.isEmpty?"0":"Rp "+MoneyFormatter(amount: double.parse(promotionProgramInputState.totalTransaction.value.text.replaceAll(",", ""))).output.withoutFractionDigits),
+              Text(promotionProgramInputState.totalTransaction!.value.text.isEmpty?"0":"Rp "+MoneyFormatter(amount: double.parse(promotionProgramInputState.totalTransaction!.value.text.replaceAll(",", ""))).output.withoutFractionDigits),
               Divider(
                 thickness: 1,
                 color: Colors.black54,
@@ -387,10 +380,10 @@ class _TransactionPageState extends State<TransactionPage> {
                                 "Customer Name",
                                 style: TextStyle(fontSize: 12),
                               ),
-                              items: inputPagePresenter.customerNameInputPageDropdownStateRx.value.choiceList.map((item) {
+                              items: inputPagePresenter.customerNameInputPageDropdownStateRx.value.choiceList?.map((item) {
                                 return DropdownMenuItem(
                                   child: Text(
-                                      item.value,
+                                      item.value!,
                                       style: TextStyle(fontSize: 12)
                                   ),
                                   value: item,
@@ -399,65 +392,6 @@ class _TransactionPageState extends State<TransactionPage> {
                               onChanged: (value) => inputPagePresenter.changeSelectCustomer(value),
                             )),
                           ),
-                          // Container(
-                          //   width: Get.width,
-                          //   child: Obx(() => TextFormField(
-                          //     controller: inputPagePresenter.transactionNumberTextEditingControllerRx.value,
-                          //     keyboardType: TextInputType.text,
-                          //     onChanged: (value) => inputPagePresenter.checkAddItemStatus(),
-                          //     decoration: InputDecoration(
-                          //       labelText: 'Transaction Number',
-                          //       labelStyle: TextStyle(
-                          //           color: Colors.black87,
-                          //           fontSize: 12,
-                          //           fontFamily: 'AvenirLight'
-                          //       ),
-                          //       focusedBorder: UnderlineInputBorder(
-                          //         borderSide:
-                          //         BorderSide(color: Colors.purple),
-                          //       ),
-                          //       enabledBorder: new UnderlineInputBorder(
-                          //           borderSide: BorderSide(
-                          //               color: Colors.grey, width: 1.0
-                          //           )
-                          //       ),
-                          //     ),
-                          //     style: TextStyle(
-                          //         color: Colors.black87,
-                          //         fontSize: 17,
-                          //         fontFamily: 'AvenirLight'
-                          //     ),
-                          //   )),
-                          // ),
-                          // Container(
-                          //   width: Get.width,
-                          //   child: Obx(() => TextFormField(
-                          //     controller: inputPagePresenter.transactionDateTextEditingControllerRx.value..text = "${DateTime.now()}",
-                          //     onChanged: (value) => inputPagePresenter.checkAddItemStatus(),
-                          //     readOnly: true,
-                          //     decoration: InputDecoration(
-                          //       labelText: 'Transaction Date',
-                          //       labelStyle: TextStyle(
-                          //           color: Colors.black87,
-                          //           fontSize: 12,
-                          //           fontFamily: 'AvenirLight'),
-                          //       focusedBorder: UnderlineInputBorder(
-                          //         borderSide:
-                          //         BorderSide(color: Colors.purple),
-                          //       ),
-                          //       enabledBorder: new UnderlineInputBorder(
-                          //           borderSide: BorderSide(
-                          //               color: Colors.grey, width: 1.0)),
-                          //     ),
-                          //     style: TextStyle(
-                          //         color: Colors.black87,
-                          //         fontSize: 17,
-                          //         fontFamily: 'AvenirLight'),
-                          //     //  controller: _passwordController,
-                          //     // obscureText: true,
-                          //   )),
-                          // ),
-
                         ],
                       ),
                     ),
@@ -470,19 +404,19 @@ class _TransactionPageState extends State<TransactionPage> {
 
                 Obx(() {
                   InputPageWrapper inputPageWrapper = inputPagePresenter.promotionProgramInputStateRx.value;
-                  List<PromotionProgramInputState> promotionProgramInputStateList = inputPageWrapper.promotionProgramInputState;
-                  bool isAddItem = inputPageWrapper.isAddItem;
-                  return promotionProgramInputStateList.length == 0 ? ElevatedButton(
+                  List<PromotionProgramInputState>? promotionProgramInputStateList = inputPageWrapper.promotionProgramInputState;
+                  bool? isAddItem = inputPageWrapper.isAddItem;
+                  return promotionProgramInputStateList?.length == 0 ? ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
                       ),
                       child: Text("Add Data Transaction"),
-                      onPressed: isAddItem ? () => inputPagePresenter.addItem() : null
+                      onPressed: isAddItem! ? () => inputPagePresenter.addItem() : null
                   ) : ListView.builder(
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       reverse: true,
-                      itemCount: promotionProgramInputStateList.length,
+                      itemCount: promotionProgramInputStateList?.length,
                       itemBuilder: (context, index) => Column(
                         children: [
                           customCard(index, inputPagePresenter),
@@ -490,7 +424,7 @@ class _TransactionPageState extends State<TransactionPage> {
                             height: 10,
                           ),
 
-                          index == promotionProgramInputStateList.length - promotionProgramInputStateList.length ? Column(
+                          index == promotionProgramInputStateList!.length - promotionProgramInputStateList.length ? Column(
                             children: [
 
                             ],
@@ -501,9 +435,9 @@ class _TransactionPageState extends State<TransactionPage> {
                               ),
                               child: Text("Submit"),
                               onPressed: (){
-                                List<PromotionProgramInputState> promotionProgramInputState = inputPagePresenter.promotionProgramInputStateRx.value.promotionProgramInputState.toList();
-                                List disc = promotionProgramInputState.map((e) => e.discTransaction.text).toList();
-                                List<String> price = promotionProgramInputState.map((e) => e.priceTransaction.text).toList();
+                                List<PromotionProgramInputState>? promotionProgramInputState = inputPagePresenter.promotionProgramInputStateRx.value.promotionProgramInputState?.toList();
+                                List<String?>? disc = promotionProgramInputState?.map((e) => e.discTransaction?.text).toList();
+                                List<String?>? price = promotionProgramInputState?.map((e) => e.priceTransaction?.text).toList();
                                 print(disc);
                                 print("originalPrice ${inputPagePresenter.originalPrice.toString()}");
                                 print("Editing price :${price}");

@@ -6,9 +6,9 @@ import '../HistoryNomorPP_All.dart';
 import '../input-page/input-page-new.dart';
 
 class DashboardOrderTaking extends StatefulWidget {
-  int initialIndexs;
+  int? initialIndexs;
 
-  DashboardOrderTaking({Key key, this.initialIndexs}) : super(key: key);
+  DashboardOrderTaking({Key? key, this.initialIndexs}) : super(key: key);
 
   @override
   State<DashboardOrderTaking> createState() => _DashboardOrderTakingState();
@@ -24,7 +24,7 @@ class _DashboardOrderTakingState extends State<DashboardOrderTaking> {
     }else if(widget.initialIndexs==1){
       tabController.initialIndex = 1;
       Future.delayed(Duration(seconds: 1),(){
-        tabController.controller.animateTo(tabController.initialIndex);
+        tabController.controller!.animateTo(tabController.initialIndex!);
       });
     }
   }
@@ -49,7 +49,7 @@ class _DashboardOrderTakingState extends State<DashboardOrderTaking> {
       body: SingleChildScrollView(
         physics: NeverScrollableScrollPhysics(),
         child: DefaultTabController(
-            initialIndex: tabController.initialIndex,
+            initialIndex: tabController.initialIndex!,
             length: 2,
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -90,22 +90,21 @@ class _DashboardOrderTakingState extends State<DashboardOrderTaking> {
 
 class DashboadOrderTakingTabController extends GetxController with GetSingleTickerProviderStateMixin {
   // dynamic myTab;
-  int initialIndex = 0;
+  int? initialIndex = 0;
+  TabController? controller;
   DashboadOrderTakingTabController({this.initialIndex});
-
-  TabController controller;
 
   @override
   void onInit() {
     super.onInit();
     Future.delayed(Duration(seconds: 1),(){
-      controller = TabController(vsync: this, length: 2, initialIndex: initialIndex);
+      controller = TabController(vsync: this, length: 2, initialIndex: initialIndex!);
     });
   }
 
   @override
   void onClose() {
-    controller.dispose();
+    controller!.dispose();
     super.onClose();
   }
 }

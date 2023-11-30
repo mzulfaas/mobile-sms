@@ -10,38 +10,38 @@ import 'package:get/get.dart';
 import 'ApiConstant.dart';
 part 'User.g.dart';
 
-@HiveType()
+@HiveType(typeId: 0) // Update typeId with an appropriate unique integer
 class User {
   @HiveField(0)
-  int id;
+  late int? id;
   @HiveField(1)
-  String username;
+  late String? username;
   @HiveField(2)
-  String password;
+  late String? password;
   @HiveField(3)
-  String fullname;
+  late String? fullname;
   @HiveField(4)
-  String level;
+  late String? level;
   @HiveField(5)
-  String roles;
+  late String? roles;
   @HiveField(6)
-  String approvalRoles;
+  late String? approvalRoles;
   @HiveField(7)
-  String brand;
+  late String? brand;
   @HiveField(8)
-  String custSegment;
+  late String? custSegment;
   @HiveField(9)
-  String businessUnit;
+  late String? businessUnit;
   @HiveField(10)
-  String token;
+  late String? token;
   @HiveField(11)
-  String message;
+  late String? message;
   @HiveField(12)
-  int code;
+  late int? code;
   @HiveField(13)
-  User user;
+  late User? user;
   @HiveField(14)
-  dynamic so;
+  late dynamic so;
 
   User(
       {this.id,
@@ -97,6 +97,7 @@ class User {
       body: jsonEncode(dataLogin),
     );
     print("apiResultLogin :${apiResult.statusCode}\n${apiResult.body}");
+    User? _user;
     if(apiResult.statusCode==200){
       print("ini api result login : ${apiResult.statusCode}");
       print("ini api result login : ${apiResult.body}");
@@ -105,11 +106,11 @@ class User {
       print("ini isi login $jsonObject");
       var data = jsonObject;
       // var data = jsonObject as Map<String, dynamic>;
-      User _user = User.fromJson(jsonDecode(data));
+       _user = User.fromJson(jsonDecode(data));
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString("username", _user.username);
-      prefs.setString("token", _user.token);
-      prefs.setInt("userid", _user.id);
+      prefs.setString("username", _user.username!);
+      prefs.setString("token", _user.token!);
+      prefs.setInt("userid", _user.id!);
       prefs.setString("so", _user.so);
       print("ini username login : ${_user.username}");
       print("ini userid : ${_user.id}");
@@ -122,61 +123,6 @@ class User {
       );
       // Exception('Failed to login');
     }
+    return _user!;
   }
-
-  // static Future<User> getUsers(
-  //     String username, String password, int code) async {
-  //   Response apiResult;
-  //   String url = ApiConstant(code).urlApi + "api/LoginSMS";
-  //   print("ini url login $url");
-  //
-  //   try {
-  //     var dio = Dio();
-  //     dio.options.headers['content-type'] = 'application/json';
-  //     dynamic dataLogin = {
-  //       "username": username,
-  //       "password": password
-  //     },
-  //     apiResult = await dio.post(url, data: dataLogin,).timeout(Duration(minutes: 5));
-  //     print("ini api result login : ${apiResult.statusCode}");
-  //     print("ini api result login : ${apiResult.body}");
-  //     print("ini data login : $dataLogin");
-  //   }
-  //   on TimeoutException catch (_) {
-  //     throw "Time out. Please reload.";
-  //   } on SocketException catch (_) {
-  //     throw "No Connection. Please connect to Internet.";
-  //   } on HttpException catch (_) {
-  //     throw "No Connection. Please connect to Internet.";
-  //   } catch (_) {
-  //     throw "Username and Password invalid.";
-  //   }
-  //
-  //   dynamic jsonObject = apiResult.data;
-  //   print("ini isi login $jsonObject");
-  //   var data = jsonObject as Map<String, dynamic>;
-  //   User _user = User.fromJson(data);
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   prefs.setString("username", _user.username);
-  //   prefs.setString("token", _user.token);
-  //   print("ini username login : ${_user.username}");
-  //   return _user;
-  // }
-
-  // static Future<User> getUserNOTPassword(String username, int code) async {
-  //   var apiResult;
-
-  //   String url =
-  //       ApiConstant(code).urlApi + "api/hujanlogin?username=" + username;
-  //   try {
-  //     apiResult = await http.get(url).timeout(Duration(minutes: 5));
-  //   } on TimeoutException catch (_) {
-  //     throw "Time out. Please reload.";
-  //   } on HttpException catch (_) {
-  //     throw "No Connection. Please connect to Internet.";
-  //   }
-  //   var jsonObject = json.decode(apiResult.body);
-  //   var data = jsonObject as Map<String, dynamic>;
-  //   return User.convertUser(data);
-  // }
 }

@@ -3,13 +3,11 @@ import 'package:get/get.dart';
 import 'package:mobile_sms/view/HistoryNomorPP_All.dart';
 import 'package:mobile_sms/view/input-page/input-page-new.dart';
 import 'package:mobile_sms/view/input-page/input-page-presenter-new.dart';
-import 'package:mobile_sms/view/input-page/input-page-presenter.dart';
-import 'package:mobile_sms/view/input-page/input-page.dart';
 
 class DashboardPP extends StatefulWidget {
-  int initialIndexs;
+  int? initialIndexs;
 
-  DashboardPP({Key key, this.initialIndexs}) : super(key: key);
+  DashboardPP({Key? key, this.initialIndexs}) : super(key: key);
 
   @override
   State<DashboardPP> createState() => _DashboardPPState();
@@ -25,7 +23,7 @@ class _DashboardPPState extends State<DashboardPP> {
     }else if(widget.initialIndexs==1){
       tabController.initialIndex = 1;
       Future.delayed(Duration(seconds: 1),(){
-        tabController.controller.animateTo(tabController.initialIndex);
+        tabController.controller!.animateTo(tabController.initialIndex!);
       });
     }
   }
@@ -50,7 +48,7 @@ class _DashboardPPState extends State<DashboardPP> {
       body: SingleChildScrollView(
         physics: NeverScrollableScrollPhysics(),
         child: DefaultTabController(
-          initialIndex: tabController.initialIndex,
+          initialIndex: tabController.initialIndex!,
           length: 2,
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -91,16 +89,16 @@ class _DashboardPPState extends State<DashboardPP> {
 
 class DashboardPPTabController extends GetxController with GetSingleTickerProviderStateMixin {
   // dynamic myTab;
-  int initialIndex = 0;
+  int? initialIndex = 0;
+  TabController? controller;
   DashboardPPTabController({this.initialIndex});
 
-  TabController controller;
 
   @override
   void onInit() {
     super.onInit();
     Future.delayed(Duration(seconds: 1),(){
-      controller = TabController(vsync: this, length: 2, initialIndex: initialIndex);
+      controller = TabController(vsync: this, length: 2, initialIndex: initialIndex!);
     });
   }
 }

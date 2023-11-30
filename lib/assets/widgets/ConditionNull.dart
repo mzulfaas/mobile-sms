@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ConditionNull extends StatelessWidget {
-  String message;
+  String? message;
   ConditionNull({this.message});
 
   @override

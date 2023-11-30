@@ -29,25 +29,25 @@ import 'HistorySOAll.dart';
 class HistoryLinesAll extends StatefulWidget {
   @override
   _HistoryLinesAllState createState() => _HistoryLinesAllState();
-  String numberPP;
-  int idEmp;
+  String? numberPP;
+  int? idEmp;
 
   HistoryLinesAll({this.numberPP, this.idEmp});
 }
 
 class _HistoryLinesAllState extends State<HistoryLinesAll> {
-  List _listHistorySO;
+  List<Promosi>? _listHistorySO;
   dynamic _listHistorySOEncode;
   bool _statusDisable = true;
-  GlobalKey<RefreshIndicatorState> refreshKey;
-  List<int> _listid = new List<int>();
-  List<Lines> listDisc = new List<Lines>();
+  GlobalKey<RefreshIndicatorState>? refreshKey;
+  List<int> _listid = <int>[];
+  List<Lines> listDisc = <Lines>[];
   DateTime selectedDate = DateTime.now();
-  DateTime fromDate, toDate = null;
-  DateTime dateFrom, dateTo;
-  double discount = null;
-  User _user;
-  int code;
+  DateTime? fromDate, toDate;
+  DateTime? dateFrom, dateTo;
+  double? discount = null;
+  User? _user;
+  int? code;
 
   bool valueSelectAll = false;
 
@@ -57,7 +57,7 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
   var listLines;
   Future<Null> listHistorySO() async {
     await Future.delayed(Duration(seconds: 1));
-    Promosi.getListLines(widget.numberPP, code, _user.token, _user.username)
+    Promosi.getListLines(widget.numberPP!, code!, _user!.token!, _user!.username!)
         .then((value) {
       setState(() {
         listLines = value;
@@ -79,7 +79,7 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
     });
   }
 
-  Promosi promosi;
+  Promosi? promosi;
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +97,7 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
               leading: IconButton(
                 icon: Icon(
                   Icons.arrow_back,
-                  color: Theme.of(context).accentColor,
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
                 onPressed: onBackPressLines,
               ),
@@ -105,7 +105,7 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
                 "List Lines",
                 style: TextStyle(
                     fontSize: ScreenUtil().setSp(20),
-                    color: Theme.of(context).accentColor),
+                    color: Theme.of(context).colorScheme.secondary),
               ),
             ),
             body: Scaffold(
@@ -113,7 +113,7 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
                 onRefresh: listHistorySO,
                 child: FutureBuilder(
                   future: Promosi.getListLines(
-                      widget.numberPP, code, _user?.token, _user?.username),
+                      widget.numberPP!, code!, _user!.token!, _user!.username!),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     _listHistorySO == null
                         ? _listHistorySO = snapshot.data
@@ -127,10 +127,10 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
                         ),
                       );
                     } else {
-                      if (_listHistorySO[0].codeError == 404 ||
-                          _listHistorySO[0].codeError == 303) {
+                      if (_listHistorySO![0].codeError == 404 ||
+                          _listHistorySO![0].codeError == 303) {
                         return ConditionNull(
-                            message: _listHistorySO[0].message);
+                            message: _listHistorySO![0].message);
                       } else {
                         return startApp==false?Center(child: CircularProgressIndicator()):SingleChildScrollView(
                           child: Column(
@@ -197,26 +197,6 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
                                                   errorStyle: TextStyle(
                                                       color: Theme.of(context).errorColor,
                                                       fontSize: 15)),
-                                              // ignore: missing_return
-                                              // onShowPicker: (context, currentValue) {
-                                              //   return showDatePicker(
-                                              //       context: context,
-                                              //       firstDate: DateTime(DateTime.now().year - 1),
-                                              //       initialDate: currentValue ??
-                                              //           DateTime.parse(promosi.toDate),
-                                              //       lastDate: DateTime(DateTime.now().year + 1),
-                                              //       builder: (BuildContext context, Widget child) {
-                                              //         return Theme(
-                                              //           data: ThemeData.light(),
-                                              //           child: child,
-                                              //         );
-                                              //       });
-                                              // },
-                                              // onChanged: (value) {
-                                              //   if (value != null) {
-                                              //     setBundleLines(promosi.id, null, null, value);
-                                              //   }
-                                              // },
                                             ))),
                                   ],
                                 ),
@@ -226,9 +206,9 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
                                 shrinkWrap: true,
                                 physics: NeverScrollableScrollPhysics(),
                                 itemBuilder: (BuildContext context, int index) {
-                                  print("notoling ${jsonEncode(_listHistorySO[0])}");
+                                  print("notoling ${jsonEncode(_listHistorySO![0])}");
                                   return CardLinesAdapter(
-                                      widget.numberPP, _listHistorySO[index], index);
+                                      widget.numberPP!, _listHistorySO![index], index);
                                 },
                               ),
                             ],
@@ -248,16 +228,16 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
 
   Container CardLinesAdapter(String namePP, Promosi promosi, int index) {
     print("qq : ${jsonEncode(promosi.fromDate)}");
-    double price = double.parse(promosi.price.replaceAll(RegExp("Rp"), "").replaceAll(".", ""));
-    double disc1 = double.parse(promosi.disc1);
-    double disc2 = double.parse(promosi.disc2);
-    double disc3 = double.parse(promosi.disc3);
-    double disc4 = double.parse(promosi.disc4);
-    double discValue1 = double.parse(promosi.value1);
-    double discValue2 = double.parse(promosi.value2);
+    double price = double.parse(promosi.price!.replaceAll(RegExp("Rp"), "").replaceAll(".", ""));
+    double disc1 = double.parse(promosi.disc1!);
+    double disc2 = double.parse(promosi.disc2!);
+    double disc3 = double.parse(promosi.disc3!);
+    double disc4 = double.parse(promosi.disc4!);
+    double discValue1 = double.parse(promosi.value1!);
+    double discValue2 = double.parse(promosi.value2!);
     double totalPriceDiscOnly = price - (price * ((disc1+disc2+disc3+disc4)/100));
     double totalPriceDiscValue = price - (discValue1+discValue2);
-    List<Promosi> data = _listHistorySO;
+    List<Promosi> data = _listHistorySO!;
     print("dataDetail :${jsonEncode(_listHistorySO)}");
     List qtyFrom = data.map((element) => element.qty).toList();
     print("qty from :$qtyFrom");
@@ -265,7 +245,7 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
     print("qty to :$qtyTo");
     print("no pp :${promosi.nomorPP}");
     print("pp type :${promosi.disc1}");
-    String str = promosi.nomorPP;
+    String str = promosi.nomorPP!;
     bool hasDateTime = RegExp(r"\d{2}-\d{2}-\d{4} \d{2}:\d{2}:\d{2}").hasMatch(str);
     print("hasDateTime : ${hasDateTime}"); // Output: true
     return Container(
@@ -280,7 +260,7 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
             TextResultCard(
               context: context,
               title: "Product",
-              value: promosi.product,
+              value: promosi.product!,
             ),
             Row(
               children: [
@@ -310,12 +290,12 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
             TextResultCard(
               context: context,
               title: 'Unit',
-              value: promosi.unitId,
+              value: promosi.unitId!,
             ),
             TextResultCard(
               context: context,
               title: "Price",
-              value: promosi.price,
+              value: promosi.price!,
             ),
             //Discount
             promosi.ppType=="Bonus"?SizedBox():Row(
@@ -337,7 +317,7 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
                     builder: (context, linesProv, _) => TextFormField(
                       readOnly: _statusDisable,
                       keyboardType: TextInputType.text,
-                      initialValue: promosi.disc1.split(".").first,
+                      initialValue: promosi.disc1!.split(".").first,
                       onFieldSubmitted: (value) {
                         setBundleLines(
                             promosi.id, double.parse(value), null, null);
@@ -363,7 +343,7 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
                     builder: (context, linesProv, _) => TextFormField(
                       readOnly: _statusDisable,
                       keyboardType: TextInputType.text,
-                      initialValue: promosi.disc2.split(".").first,
+                      initialValue: promosi.disc2!.split(".").first,
                       onFieldSubmitted: (value) {
                         setBundleLines(
                             promosi.id, double.parse(value), null, null);
@@ -392,7 +372,7 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
                     builder: (context, linesProv, _) => TextFormField(
                       readOnly: _statusDisable,
                       keyboardType: TextInputType.text,
-                      initialValue: promosi.disc3.split(".").first,
+                      initialValue: promosi.disc3!.split(".").first,
                       onFieldSubmitted: (value) {
                         setBundleLines(
                             promosi.id, double.parse(value), null, null);
@@ -418,7 +398,7 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
                     builder: (context, linesProv, _) => TextFormField(
                       readOnly: _statusDisable,
                       keyboardType: TextInputType.text,
-                      initialValue: promosi.disc4.split(".").first,
+                      initialValue: promosi.disc4!.split(".").first,
                       onFieldSubmitted: (value) {
                         setBundleLines(
                             promosi.id, double.parse(value), null, null);
@@ -447,7 +427,7 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
                     builder: (context, linesProv, _) => TextFormField(
                       readOnly: _statusDisable,
                       keyboardType: TextInputType.text,
-                      initialValue: "${MoneyFormatter(amount: double.parse(promosi.value1)).output.withoutFractionDigits}",
+                      initialValue: "${MoneyFormatter(amount: double.parse(promosi.value1!)).output.withoutFractionDigits}",
                       onFieldSubmitted: (value) {
                         setBundleLines(
                             promosi.id, double.parse(value), null, null);
@@ -473,7 +453,7 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
                     builder: (context, linesProv, _) => TextFormField(
                       readOnly: _statusDisable,
                       keyboardType: TextInputType.text,
-                      initialValue: "${MoneyFormatter(amount: double.parse(promosi.value2)).output.withoutFractionDigits}",
+                      initialValue: "${MoneyFormatter(amount: double.parse(promosi.value2!)).output.withoutFractionDigits}",
                       onFieldSubmitted: (value) {
                         setBundleLines(
                             promosi.id, double.parse(value), null, null);
@@ -486,17 +466,17 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
             promosi.ppType=="Diskon"?SizedBox():TextResultCard(
               context: context,
               title: 'Bonus Item',
-              value: promosi.suppItem,
+              value: promosi.suppItem!,
             ),
             promosi.ppType=="Diskon"?SizedBox():TextResultCard(
               context: context,
               title: 'Bonus Qty',
-              value: promosi.suppQty,
+              value: promosi.suppQty!,
             ),
             promosi.ppType=="Diskon"?SizedBox():TextResultCard(
               context: context,
               title: 'Bonus Unit',
-              value: promosi.suppUnit,
+              value: promosi.suppUnit!,
             ),
             TextResultCard(
               context: context,
@@ -508,13 +488,13 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
   }
 
   void setBundleLines(
-      int id, double disc, DateTime fromDate, DateTime toDate) async {
+      int id, double disc, DateTime? fromDate, DateTime? toDate) async {
     Lines model = new Lines();
-    List<Lines> listDisc = new List<Lines>();
+    List<Lines> listDisc = <Lines>[];
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    String result = preferences.getString("result");
+    String? result = preferences.getString("result");
     if (result != "") {
-      var listStringResult = json.decode(result);
+      var listStringResult = json.decode(result!);
       for (var objectResult in listStringResult) {
         var objects = Lines.fromJson(objectResult as Map<String, dynamic>);
         listDisc.add(objects);
@@ -537,8 +517,8 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
   approveNew(String apprroveOrReject)async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     dynamic id = prefs.getInt("userid");
-    String url = ApiConstant(code).urlApi + "api/Approve/$id";
-    List<Promosi> data = _listHistorySO;
+    String url = ApiConstant(code!).urlApi + "api/Approve/$id";
+    List<Promosi> data = _listHistorySO!;
     print(_listHistorySO);
     List idLines = data.map((element) => element.id).toList();
     dynamic isiBody = jsonEncode(<String, dynamic>{
@@ -570,43 +550,22 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
   }
 
   void getUpdateData(
-      BuildContext context, List<Lines> listDisc, int idEmp, int code) async {List<Lines> listDisc = new List<Lines>();
+      BuildContext context, List<Lines> listDisc, int idEmp, int code) async {List<Lines> listDisc = <Lines>[];
     SharedPreferences preferences = await SharedPreferences.getInstance();
     Future.delayed(Duration(milliseconds: 10));
-    String result = preferences.getString("result");
-    var listStringResult = json.decode(result);
+    String? result = preferences.getString("result");
+    var listStringResult = json.decode(result!);
     for (var objectResult in listStringResult) {
       var objects = Lines.fromJson(objectResult as Map<String, dynamic>);
       listDisc.add(objects);
     }
     preferences.setString("result", "");
-    _approvePP(context, listDisc, widget.idEmp, code);
+    _approvePP(context, listDisc, widget.idEmp!, code);
   }
 
   DateTime convertDate(String date) {
     final dateTime = DateTime.parse(date ?? "");
     return dateTime;
-  }
-
-  // Future<bool> _approvePP(
-  //     BuildContext context, String nomorPP, int idEmp, int code) {
-  Future<bool> _approvePP(
-      BuildContext context, List<Lines> listDisc, int idEmp, int code) {
-    Promosi.approveSalesOrder(listDisc, code).then((value) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-        return HistoryNomorPP();
-      }));
-    }).catchError((onError) {
-      Navigator.pop(context);
-      Fluttertoast.showToast(
-          msg: 'Error : ' + onError.toString(),
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 5,
-          backgroundColor: Colors.red[500],
-          textColor: Colors.black,
-          fontSize: ScreenUtil().setSp(16));
-    });
   }
 
   void getSharedPreference() async {
@@ -622,12 +581,28 @@ class _HistoryLinesAllState extends State<HistoryLinesAll> {
     });
   }
 
-  Future<bool> onBackPressLines() {
+  Future<bool> _approvePP(BuildContext context, List<Lines> listDisc, int idEmp, int code) async {
+    try {
+      await Promosi.approveSalesOrder(listDisc, code);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HistoryNomorPP()));
+      return true; // Return true on success
+    } catch (onError) {
+      Navigator.pop(context);
+      Fluttertoast.showToast(
+          msg: 'Error : ' + onError.toString(),
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 5,
+          backgroundColor: Colors.red[500],
+          textColor: Colors.black,
+          fontSize: ScreenUtil().setSp(16));
+      return false; // Return false on error
+    }
+  }
 
-    Get.off(DashboardPP(initialIndexs: 1,));
-    // return Navigator.pushReplacement(context,
-    //     MaterialPageRoute(builder: (context) {
-    //   return HistoryNomorPP();
-    // }));
+
+  Future<bool> onBackPressLines() async {
+    Get.off(DashboardPP(initialIndexs: 1));
+    return true; // Explicitly return true
   }
 }

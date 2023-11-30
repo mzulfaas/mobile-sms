@@ -1,9 +1,9 @@
 class CreatePromosi {
-  int pPtype;
-  String pPname;
-  String location;
-  String vendor;
-  List<LinesCreatePromosi> lines;
+  int? pPtype;
+  String? pPname;
+  String? location;
+  String? vendor;
+  List<LinesCreatePromosi>? lines;
 
   CreatePromosi(
       {this.pPtype, this.pPname, this.location, this.vendor, this.lines});
@@ -16,7 +16,7 @@ class CreatePromosi {
     if (json['Lines'] != null) {
       lines = <LinesCreatePromosi>[];
       json['Lines'].forEach((v) {
-        lines.add(new LinesCreatePromosi.fromJson(v));
+        lines!.add(new LinesCreatePromosi.fromJson(v));
       });
     }
   }
@@ -28,33 +28,33 @@ class CreatePromosi {
     data['Location'] = this.location;
     data['Vendor'] = this.vendor;
     if (this.lines != null) {
-      data['Lines'] = this.lines.map((v) => v.toJson()).toList();
+      data['Lines'] = this.lines!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
 class LinesCreatePromosi {
-  String customer;
-  String itemId;
-  int qtyFrom;
-  int qtyTo;
-  String unit;
-  int multiply;
-  String fromDate;
-  String toDate;
-  String currency;
-  int type;
-  double pct1;
-  int pct2;
-  double pct3;
-  int pct4;
-  double value1;
-  double value2;
-  int supplyItemOnlyOnce;
-  String supplyItem;
-  int qtySupply;
-  String unitSupply;
+  String? customer;
+  String? itemId;
+  int? qtyFrom;
+  int? qtyTo;
+  String? unit;
+  int? multiply;
+  String? fromDate;
+  String? toDate;
+  String? currency;
+  int? type;
+  double? pct1;
+  int? pct2;
+  double? pct3;
+  int? pct4;
+  double? value1;
+  double? value2;
+  int? supplyItemOnlyOnce;
+  String? supplyItem;
+  int? qtySupply;
+  String? unitSupply;
 
   LinesCreatePromosi(
       {this.customer,

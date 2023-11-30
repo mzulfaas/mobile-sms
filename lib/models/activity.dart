@@ -1,10 +1,10 @@
 class Activity {
-  int pPtype;
-  String pPname;
-  String pPnum;
-  String location;
-  String vendor;
-  List<Lines> lines;
+  int? pPtype;
+  String? pPname;
+  String? pPnum;
+  String? location;
+  String? vendor;
+  List<Lines>? lines;
 
   Activity({this.pPtype, this.pPname, this.pPnum, this.location, this.vendor, this.lines});
 
@@ -17,7 +17,7 @@ class Activity {
     if (json['Lines'] != null) {
       lines = <Lines>[];
       json['Lines'].forEach((v) {
-        lines.add(new Lines.fromJson(v));
+        lines!.add(new Lines.fromJson(v));
       });
     }
   }
@@ -30,33 +30,33 @@ class Activity {
     data['Location'] = this.location;
     data['Vendor'] = this.vendor;
     if (this.lines != null) {
-      data['Lines'] = this.lines.map((v) => v.toJson()).toList();
+      data['Lines'] = this.lines!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
 class Lines {
-  String customer;
-  String itemId;
-  int qtyFrom;
-  int qtyTo;
-  String unit;
-  int multiply;
-  String fromDate;
-  String toDate;
-  String currency;
-  int type;
-  double pct1;
-  double pct2;
-  double pct3;
-  double pct4;
-  double value1;
-  double value2;
-  int supplyItemOnlyOnce;
-  String supplyItem;
-  double qtySupply;
-  String unitSupply;
+  String? customer;
+  String? itemId;
+  int? qtyFrom;
+  int? qtyTo;
+  String? unit;
+  int? multiply;
+  String? fromDate;
+  String? toDate;
+  String? currency;
+  int? type;
+  double? pct1;
+  double? pct2;
+  double? pct3;
+  double? pct4;
+  double? value1;
+  double? value2;
+  int? supplyItemOnlyOnce;
+  String? supplyItem;
+  double? qtySupply;
+  String? unitSupply;
 
   Lines(
       {this.customer,

@@ -1,40 +1,40 @@
 class ActivityEdit {
-  List<ActivityLinesEdit> activityLinesEdit;
-  int id;
-  String number;
-  String customerId;
-  dynamic vendor;
-  String name;
-  String type;
-  String relation;
-  String date;
-  String location;
-  String statusKlaim;
-  int status;
-  dynamic totalListing;
-  dynamic totalPOListing;
-  String createdDate;
-  String createdBy;
-  dynamic attachment;
-  dynamic approve1;
-  dynamic approve2;
-  dynamic approve3;
-  dynamic requirement;
-  dynamic description;
-  dynamic title;
-  dynamic productId;
-  dynamic approve1By;
-  dynamic approve2By;
-  dynamic approve3By;
-  int imported;
-  String bU;
-  int ack;
-  dynamic vendId;
-  int testing;
-  dynamic fromDate;
-  dynamic toDate;
-  int notif;
-  String note;
+  List<ActivityLinesEdit>? activityLinesEdit;
+  int? id;
+  String? number;
+  String? customerId;
+  dynamic? vendor;
+  String? name;
+  String? type;
+  String? relation;
+  String? date;
+  String? location;
+  String? statusKlaim;
+  int? status;
+  dynamic? totalListing;
+  dynamic? totalPOListing;
+  String? createdDate;
+  String? createdBy;
+  dynamic? attachment;
+  dynamic? approve1;
+  dynamic? approve2;
+  dynamic? approve3;
+  dynamic? requirement;
+  dynamic? description;
+  dynamic? title;
+  dynamic? productId;
+  dynamic? approve1By;
+  dynamic? approve2By;
+  dynamic? approve3By;
+  int? imported;
+  String? bU;
+  int? ack;
+  dynamic? vendId;
+  int? testing;
+  dynamic? fromDate;
+  dynamic? toDate;
+  int? notif;
+  String? note;
 
   ActivityEdit(
       {this.activityLinesEdit,
@@ -78,7 +78,7 @@ class ActivityEdit {
     if (json['activityLines'] != null) {
       activityLinesEdit = <ActivityLinesEdit>[];
       json['activityLines'].forEach((v) {
-        activityLinesEdit.add(new ActivityLinesEdit.fromJson(v));
+        activityLinesEdit!.add(new ActivityLinesEdit.fromJson(v));
       });
     }
     id = json['Id'];
@@ -122,7 +122,7 @@ class ActivityEdit {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.activityLinesEdit != null) {
       data['activityLines'] =
-          this.activityLinesEdit.map((v) => v.toJson()).toList();
+          this.activityLinesEdit!.map((v) => v.toJson()).toList();
     }
     data['Id'] = this.id;
     data['Number'] = this.number;
@@ -164,36 +164,36 @@ class ActivityEdit {
 }
 
 class ActivityLinesEdit {
-  int id;
-  String headerNumber;
-  dynamic relation;
-  dynamic activityNumber;
-  dynamic activityName;
-  dynamic customerRelation;
-  String itemRelation;
-  String item;
-  String customer;
-  dynamic custSegment;
-  dynamic  custSubSegment;
-  double minQty;
-  double qtyFrom;
-  double qtyTo;
-  dynamic priceListing;
+  int? id;
+  String? headerNumber;
+  dynamic? relation;
+  dynamic? activityNumber;
+  dynamic? activityName;
+  dynamic? customerRelation;
+  String? itemRelation;
+  String? item;
+  String? customer;
+  dynamic? custSegment;
+  dynamic?  custSubSegment;
+  double? minQty;
+  double? qtyFrom;
+  double? qtyTo;
+  dynamic? priceListing;
   dynamic total;
-  String unitID;
-  String fromDate;
-  String toDate;
-  String currency;
+  String? unitID;
+  String? fromDate;
+  String? toDate;
+  String? currency;
   dynamic percent1;
   dynamic percent2;
   dynamic percent3;
   dynamic percent4;
   dynamic value1;
   dynamic value2;
-  String suppItemOnlyOnce;
-  String suppItemId;
+  String? suppItemOnlyOnce;
+  String? suppItemId;
   dynamic suppItemQty;
-  String supplementaryUnitId;
+  String? supplementaryUnitId;
   dynamic location;
   dynamic purchaseOrder;
   dynamic status;
@@ -206,19 +206,19 @@ class ActivityLinesEdit {
   dynamic imported;
   dynamic countCustomerID;
   dynamic estimatedPOAmount;
-  int typeClaim;
+  int? typeClaim;
   dynamic description;
   dynamic listCustomer;
   dynamic keterangan;
   dynamic cost;
   dynamic quota;
   dynamic itemGroup;
-  int multiply;
+  int? multiply;
   dynamic itemMultiDisc;
-  String warehouse;
-  int headerId;
-  String salesPrice;
-  String priceTo;
+  String? warehouse;
+  int? headerId;
+  String? salesPrice;
+  String? priceTo;
 
   ActivityLinesEdit(
       {this.id,
